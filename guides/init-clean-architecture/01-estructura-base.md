@@ -20,16 +20,111 @@ En esta etapa se crea:
 
 ## Parámetros de Entrada
 
-| Parámetro   | Descripción                  | Requerido | Ejemplo                     |
-| ----------- | ---------------------------- | --------- | --------------------------- |
-| `--name`    | Nombre de la solución        | ✅ Sí     | `MiProyecto`                |
-| `--version` | Versión de .NET              | ✅ Sí     | `net9.0`                    |
-| `--path`    | Ruta donde crear el proyecto | ✅ Sí     | `C:\projects\miproyecto`    |
+| Parámetro   | Descripción                  | Requerido | Ejemplo                     | Default          |
+| ----------- | ---------------------------- | --------- | --------------------------- | ---------------- |
+| `--name`    | Nombre de la solución        | ✅ Sí     | `MiProyecto`                | -                |
+| `--version` | Versión de .NET              | ✅ Sí     | `net9.0`                    | -                |
+| `--path`    | Ruta donde crear el proyecto | ❌ No     | `C:\projects\miproyecto`    | `.` (directorio actual) |
 
-**Ejemplo de uso del MCP tool:**
+**Ejemplos de uso del MCP tool:**
 
 ```bash
+# Con path explícito
 init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\miproyecto
+
+# Sin path (usa directorio actual)
+init-clean-architecture --name=MiProyecto --version=net9.0
+```
+
+## Validaciones Pre-ejecución
+
+Antes de ejecutar el proceso de construcción, el tool debe validar:
+
+### 1. Validación de .NET SDK
+
+Verificar que .NET SDK esté instalado con la versión especificada:
+
+```bash
+dotnet --version
+```
+
+**Acción:** Si no está instalado o la versión es menor, mostrar error con instrucciones de instalación.
+
+### 2. Validación del directorio destino
+
+**Si se especifica `--path`:**
+- Crear el directorio si no existe
+- Validar permisos de escritura
+
+**Si NO se especifica `--path` (usa directorio actual):**
+- Verificar que el directorio esté vacío o solo contenga archivos de Git
+
+### 3. Validación de directorio vacío
+
+El directorio se considera **válido (vacío)** si contiene únicamente:
+
+**Archivos/carpetas permitidos:**
+- `.git/` - Directorio de Git
+- `.gitignore` - Archivo de exclusiones de Git
+- `.gitattributes` - Atributos de Git
+- `README.md` - Documentación inicial
+- `LICENSE` - Archivo de licencia
+- `.editorconfig` - Configuración de editor
+
+**Archivos/carpetas NO permitidos (indicarían que no está vacío):**
+- `*.sln` - Ya existe una solución
+- `*.csproj` - Ya existen proyectos
+- `src/` - Ya existe carpeta de código fuente
+- `tests/` - Ya existe carpeta de tests
+- `bin/`, `obj/` - Directorios de compilación
+- Cualquier otro archivo o carpeta
+
+**Acción si el directorio NO está vacío:**
+
+Mostrar error:
+```
+Error: El directorio no está vacío.
+Encontrado: [lista de archivos/carpetas no permitidos]
+
+El directorio debe estar vacío o contener solo archivos de Git (.git, .gitignore, README.md, etc.)
+
+Opciones:
+1. Especifica un directorio diferente con --path
+2. Limpia el directorio actual
+3. Usa un directorio nuevo
+```
+
+### 4. Validación del nombre del proyecto
+
+El `--name` debe ser un identificador C# válido:
+
+**Reglas:**
+- ✅ Empieza con letra o guion bajo
+- ✅ Contiene solo letras, números, guiones bajos o puntos
+- ✅ No contiene espacios
+- ❌ No puede ser una palabra reservada de C#
+
+**Ejemplos válidos:**
+- `MiProyecto`
+- `Mi_Proyecto`
+- `MiProyecto.API`
+- `Proyecto123`
+
+**Ejemplos inválidos:**
+- `Mi Proyecto` (contiene espacio)
+- `123Proyecto` (empieza con número)
+- `Mi-Proyecto` (contiene guion medio)
+- `class` (palabra reservada)
+
+**Acción si el nombre es inválido:**
+```
+Error: El nombre del proyecto no es válido.
+Proporcionado: "Mi Proyecto"
+
+El nombre debe:
+- Empezar con letra o guion bajo
+- Contener solo letras, números, guiones bajos o puntos
+- No contener espacios ni caracteres especiales
 ```
 
 ## Estructura de Archivos a Crear
@@ -43,13 +138,28 @@ init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\mi
 ```
 
 Donde:
-- `{path}` = valor del parámetro `--path`
+- `{path}` = valor del parámetro `--path` (o `.` si no se especifica)
 - `{name}` = valor del parámetro `--name`
 
 ## Proceso de Construcción
 
+### Paso 0: Determinar directorio de trabajo
+
+**Si se especificó `--path`:**
+```bash
+# El path es el especificado por el usuario
+WORK_DIR="{path}"
+```
+
+**Si NO se especificó `--path`:**
+```bash
+# El path es el directorio actual
+WORK_DIR="."
+```
+
 ### Paso 1.1: Crear estructura de carpetas
 
+**Si se especificó `--path`:**
 ```bash
 mkdir "{path}"
 cd "{path}"
@@ -57,7 +167,14 @@ mkdir src
 mkdir tests
 ```
 
-**Ejemplo concreto:**
+**Si NO se especificó `--path` (directorio actual):**
+```bash
+# Ya estamos en el directorio correcto
+mkdir src
+mkdir tests
+```
+
+**Ejemplo concreto con path explícito:**
 
 ```bash
 mkdir "C:\projects\miproyecto"
@@ -66,16 +183,30 @@ mkdir src
 mkdir tests
 ```
 
+**Ejemplo concreto sin path (directorio actual):**
+
+```bash
+# Asumiendo que estamos en C:\projects\miproyecto
+mkdir src
+mkdir tests
+```
+
 ### Paso 1.2: Crear archivo de solución
 
 ```bash
-dotnet new sln -n {name} -o "{path}"
+dotnet new sln -n {name} -o "{WORK_DIR}"
 ```
 
-**Ejemplo concreto:**
+**Ejemplo concreto con path explícito:**
 
 ```bash
 dotnet new sln -n MiProyecto -o "C:\projects\miproyecto"
+```
+
+**Ejemplo concreto sin path (directorio actual):**
+
+```bash
+dotnet new sln -n MiProyecto -o "."
 ```
 
 **Resultado esperado:**
@@ -236,8 +367,52 @@ Esta estructura es compatible con:
 
 **Solución:** Ejecutar terminal como administrador o verificar permisos en el path especificado
 
+### Problema: "El directorio no está vacío"
+
+**Causa:** El directorio ya contiene archivos o carpetas que no son permitidos (algo más que archivos de Git).
+
+**Solución:**
+
+**Opción 1 - Limpiar directorio:**
+```bash
+# Eliminar archivos no deseados (ten cuidado)
+# Revisar qué hay en el directorio primero
+ls -la
+
+# Eliminar solo lo necesario manualmente
+```
+
+**Opción 2 - Usar otro directorio:**
+```bash
+# Especifica un path diferente
+init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\otro-directorio
+```
+
+**Opción 3 - Crear subdirectorio:**
+```bash
+# Crear y usar un subdirectorio nuevo
+mkdir nuevo-proyecto
+cd nuevo-proyecto
+init-clean-architecture --name=MiProyecto --version=net9.0
+```
+
 ### Problema: El archivo .sln ya existe
 
 **Solución:**
 - Eliminar el archivo existente, o
 - Cambiar el parámetro `--name` o `--path`
+
+### Problema: Nombre de proyecto inválido
+
+**Causa:** El `--name` contiene caracteres no permitidos o espacios.
+
+**Solución:**
+```bash
+# ❌ Incorrecto
+init-clean-architecture --name="Mi Proyecto" --version=net9.0
+
+# ✅ Correcto
+init-clean-architecture --name=MiProyecto --version=net9.0
+# o
+init-clean-architecture --name=Mi_Proyecto --version=net9.0
+```
