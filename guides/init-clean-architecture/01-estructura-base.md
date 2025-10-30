@@ -242,17 +242,20 @@ Una vez completada la estructura base, continuar con:
 
 ### Gestión Centralizada de Paquetes
 
-Con `Directory.Packages.props` habilitado, cuando agregues un paquete a un proyecto, debes hacerlo sin especificar la versión:
+Con `Directory.Packages.props` habilitado, cuando agregues un paquete a un proyecto (en pasos posteriores), debes hacerlo sin especificar la versión:
 
 **❌ Incorrecto:**
-```bash
+```
 dotnet add package FluentValidation --version 12.0.0
 ```
 
 **✅ Correcto:**
-```bash
+```
 dotnet add package FluentValidation
 ```
+
+> **Nota:** Estos son ejemplos para referencia futura. NO se ejecutan en este paso.
+> Los paquetes se agregan en los pasos posteriores cuando se creen los proyectos.
 
 La versión se toma automáticamente del archivo `Directory.Packages.props`.
 
