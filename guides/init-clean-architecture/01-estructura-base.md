@@ -129,136 +129,68 @@ El nombre debe:
 
 ## Estructura de Archivos a Crear
 
+La estructura final en el directorio actual será:
+
 ```
-{path}/
-├── {name}.sln
+./
+├── {ProjectName}.sln
 ├── Directory.Packages.props
 ├── src/
 └── tests/
 ```
 
-Donde:
-- `{path}` = valor del parámetro `--path` (o `.` si no se especifica)
-- `{name}` = valor del parámetro `--name`
+> **Ejemplo:** Si tu proyecto se llama "InventorySystem", tendrás:
+> ```
+> ./
+> ├── InventorySystem.sln
+> ├── Directory.Packages.props
+> ├── src/
+> └── tests/
+> ```
 
 ## Proceso de Construcción
 
-### Paso 0: Determinar directorio de trabajo
+> **Nota:** Los placeholders como `{ProjectName}` serán reemplazados automáticamente por el servidor MCP con el nombre real de tu proyecto.
 
-**Si se especificó `--path`:**
+### Paso 1: Verificar instalación de .NET
+
+Verifica que tengas .NET SDK instalado:
+
 ```bash
-# El path es el especificado por el usuario
-WORK_DIR="{path}"
+dotnet --version
 ```
 
-**Si NO se especificó `--path`:**
-```bash
-# El path es el directorio actual
-WORK_DIR="."
-```
+> Deberías ver la versión 9.0 o superior.
 
-### Paso 1.1: Crear estructura de carpetas
+### Paso 2: Crear estructura de carpetas
 
-**Si se especificó `--path`:**
 ```bash
-mkdir "{path}"
-cd "{path}"
 mkdir src
 mkdir tests
 ```
 
-**Si NO se especificó `--path` (directorio actual):**
-```bash
-# Ya estamos en el directorio correcto
-mkdir src
-mkdir tests
-```
+> Esto crea las carpetas `src/` y `tests/` en el directorio actual.
 
-**Ejemplo concreto con path explícito:**
+### Paso 3: Crear archivo de solución
 
 ```bash
-mkdir "C:\projects\miproyecto"
-cd "C:\projects\miproyecto"
-mkdir src
-mkdir tests
+dotnet new sln -n {ProjectName}
 ```
 
-**Ejemplo concreto sin path (directorio actual):**
+> Este comando crea el archivo `{ProjectName}.sln` en el directorio actual.
+>
+> **Ejemplo:** Si tu proyecto se llama "InventorySystem", se creará `InventorySystem.sln`
 
-```bash
-# Asumiendo que estamos en C:\projects\miproyecto
-mkdir src
-mkdir tests
-```
+### Paso 4: Crear archivo Directory.Packages.props
 
-### Paso 1.2: Crear archivo de solución
+Este archivo habilita la gestión centralizada de paquetes NuGet. Todas las versiones se definen aquí una sola vez.
 
-```bash
-dotnet new sln -n {name} -o "{WORK_DIR}"
-```
+**📄 COPIAR TEMPLATE:** `templates/Directory.Packages.props` → `./Directory.Packages.props`
 
-**Ejemplo concreto con path explícito:**
-
-```bash
-dotnet new sln -n MiProyecto -o "C:\projects\miproyecto"
-```
-
-**Ejemplo concreto sin path (directorio actual):**
-
-```bash
-dotnet new sln -n MiProyecto -o "."
-```
-
-**Resultado esperado:**
-
-```
-La plantilla "Archivo de solución" se creó correctamente.
-```
-
-### Paso 1.3: Crear archivo Directory.Packages.props
-
-Crear el archivo `Directory.Packages.props` en la raíz de la solución con el siguiente contenido:
-
-```xml
-<Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
-    <PackageVersion Include="AutoMapper" Version="15.0.1" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
-    <PackageVersion Include="DotNetEnv" Version="3.1.1" />
-    <PackageVersion Include="FastEndpoints" Version="7.0.1" />
-    <PackageVersion Include="FastEndpoints.Security" Version="7.0.1" />
-    <PackageVersion Include="FastEndpoints.Swagger" Version="7.0.1" />
-    <PackageVersion Include="FastEndpoints.Testing" Version="7.0.1" />
-    <PackageVersion Include="FluentAssertions" Version="8.5.0" />
-    <PackageVersion Include="FluentMigrator" Version="7.1.0" />
-    <PackageVersion Include="FluentMigrator.Runner" Version="7.1.0" />
-    <PackageVersion Include="FluentValidation" Version="12.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="NHibernate" Version="5.5.2" />
-    <PackageVersion Include="NUnit" Version="4.2.2" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageVersion Include="Scrutor" Version="6.1.0" />
-    <PackageVersion Include="Spectre.Console" Version="0.50.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.3" />
-    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.7" />
-  </ItemGroup>
-</Project>
-```
+> El servidor MCP debe:
+> 1. Descargar el archivo desde `templates/Directory.Packages.props` en el repositorio de GitHub
+> 2. Copiarlo a `./Directory.Packages.props` en el directorio actual
+> 3. **No requiere reemplazo de placeholders** (este archivo no tiene placeholders)
 
 **⚠️ NOTA IMPORTANTE:**
 Este archivo **NO incluye** los paquetes específicos de bases de datos:
@@ -267,64 +199,39 @@ Este archivo **NO incluye** los paquetes específicos de bases de datos:
 
 Estos paquetes se agregarán posteriormente cuando se ejecute el tool `configure-database`.
 
-**Propósito:**
-Este archivo habilita la **gestión centralizada de paquetes NuGet**. Todas las versiones de paquetes se definen aquí una sola vez, y los proyectos individuales solo referencian el nombre del paquete sin especificar versión, evitando conflictos y facilitando el mantenimiento.
+## Verificación
 
-**Ubicación:** `{path}/Directory.Packages.props`
+Después de ejecutar todos los pasos, valida que la estructura se creó correctamente:
 
-## Validación
-
-Después de ejecutar estos pasos, verifica que se haya creado la siguiente estructura:
+### 1. Verificar estructura de archivos
 
 ```bash
-ls -la "{path}"
+ls -la
 ```
 
-**Resultado esperado:**
+Deberías ver:
+- `{ProjectName}.sln`
+- `Directory.Packages.props`
+- Carpeta `src/`
+- Carpeta `tests/`
 
-```
-Directory.Packages.props
-{name}.sln
-src/
-tests/
-```
+> **Ejemplo:** Para el proyecto "InventorySystem":
+> ```
+> InventorySystem.sln
+> Directory.Packages.props
+> src/
+> tests/
+> ```
 
-**Verificar contenido del archivo .sln:**
+### 2. Compilar la solución
 
 ```bash
-cat "{path}/{name}.sln"
+dotnet build
 ```
 
-Debe contener algo similar a:
-
-```
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
-MinimumVisualStudioVersion = 10.0.40219.1
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-EndGlobal
-```
-
-**Verificar que Directory.Packages.props existe y es válido XML:**
-
-```bash
-cat "{path}/Directory.Packages.props" | head -n 5
-```
-
-Debe mostrar:
-
-```xml
-<Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-```
+> Debería mostrar: "Build succeeded. 0 Warning(s). 0 Error(s)."
+>
+> **Nota:** Es normal que aún no haya proyectos que compilar en este punto.
 
 ## Siguientes Pasos
 

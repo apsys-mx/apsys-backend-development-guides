@@ -16,22 +16,13 @@ Esta capa es **completamente independiente de la infraestructura** y de cualquie
 Este paso requiere que se haya completado:
 - ✅ **[01-estructura-base.md](./01-estructura-base.md)** - Estructura base del proyecto
 
-## Parámetros de Entrada
-
-Los mismos parámetros del paso anterior:
-
-| Parámetro   | Valor desde paso anterior |
-| ----------- | ------------------------- |
-| `--name`    | Nombre de la solución     |
-| `--path`    | Ruta del proyecto         |
-
 ## Estructura de Archivos a Crear
 
 ```
-{path}/
+./
 ├── src/
-│   └── {name}.domain/
-│       ├── {name}.domain.csproj
+│   └── {ProjectName}.domain/
+│       ├── {ProjectName}.domain.csproj
 │       ├── entities/
 │       │   └── AbstractDomainObject.cs
 │       ├── exceptions/
@@ -46,11 +37,20 @@ Los mismos parámetros del paso anterior:
 │               ├── GetManyAndCountResult.cs
 │               └── SortingCriteria.cs
 └── tests/
-    └── {name}.domain.tests/
-        ├── {name}.domain.tests.csproj
+    └── {ProjectName}.domain.tests/
+        ├── {ProjectName}.domain.tests.csproj
         └── entities/
             └── DomainTestBase.cs
 ```
+
+> **Ejemplo:** Para el proyecto "InventorySystem":
+> ```
+> ./
+> ├── src/
+> │   └── InventorySystem.domain/
+> └── tests/
+>     └── InventorySystem.domain.tests/
+> ```
 
 ## Paquetes NuGet Requeridos
 
@@ -66,447 +66,193 @@ Los mismos parámetros del paso anterior:
 
 ## Proceso de Construcción
 
-### Paso 2.1: Crear proyecto classlib para source
+> **Nota:** Los placeholders como `{ProjectName}` serán reemplazados automáticamente por el servidor MCP con el nombre real de tu proyecto.
+
+### Paso 1: Crear proyecto domain
 
 ```bash
-mkdir "{path}/src/{name}.domain"
-dotnet new classlib -n {name}.domain -o "{path}/src/{name}.domain"
-dotnet sln "{path}/{name}.sln" add "{path}/src/{name}.domain/{name}.domain.csproj"
+dotnet new classlib -n {ProjectName}.domain -o src/{ProjectName}.domain
+dotnet sln add src/{ProjectName}.domain/{ProjectName}.domain.csproj
 ```
 
-**Ejemplo concreto:**
+> Esto crea un proyecto de biblioteca de clases para la capa de dominio y lo agrega a la solución.
+
+### Paso 2: Eliminar archivo Class1.cs autogenerado
 
 ```bash
-mkdir "C:/projects/miproyecto/src/MiProyecto.domain"
-dotnet new classlib -n MiProyecto.domain -o "C:/projects/miproyecto/src/MiProyecto.domain"
-dotnet sln "C:/projects/miproyecto/MiProyecto.sln" add "C:/projects/miproyecto/src/MiProyecto.domain/MiProyecto.domain.csproj"
+rm src/{ProjectName}.domain/Class1.cs
 ```
 
-**Resultado esperado:**
-
-```
-La plantilla "Biblioteca de clases" se creó correctamente.
-Proyecto agregado a la solución.
-```
-
-### Paso 2.2: Eliminar archivo Class1.cs autogenerado
+### Paso 3: Instalar paquetes NuGet en domain
 
 ```bash
-rm "{path}/src/{name}.domain/Class1.cs"
+dotnet add src/{ProjectName}.domain/{ProjectName}.domain.csproj package FluentValidation
 ```
 
-**Ejemplo concreto:**
+> FluentValidation se usa para validaciones de entidades de dominio.
+
+### Paso 4: Crear proyecto de tests
 
 ```bash
-rm "C:/projects/miproyecto/src/MiProyecto.domain/Class1.cs"
+dotnet new nunit -n {ProjectName}.domain.tests -o tests/{ProjectName}.domain.tests
+dotnet sln add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj
 ```
 
-### Paso 2.3: Instalar paquetes NuGet en source
+> Esto crea un proyecto de pruebas con NUnit.
 
-```bash
-dotnet add "{path}/src/{name}.domain/{name}.domain.csproj" package FluentValidation
-```
+### Paso 5: Remover versiones de paquetes en .csproj de tests
 
-**Ejemplo concreto:**
+**⚠️ IMPORTANTE:** El template de NUnit genera referencias de paquetes con versiones explícitas. Debes removerlas porque usamos gestión centralizada.
 
-```bash
-dotnet add "C:/projects/miproyecto/src/MiProyecto.domain/MiProyecto.domain.csproj" package FluentValidation
-```
-
-### Paso 2.4: Crear proyecto de tests
-
-```bash
-mkdir "{path}/tests/{name}.domain.tests"
-dotnet new nunit -n {name}.domain.tests -o "{path}/tests/{name}.domain.tests"
-dotnet sln "{path}/{name}.sln" add "{path}/tests/{name}.domain.tests/{name}.domain.tests.csproj"
-```
-
-**Ejemplo concreto:**
-
-```bash
-mkdir "C:/projects/miproyecto/tests/MiProyecto.domain.tests"
-dotnet new nunit -n MiProyecto.domain.tests -o "C:/projects/miproyecto/tests/MiProyecto.domain.tests"
-dotnet sln "C:/projects/miproyecto/MiProyecto.sln" add "C:/projects/miproyecto/tests/MiProyecto.domain.tests/MiProyecto.domain.tests.csproj"
-```
-
-### Paso 2.5: Remover versiones de paquetes en .csproj de tests
-
-**⚠️ IMPORTANTE:** Editar `tests/{name}.domain.tests/{name}.domain.tests.csproj` y **remover todos los atributos `Version`** de los `PackageReference` (porque usamos gestión centralizada con `Directory.Packages.props`).
-
-**Cambiar de:**
+Edita el archivo `tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj` y elimina todos los atributos `Version`:
 
 ```xml
-<ItemGroup>
-  <PackageReference Include="coverlet.collector" Version="6.0.2" />
-  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-  <PackageReference Include="NUnit" Version="4.2.2" />
-  <PackageReference Include="NUnit.Analyzers" Version="4.4.0" />
-  <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-</ItemGroup>
+<!-- Cambiar esto: -->
+<PackageReference Include="NUnit" Version="4.2.2" />
+
+<!-- A esto: -->
+<PackageReference Include="NUnit" />
 ```
 
-**A:**
+> Haz lo mismo para todos los `PackageReference` en el archivo.
 
-```xml
-<ItemGroup>
-  <PackageReference Include="coverlet.collector" />
-  <PackageReference Include="Microsoft.NET.Test.Sdk" />
-  <PackageReference Include="NUnit" />
-  <PackageReference Include="NUnit.Analyzers" />
-  <PackageReference Include="NUnit3TestAdapter" />
-</ItemGroup>
-```
-
-### Paso 2.6: Instalar paquetes NuGet adicionales en tests
+### Paso 6: Instalar paquetes NuGet adicionales en tests
 
 ```bash
-dotnet add "{path}/tests/{name}.domain.tests/{name}.domain.tests.csproj" package AutoFixture.AutoMoq
-dotnet add "{path}/tests/{name}.domain.tests/{name}.domain.tests.csproj" package FluentAssertions
+dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package AutoFixture.AutoMoq
+dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package FluentAssertions
 ```
 
-**Ejemplo concreto:**
+### Paso 7: Agregar referencia al proyecto domain en tests
 
 ```bash
-dotnet add "C:/projects/miproyecto/tests/MiProyecto.domain.tests/MiProyecto.domain.tests.csproj" package AutoFixture.AutoMoq
-dotnet add "C:/projects/miproyecto/tests/MiProyecto.domain.tests/MiProyecto.domain.tests.csproj" package FluentAssertions
+dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
 ```
 
-### Paso 2.7: Agregar referencia al proyecto domain en tests
+> Esto permite que los tests accedan a las clases del dominio.
+
+### Paso 8: Crear estructura de carpetas del domain
 
 ```bash
-dotnet add "{path}/tests/{name}.domain.tests/{name}.domain.tests.csproj" reference "{path}/src/{name}.domain/{name}.domain.csproj"
+mkdir src/{ProjectName}.domain/entities
+mkdir src/{ProjectName}.domain/exceptions
+mkdir src/{ProjectName}.domain/interfaces
+mkdir src/{ProjectName}.domain/interfaces/repositories
+mkdir tests/{ProjectName}.domain.tests/entities
 ```
 
-**Ejemplo concreto:**
+### Paso 9: Eliminar archivo de test autogenerado
 
 ```bash
-dotnet add "C:/projects/miproyecto/tests/MiProyecto.domain.tests/MiProyecto.domain.tests.csproj" reference "C:/projects/miproyecto/src/MiProyecto.domain/MiProyecto.domain.csproj"
+rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 ```
 
-### Paso 2.8: Crear estructura de carpetas
+### Paso 10: Copiar archivos de código desde templates
+
+**📁 COPIAR DIRECTORIO COMPLETO:** `templates/domain/` → `src/{ProjectName}.domain/`
+
+> El servidor MCP debe:
+> 1. Descargar todos los archivos desde `templates/domain/` en el repositorio de GitHub
+> 2. Copiarlos a `src/{ProjectName}.domain/` respetando la estructura de carpetas
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
+
+**Archivos que se copiarán:**
+- `entities/AbstractDomainObject.cs`
+- `exceptions/InvalidDomainException.cs`
+- `exceptions/InvalidFilterArgumentException.cs`
+- `interfaces/repositories/IRepository.cs`
+- `interfaces/repositories/IReadOnlyRepository.cs`
+- `interfaces/repositories/IUnitOfWork.cs`
+- `interfaces/repositories/GetManyAndCountResult.cs`
+- `interfaces/repositories/SortingCriteria.cs`
+- `interfaces/repositories/IGetManyAndCountResultWithSorting.cs`
+
+### Paso 11: Copiar archivos de tests desde templates
+
+**📁 COPIAR DIRECTORIO COMPLETO:** `templates/domain.tests/` → `tests/{ProjectName}.domain.tests/`
+
+> El servidor MCP debe:
+> 1. Descargar todos los archivos desde `templates/domain.tests/` en el repositorio de GitHub
+> 2. Copiarlos a `tests/{ProjectName}.domain.tests/` respetando la estructura de carpetas
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
+
+**Archivos que se copiarán:**
+- `entities/DomainTestBase.cs`
+
+## Referencia de Templates
+
+> Los templates están en el directorio `templates/` del repositorio de GitHub.
+> Para ver el código completo de cada archivo, consulta directamente los archivos en `templates/domain/` y `templates/domain.tests/`.
+
+### Archivos del Domain
+
+| Archivo | Propósito |
+|---------|-----------|
+| **entities/AbstractDomainObject.cs** | Clase base abstracta para todas las entidades de dominio. Proporciona propiedades comunes (Id, CreationDate) y métodos de validación integrados con FluentValidation. |
+| **exceptions/InvalidDomainException.cs** | Excepción lanzada cuando una entidad de dominio no cumple con sus reglas de validación. |
+| **exceptions/InvalidFilterArgumentException.cs** | Excepción lanzada cuando los argumentos de filtrado (queries) son inválidos. |
+| **interfaces/repositories/IRepository.cs** | Interfaz genérica para operaciones de escritura en repositorios (CRUD completo). |
+| **interfaces/repositories/IReadOnlyRepository.cs** | Interfaz genérica para operaciones de solo lectura en repositorios. |
+| **interfaces/repositories/IUnitOfWork.cs** | Patrón Unit of Work para gestionar transacciones de base de datos. |
+| **interfaces/repositories/GetManyAndCountResult.cs** | DTO para resultados paginados (items + total count). |
+| **interfaces/repositories/SortingCriteria.cs** | Representa criterios de ordenamiento para consultas. |
+| **interfaces/repositories/IGetManyAndCountResultWithSorting.cs** | Interfaz para consultas paginadas con soporte de filtrado y ordenamiento avanzado. |
+
+### Archivos de Tests
+
+| Archivo | Propósito |
+|---------|-----------|
+| **entities/DomainTestBase.cs** | Clase base para tests de entidades de dominio, proporciona setup común con NUnit. |
+
+> **Nota:** Todos los archivos usan el placeholder `{ProjectName}` en sus namespaces, que el servidor MCP debe reemplazar con el nombre real del proyecto.
+
+## Verificación
+
+### 1. Compilar la solución
 
 ```bash
-mkdir "{path}/src/{name}.domain/entities"
-mkdir "{path}/src/{name}.domain/exceptions"
-mkdir "{path}/src/{name}.domain/interfaces"
-mkdir "{path}/src/{name}.domain/interfaces/repositories"
-mkdir "{path}/tests/{name}.domain.tests/entities"
+dotnet build
 ```
 
-**Ejemplo concreto:**
-
-```bash
-mkdir "C:/projects/miproyecto/src/MiProyecto.domain/entities"
-mkdir "C:/projects/miproyecto/src/MiProyecto.domain/exceptions"
-mkdir "C:/projects/miproyecto/src/MiProyecto.domain/interfaces"
-mkdir "C:/projects/miproyecto/src/MiProyecto.domain/interfaces/repositories"
-mkdir "C:/projects/miproyecto/tests/MiProyecto.domain.tests/entities"
-```
-
-### Paso 2.9: Eliminar archivo de test autogenerado
-
-```bash
-rm "{path}/tests/{name}.domain.tests/UnitTest1.cs"
-```
-
-**Ejemplo concreto:**
-
-```bash
-rm "C:/projects/miproyecto/tests/MiProyecto.domain.tests/UnitTest1.cs"
-```
-
-## Código Fuente de Archivos
-
-### entities/AbstractDomainObject.cs
-
-**Ubicación:** `{path}/src/{name}.domain/entities/AbstractDomainObject.cs`
-
-```csharp
-using FluentValidation;
-using FluentValidation.Results;
-
-namespace {name}.domain.entities;
-
-public abstract class AbstractDomainObject
-{
-    protected AbstractDomainObject()
-    { }
-
-    protected AbstractDomainObject(Guid id, DateTime creationDate)
-    {
-        Id = id;
-        CreationDate = creationDate;
-    }
-
-    public virtual Guid Id { get; set; } = Guid.NewGuid();
-    public virtual DateTime CreationDate { get; set; } = DateTime.Now;
-
-    public virtual bool IsValid()
-    {
-        IValidator? validator = GetValidator();
-        if (validator == null)
-            return true;
-
-        var context = new ValidationContext<object>(this);
-        ValidationResult result = validator.Validate(context);
-        return result.IsValid;
-    }
-
-    public virtual IEnumerable<ValidationFailure> Validate()
-    {
-        IValidator? validator = GetValidator();
-        if (validator == null)
-            return new List<ValidationFailure>();
-        else
-        {
-            var context = new ValidationContext<object>(this);
-            ValidationResult result = validator.Validate(context);
-            return result.Errors;
-        }
-    }
-
-    public virtual IValidator? GetValidator()
-         => null;
-}
-```
-
-**Propósito:** Clase base abstracta para todas las entidades de dominio. Proporciona:
-- Propiedades comunes (Id, CreationDate)
-- Métodos de validación integrados con FluentValidation
-- Patrón Template Method para validadores
-
-### exceptions/InvalidDomainException.cs
-
-**Ubicación:** `{path}/src/{name}.domain/exceptions/InvalidDomainException.cs`
-
-```csharp
-using FluentValidation.Results;
-
-namespace {name}.domain.exceptions;
-
-public class InvalidDomainException : Exception
-{
-    public IEnumerable<ValidationFailure> Errors { get; set; }
-
-    public InvalidDomainException(IEnumerable<ValidationFailure> errors)
-        : base("Domain validation failed")
-    {
-        Errors = errors;
-    }
-}
-```
-
-**Propósito:** Excepción lanzada cuando una entidad de dominio no cumple con sus reglas de validación.
-
-### exceptions/InvalidFilterArgumentException.cs
-
-**Ubicación:** `{path}/src/{name}.domain/exceptions/InvalidFilterArgumentException.cs`
-
-```csharp
-namespace {name}.domain.exceptions;
-
-public class InvalidFilterArgumentException : Exception
-{
-    public InvalidFilterArgumentException(string message) : base(message)
-    {
-    }
-
-    public InvalidFilterArgumentException(string message, string argName) : base(message)
-    {
-    }
-}
-```
-
-**Propósito:** Excepción lanzada cuando los argumentos de filtrado (queries) son inválidos.
-
-### interfaces/repositories/IRepository.cs
-
-**Ubicación:** `{path}/src/{name}.domain/interfaces/repositories/IRepository.cs`
-
-```csharp
-namespace {name}.domain.interfaces.repositories;
-
-public interface IRepository<T, TKey> : IReadOnlyRepository<T, TKey> where T : class
-{
-    T Add(T item);
-    Task AddAsync(T item);
-    T Save(T item);
-    Task SaveAsync(T item);
-    void Delete(T item);
-    Task DeleteAsync(T item);
-}
-```
-
-**Propósito:** Interfaz genérica para operaciones de escritura en repositorios (CRUD completo).
-
-### interfaces/repositories/IReadOnlyRepository.cs
-
-**Ubicación:** `{path}/src/{name}.domain/interfaces/repositories/IReadOnlyRepository.cs`
-
-```csharp
-namespace {name}.domain.interfaces.repositories;
-
-public interface IReadOnlyRepository<T, TKey> where T : class
-{
-    T? GetById(TKey id);
-    Task<T?> GetByIdAsync(TKey id);
-    IEnumerable<T> GetAll();
-    Task<IEnumerable<T>> GetAllAsync();
-}
-```
-
-**Propósito:** Interfaz genérica para operaciones de solo lectura en repositorios.
-
-### interfaces/repositories/IUnitOfWork.cs
-
-**Ubicación:** `{path}/src/{name}.domain/interfaces/repositories/IUnitOfWork.cs`
-
-```csharp
-namespace {name}.domain.interfaces.repositories;
-
-public interface IUnitOfWork : IDisposable
-{
-    void BeginTransaction();
-    void Commit();
-    void Rollback();
-}
-```
-
-**Propósito:** Patrón Unit of Work para gestionar transacciones de base de datos.
-
-### interfaces/repositories/GetManyAndCountResult.cs
-
-**Ubicación:** `{path}/src/{name}.domain/interfaces/repositories/GetManyAndCountResult.cs`
-
-```csharp
-namespace {name}.domain.interfaces.repositories;
-
-public class GetManyAndCountResult<T>
-{
-    public IEnumerable<T> Items { get; set; } = [];
-    public int Count { get; set; }
-}
-```
-
-**Propósito:** DTO para resultados paginados (items + total count).
-
-### interfaces/repositories/SortingCriteria.cs
-
-**Ubicación:** `{path}/src/{name}.domain/interfaces/repositories/SortingCriteria.cs`
-
-```csharp
-namespace {name}.domain.interfaces.repositories;
-
-public class SortingCriteria
-{
-    public string PropertyName { get; set; } = string.Empty;
-    public bool Ascending { get; set; } = true;
-}
-```
-
-**Propósito:** Representa criterios de ordenamiento para consultas.
-
-### interfaces/repositories/IGetManyAndCountResultWithSorting.cs
-
-**Ubicación:** `{path}/src/{name}.domain/interfaces/repositories/IGetManyAndCountResultWithSorting.cs`
-
-```csharp
-namespace {name}.domain.interfaces.repositories;
-
-public interface IGetManyAndCountResultWithSorting<T> where T : class
-{
-    GetManyAndCountResult<T> GetManyAndCount(int offset, int limit, string? filter = null, IEnumerable<SortingCriteria>? sorting = null);
-    Task<GetManyAndCountResult<T>> GetManyAndCountAsync(int offset, int limit, string? filter = null, IEnumerable<SortingCriteria>? sorting = null);
-}
-```
-
-**Propósito:** Interfaz para consultas paginadas con soporte de filtrado y ordenamiento avanzado.
-
-### tests/entities/DomainTestBase.cs
-
-**Ubicación:** `{path}/tests/{name}.domain.tests/entities/DomainTestBase.cs`
-
-```csharp
-using NUnit.Framework;
-
-namespace {name}.domain.tests.entities;
-
-public class DomainTestBase
-{
-    [SetUp]
-    public void Setup()
-    {
-        // Inicialización común para tests de dominio
-    }
-}
-```
-
-**Propósito:** Clase base para tests de entidades de dominio, proporciona setup común.
-
-## Validación
-
-### 1. Verificar que los proyectos se compiln correctamente
-
-```bash
-dotnet build "{path}/{name}.sln"
-```
-
-**Resultado esperado:**
-
-```
-Build succeeded.
-    0 Warning(s)
-    0 Error(s)
-```
+> Debería mostrar: "Build succeeded. 0 Warning(s). 0 Error(s)."
 
 ### 2. Verificar estructura de carpetas
 
 ```bash
-ls -R "{path}/src/{name}.domain"
+ls -R src/{ProjectName}.domain
 ```
 
-**Debe mostrar:**
+Deberías ver:
+- `entities/AbstractDomainObject.cs`
+- `exceptions/InvalidDomainException.cs`
+- `exceptions/InvalidFilterArgumentException.cs`
+- `interfaces/repositories/` con todas las interfaces
 
-```
-entities/
-  AbstractDomainObject.cs
-exceptions/
-  InvalidDomainException.cs
-  InvalidFilterArgumentException.cs
-interfaces/
-  repositories/
-    IRepository.cs
-    IReadOnlyRepository.cs
-    IUnitOfWork.cs
-    IGetManyAndCountResultWithSorting.cs
-    GetManyAndCountResult.cs
-    SortingCriteria.cs
-{name}.domain.csproj
-```
+> **Ejemplo:** Para el proyecto "InventorySystem":
+> ```
+> src/InventorySystem.domain/
+> ├── entities/
+> │   └── AbstractDomainObject.cs
+> ├── exceptions/
+> │   ├── InvalidDomainException.cs
+> │   └── InvalidFilterArgumentException.cs
+> └── interfaces/
+>     └── repositories/
+>         ├── IRepository.cs
+>         ├── IReadOnlyRepository.cs
+>         ├── IUnitOfWork.cs
+>         ├── IGetManyAndCountResultWithSorting.cs
+>         ├── GetManyAndCountResult.cs
+>         └── SortingCriteria.cs
+> ```
 
 ### 3. Ejecutar tests
 
 ```bash
-dotnet test "{path}/tests/{name}.domain.tests/{name}.domain.tests.csproj"
+dotnet test
 ```
 
-**Resultado esperado:**
-
-```
-Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1
-```
-
-### 4. Verificar referencias de paquetes
-
-```bash
-dotnet list "{path}/src/{name}.domain/{name}.domain.csproj" package
-```
-
-**Debe incluir:**
-
-```
-FluentValidation
-```
+> Debería mostrar: "Passed! - Failed: 0, Passed: 1"
 
 ## Siguientes Pasos
 
