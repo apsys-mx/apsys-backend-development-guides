@@ -1,6 +1,6 @@
 # 02 - Capa de Dominio (Domain Layer)
 
-> **Versión:** 1.0.0 | **Última actualización:** 2025-01-29 | **Estado:** Estable
+> **Versión:** 1.0.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -65,6 +65,7 @@ Este paso requiere que se haya completado:
 - `NUnit3TestAdapter` - Adaptador de NUnit (incluido en template)
 - `AutoFixture.AutoMoq` - Generación automática de datos de prueba
 - `FluentAssertions` - Aserciones fluidas para tests
+- `Castle.Core` - Dependencia de Moq (previene warnings de versiones)
 
 ## Proceso de Construcción
 
@@ -123,7 +124,10 @@ Edita el archivo `tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.cs
 ```bash
 dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package AutoFixture.AutoMoq
 dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package FluentAssertions
+dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package Castle.Core
 ```
+
+> **Nota:** Castle.Core se agrega explícitamente para evitar warnings de dependencias transitivas de Moq.
 
 ### Paso 7: Agregar referencia al proyecto domain en tests
 

@@ -1,19 +1,19 @@
 {
-  "version": "1.0.0",
-  "releaseDate": "2025-01-29",
+  "version": "1.0.1",
+  "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
     "mcpProtocol": "1.0"
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "milestone": 1,
       "status": "stable",
-      "lastModified": "2025-01-29",
+      "lastModified": "2025-01-30",
       "documents": {
         "01-estructura-base.md": "1.0.0",
-        "02-domain-layer.md": "1.0.0",
+        "02-domain-layer.md": "1.0.1",
         "03-infrastructure-filtering.md": "pending",
         "04-infrastructure-repositories.md": "pending",
         "05-application-layer.md": "pending",
@@ -29,13 +29,23 @@
     }
   },
   "templates": {
-    "version": "1.0.0",
-    "lastModified": "2025-01-29",
+    "version": "1.0.1",
+    "lastModified": "2025-01-30",
     "packages": {
-      "Directory.Packages.props": "1.0.0"
+      "Directory.Packages.props": "1.0.1"
     }
   },
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2025-01-30",
+      "changes": [
+        "Fixed Castle.Core dependency warning by adding explicit version 5.1.1",
+        "Updated Directory.Packages.props with Castle.Core package",
+        "Updated 02-domain-layer.md to include Castle.Core in test packages"
+      ],
+      "breaking": false
+    },
     {
       "version": "1.0.0",
       "date": "2025-01-29",
