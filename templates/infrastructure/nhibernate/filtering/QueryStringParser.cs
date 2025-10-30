@@ -1,9 +1,8 @@
-using {ProjectName}.domain.resources;
 using System.Globalization;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace {ProjectName}.infrastructure.nhibernate.filtering;
 
@@ -32,7 +31,7 @@ public class QueryStringParser
     /// <param name="queryString"></param>
     public QueryStringParser(string queryString)
     {
-        _queryString = HttpUtility.UrlDecode(queryString);
+        _queryString = WebUtility.UrlDecode(queryString);
     }
 
     public static string GetDescendingValue() => "desc";
@@ -150,7 +149,7 @@ public class QueryStringParser
 
             /// - Set the quick search value
             quickSearch.Value = parameters[_query];
-            quickSearch.Value = quickSearch.Value.RemoveAccents().ToLowerInvariant();
+            quickSearch.Value = quickSearch.Value.ToLowerInvariant();
 
             /// - Iterate over the inherited class's properties
             foreach (PropertyInfo property in properties)

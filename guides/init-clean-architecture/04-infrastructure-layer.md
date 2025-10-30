@@ -1,6 +1,6 @@
 # 04 - Capa de Infraestructura (Infrastructure Layer)
 
-> **Versión:** 1.3.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.3.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -71,13 +71,13 @@ rm src/{ProjectName}.infrastructure/Class1.cs
 dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package FluentValidation
 dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package NHibernate
 dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package System.Linq.Dynamic.Core
-dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package Microsoft.AspNetCore.WebUtilities
 ```
 
 > - **FluentValidation**: Para validar entidades antes de persistirlas
 > - **NHibernate**: ORM para mapeo objeto-relacional
 > - **System.Linq.Dynamic.Core**: Para queries dinámicas desde strings
-> - **Microsoft.AspNetCore.WebUtilities**: Para parsing de query strings
+>
+> **Nota:** No es necesario instalar `Microsoft.AspNetCore.WebUtilities`. Los templates usan `System.Net.WebUtility` que viene incluido en .NET 9.0.
 
 ### Paso 5: Agregar referencias de proyectos
 
@@ -195,7 +195,7 @@ rm tests/{ProjectName}.infrastructure.tests/UnitTest1.cs
 | **FilterOperator.cs** | Modelo que representa un operador de filtro con nombre de campo, valores y tipo de operador relacional |
 | **InvalidQueryStringArgumentException.cs** | Excepción lanzada cuando un query string contiene argumentos inválidos o mal formados |
 | **QueryOperations.cs** | Enum y utilidades para operaciones de query disponibles en el sistema de filtrado |
-| **QueryStringParser.cs** | Parser principal que extrae paginación (pageNumber, pageSize), ordenamiento (sortBy, sortDirection) y filtros desde query strings HTTP |
+| **QueryStringParser.cs** | Parser principal que extrae paginación (pageNumber, pageSize), ordenamiento (sortBy, sortDirection) y filtros desde query strings HTTP. **Usa `System.Net.WebUtility` para decodificación de URLs (compatible con .NET 9.0)** |
 | **QuickSearch.cs** | Modelo para búsqueda rápida multi-columna con query general |
 | **RelationalOperator.cs** | Enum de operadores relacionales: Equals, Contains, GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual, Between |
 | **Sorting.cs** | Modelo simple con propiedades By (campo) y Direction (asc/desc) |
@@ -453,7 +453,6 @@ Debería incluir:
 - `FluentValidation`
 - `NHibernate`
 - `System.Linq.Dynamic.Core`
-- `Microsoft.AspNetCore.WebUtilities`
 
 ## Próximos Pasos
 
@@ -481,6 +480,35 @@ Cada proyecto define sus propios mappers según su modelo de base de datos. NO h
 ### NHUnitOfWork Requiere Configuración
 
 El template de NHUnitOfWork viene VACÍO en las secciones de repositorios. Debes agregar manualmente las propiedades para tus repositorios específicos.
+
+## Historial de Versiones
+
+### v1.3.1 (2025-01-30)
+
+**Correcciones:**
+- ✅ **QueryStringParser.cs**: Eliminado `using System.Web` (incompatible con .NET 9.0)
+- ✅ **QueryStringParser.cs**: Cambiado a `using System.Net` y uso de `WebUtility.UrlDecode()` (nativo en .NET 9.0)
+- ✅ **QueryStringParser.cs**: Simplificado método de búsqueda rápida, eliminando dependencia de `.RemoveAccents()`
+- ✅ **Paso 4**: Eliminado paquete `Microsoft.AspNetCore.WebUtilities` (no es necesario)
+
+**Impacto:**
+- Los proyectos ahora compilan correctamente en .NET 9.0 sin dependencias adicionales
+- El sistema de filtrado funciona sin requerir métodos de extensión externos
+- Búsquedas rápidas usan `ToLowerInvariant()` en lugar de normalización de acentos
+
+**Compatibilidad:**
+- ✅ Compatible hacia atrás: Los proyectos existentes seguirán funcionando
+- ⚠️ **Cambio de comportamiento**: Las búsquedas rápidas ya NO normalizan acentos automáticamente
+  - Antes: "Martínez" encontraría "Martinez" y viceversa
+  - Ahora: Búsqueda exacta case-insensitive solamente
+  - **Recomendación**: Si necesitas búsqueda con normalización de acentos, agregar método personalizado en capa de Application
+
+### v1.3.0 (2025-01-30)
+
+**Release inicial:**
+- ✅ Guía completa de Infrastructure Layer
+- ✅ 13 templates de NHibernate (repositorios + sistema de filtrado)
+- ✅ Documentación de Unit of Work, mappers y repositories específicos
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0",
+  "version": "1.3.1",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,7 +7,7 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.3.0",
+      "version": "1.3.1",
       "milestone": 3,
       "status": "stable",
       "lastModified": "2025-01-30",
@@ -15,7 +15,7 @@
         "01-estructura-base.md": "1.0.0",
         "02-domain-layer.md": "1.1.1",
         "03-application-layer.md": "1.2.0",
-        "04-infrastructure-layer.md": "1.3.0",
+        "04-infrastructure-layer.md": "1.3.1",
         "05-webapi-configuration.md": "pending",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
@@ -28,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.3.0",
+    "version": "1.3.1",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -56,7 +56,7 @@
       "filtering/FilterOperator.cs": "1.3.0",
       "filtering/InvalidQueryStringArgumentException.cs": "1.3.0",
       "filtering/QueryOperations.cs": "1.3.0",
-      "filtering/QueryStringParser.cs": "1.3.0",
+      "filtering/QueryStringParser.cs": "1.3.1",
       "filtering/QuickSearch.cs": "1.3.0",
       "filtering/RelationalOperator.cs": "1.3.0",
       "filtering/Sorting.cs": "1.3.0",
@@ -64,6 +64,25 @@
     }
   },
   "changelog": [
+    {
+      "version": "1.3.1",
+      "date": "2025-01-30",
+      "changes": [
+        "BUGFIX: QueryStringParser.cs - Replaced incompatible 'using System.Web' with 'using System.Net' for .NET 9.0 compatibility",
+        "BUGFIX: QueryStringParser.cs - Changed HttpUtility.UrlDecode() to WebUtility.UrlDecode() (native in .NET 9.0)",
+        "BUGFIX: QueryStringParser.cs - Removed dependency on missing .RemoveAccents() extension method",
+        "BUGFIX: 04-infrastructure-layer.md - Removed Microsoft.AspNetCore.WebUtilities package (not needed)",
+        "Updated guide documentation to reflect that System.Net.WebUtility is built into .NET 9.0",
+        "Projects now compile successfully without additional dependencies",
+        "NOTE: Quick search now uses ToLowerInvariant() instead of accent normalization"
+      ],
+      "breaking": false,
+      "fixes": [
+        "Error CS0234: namespace 'resources' does not exist in 'ProjectDemo.domain'",
+        "Error: 'System.Web' not available in .NET 9.0",
+        "Error: Method 'RemoveAccents()' does not exist"
+      ]
+    },
     {
       "version": "1.3.0",
       "date": "2025-01-30",
