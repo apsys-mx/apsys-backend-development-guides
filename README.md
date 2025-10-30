@@ -1,6 +1,6 @@
 # APSYS Backend Development Guides
 
-> **Versión:** 1.3.4 | **Release:** 2025-01-30 | **Estado:** Milestone 3 Completado
+> **Versión:** 1.4.0 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado
 
 ## Descripción
 
@@ -12,7 +12,7 @@ El servidor MCP permite a Claude generar automáticamente estructuras completas 
 
 Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
 
-- **Versión actual:** 1.3.4
+- **Versión actual:** 1.4.0
 - **Compatibilidad:** .NET 9.0, MCP Protocol 1.0
 - **Documentación completa:** [VERSIONING.md](VERSIONING.md)
 - **Metadata de versión:** [guides-version.json](guides-version.json)
@@ -62,7 +62,7 @@ apsys-backend-development-guides/
 │   │   ├── 02-domain-layer.md
 │   │   ├── 03-application-layer.md
 │   │   ├── 04-infrastructure-layer.md
-│   │   ├── 05-webapi-configuration.md           (pendiente)
+│   │   ├── 05-webapi-configuration.md
 │   │   ├── 06-migrations-base.md                (pendiente)
 │   │   └── 07-testing-support.md                (pendiente)
 │   │
@@ -79,7 +79,7 @@ apsys-backend-development-guides/
 
 ### 1. init-clean-architecture
 
-**Estado:** 🟡 En desarrollo (Milestone 3 completado)
+**Estado:** 🟡 En desarrollo (Milestone 4 completado)
 
 Crea la estructura completa de un proyecto backend con Clean Architecture, independiente de cualquier base de datos específica.
 
@@ -96,7 +96,7 @@ init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\mi
 - Capa de aplicación con use cases, DTOs, validadores y FastEndpoints
 - Capa de infraestructura con repositorios NHibernate y sistema de filtering
 - Sistema de filtering avanzado con query string parsing y LINQ dinámico
-- API REST con FastEndpoints (pendiente)
+- API REST con FastEndpoints, Swagger, JWT Bearer, CORS y AutoMapper
 - Sistema de migraciones con FluentMigrator (pendiente)
 - Proyectos de testing con AutoFixture y Moq
 
@@ -262,20 +262,20 @@ Las guías también pueden seguirse manualmente:
 ### ✅ Completado
 
 - [x] Estructura de carpetas para guías
-- [x] Tool: init-clean-architecture (Milestone 3)
+- [x] Tool: init-clean-architecture (Milestone 4)
   - [x] 01-estructura-base.md
   - [x] 02-domain-layer.md
   - [x] 03-application-layer.md
   - [x] 04-infrastructure-layer.md
-- [x] Templates de código (dominio, aplicación e infraestructura)
+  - [x] 05-webapi-configuration.md
+- [x] Templates de código (dominio, aplicación, infraestructura y webapi)
 - [x] Documentación de arquitectura
 - [x] Manual técnico completo
 - [x] Sistema de versionado semántico
 
 ### 🟡 En Progreso
 
-- [ ] Tool: init-clean-architecture (Milestone 4 y 5)
-  - [ ] 05-webapi-configuration.md
+- [ ] Tool: init-clean-architecture (Milestone 5)
   - [ ] 06-migrations-base.md
   - [ ] 07-testing-support.md
 
@@ -440,5 +440,5 @@ Para preguntas, sugerencias o problemas:
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 1.3.4-milestone3
+**Versión:** 1.4.0-milestone4
 **Mantenedores:** Equipo de Desarrollo APSYS

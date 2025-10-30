@@ -1,5 +1,5 @@
 {
-  "version": "1.3.4",
+  "version": "1.4.0",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,8 +7,8 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.3.4",
-      "milestone": 3,
+      "version": "1.4.0",
+      "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
@@ -16,7 +16,7 @@
         "02-domain-layer.md": "1.1.1",
         "03-application-layer.md": "1.2.0",
         "04-infrastructure-layer.md": "1.3.4",
-        "05-webapi-configuration.md": "pending",
+        "05-webapi-configuration.md": "1.4.0",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
       }
@@ -28,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.3.4",
+    "version": "1.4.0",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -60,9 +60,40 @@
       "filtering/RelationalOperator.cs": "1.3.0",
       "filtering/Sorting.cs": "1.3.0",
       "filtering/StringExtender.cs": "1.3.0"
+    },
+    "webapi": {
+      "Program.cs": "1.4.0",
+      "IPrincipalExtender.cs": "1.4.0",
+      "Properties/InternalsVisibleTo.cs": "1.4.0",
+      "infrastructure/ServiceCollectionExtender.cs": "1.4.0",
+      "infrastructure/authorization/MustBeApplicationUser.cs": "1.4.0",
+      "features/BaseEndpoint.cs": "1.4.0",
+      "features/hello/HelloEndpoint.cs": "1.4.0",
+      "dtos/GetManyAndCountResultDto.cs": "1.4.0",
+      "mappingprofiles/MappingProfile.cs": "1.4.0"
     }
   },
   "changelog": [
+    {
+      "version": "1.4.0",
+      "date": "2025-01-30",
+      "changes": [
+        "Added WebApi Layer guide (05-webapi-configuration.md) - Milestone 4",
+        "Created 9 WebApi templates: Program.cs, ServiceCollectionExtender, BaseEndpoint, endpoints, DTOs, AutoMapper profiles",
+        "FastEndpoints configuration with Swagger/OpenAPI documentation",
+        "JWT Bearer authentication with Identity Server integration",
+        "CORS configuration from appsettings.json",
+        "AutoMapper with generic mapping for GetManyAndCountResult",
+        "BaseEndpoint with error handling helpers",
+        "Example HelloEndpoint demonstrating FastEndpoints usage",
+        "MustBeApplicationUser authorization handler example",
+        "DotNetEnv for .env file support",
+        "Automatic Command/Handler registration from Application assembly",
+        "Vertical slicing pattern with features folder organization",
+        "Updated milestone from 3 to 4 (WebApi Layer complete)"
+      ],
+      "breaking": false
+    },
     {
       "version": "1.3.4",
       "date": "2025-01-30",
