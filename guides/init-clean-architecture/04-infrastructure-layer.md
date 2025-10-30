@@ -1,6 +1,6 @@
 # 04 - Capa de Infraestructura (Infrastructure Layer)
 
-> **Versión:** 1.3.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.3.4 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -107,11 +107,10 @@ mkdir src/{ProjectName}.infrastructure/nhibernate/repositories
 > 2. Copiarlos a `src/{ProjectName}.infrastructure/nhibernate/filtering/` respetando estructura
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
 
-**Archivos del sistema de filtrado (9 archivos):**
+**Archivos del sistema de filtrado (8 archivos):**
 - `FilterExpressionParser.cs` - Construye expresiones LINQ desde filtros
 - `FilterOperator.cs` - Modelo de operador de filtro
 - `InvalidQueryStringArgumentException.cs` - Excepción para query strings inválidos
-- `QueryOperations.cs` - Operaciones de query disponibles
 - `QueryStringParser.cs` - Parser principal de query strings
 - `QuickSearch.cs` - Modelo para búsqueda rápida
 - `RelationalOperator.cs` - Enum de operadores relacionales (Equals, Contains, GreaterThan, etc.)
@@ -194,7 +193,6 @@ rm tests/{ProjectName}.infrastructure.tests/UnitTest1.cs
 | **FilterExpressionParser.cs** | Parser que convierte FilterOperators en expresiones LINQ para consultas dinámicas. Soporta operadores relacionales (Contains, GreaterThan, Between, etc.) |
 | **FilterOperator.cs** | Modelo que representa un operador de filtro con nombre de campo, valores y tipo de operador relacional |
 | **InvalidQueryStringArgumentException.cs** | Excepción lanzada cuando un query string contiene argumentos inválidos o mal formados |
-| **QueryOperations.cs** | Enum y utilidades para operaciones de query disponibles en el sistema de filtrado |
 | **QueryStringParser.cs** | Parser principal que extrae paginación (pageNumber, pageSize), ordenamiento (sortBy, sortDirection) y filtros desde query strings HTTP. **Usa `System.Net.WebUtility` para decodificación de URLs (compatible con .NET 9.0)** |
 | **QuickSearch.cs** | Modelo para búsqueda rápida multi-columna con query general |
 | **RelationalOperator.cs** | Enum de operadores relacionales: Equals, Contains, GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual, Between |
@@ -424,7 +422,7 @@ ls -R src/{ProjectName}.infrastructure
 ```
 
 Deberías ver:
-- `nhibernate/filtering/` con 9 archivos del sistema de filtrado
+- `nhibernate/filtering/` con 8 archivos del sistema de filtrado
 - `nhibernate/NHReadOnlyRepository.cs`
 - `nhibernate/NHRepository.cs`
 - `nhibernate/NHUnitOfWork.cs`
@@ -482,6 +480,60 @@ Cada proyecto define sus propios mappers según su modelo de base de datos. NO h
 El template de NHUnitOfWork viene VACÍO en las secciones de repositorios. Debes agregar manualmente las propiedades para tus repositorios específicos.
 
 ## Historial de Versiones
+
+### v1.3.4 (2025-01-30)
+
+**Eliminación de template:**
+- ✅ **QueryOperations.cs**: Eliminado completamente del sistema de templates
+- ✅ **Guía actualizada**: Removidas todas las referencias a QueryOperations.cs
+- ✅ **Sistema de filtrado**: Ahora contiene 8 archivos en lugar de 9
+
+**Rationale:**
+- Un archivo vacío/placeholder no aporta valor real al template
+- Genera confusión innecesaria para los desarrolladores
+- Si un proyecto necesita operaciones de query personalizadas, puede crear su propia clase según necesidad
+- Principio YAGNI (You Aren't Gonna Need It): no agregar código hasta que sea necesario
+
+**Impacto:**
+- Template más limpio y enfocado
+- Reduce "ruido" en el sistema de archivos
+- Los proyectos solo crean lo que realmente necesitan
+- Sistema de filtrado sigue siendo completamente funcional con los 8 archivos restantes
+
+### v1.3.3 (2025-01-30)
+
+**Refactorización:**
+- ✅ **QueryOperations.cs**: Removido método `AddOrganizationIdToQuery` (demasiado específico para un template genérico)
+- ✅ **QueryOperations.cs**: Ahora es una clase de utilidad vacía para implementaciones específicas de cada proyecto
+- ✅ **QueryOperations.cs**: Agregada documentación completa con ejemplos de uso
+
+**Rationale:**
+- El método `AddOrganizationIdToQuery` era demasiado específico para un template reutilizable
+- Cada proyecto tiene diferentes necesidades de filtrado y operaciones de query
+- La clase ahora sirve como placeholder documentado que los desarrolladores pueden extender según sus necesidades
+
+**Impacto:**
+- Template más genérico y reutilizable
+- Los desarrolladores tienen claridad de dónde agregar operaciones personalizadas
+- No afecta la funcionalidad del sistema de filtrado existente (QueryStringParser, FilterExpressionParser, etc.)
+
+### v1.3.2 (2025-01-30)
+
+**Correcciones:**
+- ✅ **QueryOperations.cs**: Eliminado `using Microsoft.AspNetCore.WebUtilities` (incompatible con .NET 9.0)
+- ✅ **QueryOperations.cs**: Implementados métodos helper nativos `ParseQueryString()` y `BuildQueryString()`
+- ✅ **QueryOperations.cs**: Usa `WebUtility.UrlEncode/UrlDecode` (nativos en .NET 9.0)
+- ✅ **QueryOperations.cs**: Corregido bug en línea 27: `queryDict["user"]` → `queryDict["OrganizationId"]`
+
+**Impacto:**
+- Todo el sistema de filtrado ahora usa únicamente APIs nativas de .NET 9.0
+- No requiere ningún paquete NuGet adicional para query string parsing
+- Los proyectos compilan sin errores en .NET 9.0
+
+**Detalles técnicos:**
+- `ParseQueryString()`: Parsea query strings manualmente con `Split()` y `WebUtility.UrlDecode()`
+- `BuildQueryString()`: Construye query strings con `StringBuilder` y `WebUtility.UrlEncode()`
+- Ambos métodos manejan casos edge: strings vacíos, '?' inicial, pares sin valor
 
 ### v1.3.1 (2025-01-30)
 
