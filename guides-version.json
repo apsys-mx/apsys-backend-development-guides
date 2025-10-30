@@ -1,5 +1,5 @@
 {
-  "version": "1.1.1",
+  "version": "1.2.0",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,16 +7,16 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.1.1",
-      "milestone": 1,
+      "version": "1.2.0",
+      "milestone": 2,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
         "01-estructura-base.md": "1.0.0",
         "02-domain-layer.md": "1.1.1",
-        "03-infrastructure-filtering.md": "pending",
-        "04-infrastructure-repositories.md": "pending",
-        "05-application-layer.md": "pending",
+        "03-application-layer.md": "1.2.0",
+        "04-infrastructure-filtering.md": "pending",
+        "05-infrastructure-repositories.md": "pending",
         "06-webapi-base.md": "pending",
         "07-migrations-base.md": "pending",
         "08-testing-projects.md": "pending"
@@ -29,7 +29,7 @@
     }
   },
   "templates": {
-    "version": "1.1.1",
+    "version": "1.2.0",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -44,9 +44,26 @@
     },
     "domain.tests": {
       "DomainTestBase.cs": "1.1.1"
+    },
+    "application.tests": {
+      "ApplicationTestBase.cs": "1.2.0"
     }
   },
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2025-01-30",
+      "changes": [
+        "Added Application Layer guide (03-application-layer.md) - Milestone 2",
+        "Reorganized guide order: Application now comes before Infrastructure (follows Clean Architecture dependency flow)",
+        "Created ApplicationTestBase.cs template with AutoFixture + AutoMoq configuration",
+        "Application layer includes: use cases, DTOs, validators, and FastEndpoints",
+        "Guide emphasizes independence from infrastructure (works only with domain interfaces)",
+        "Includes comprehensive principles, examples, and testing patterns for application layer",
+        "Updated milestone from 1 to 2 (Application Layer complete)"
+      ],
+      "breaking": false
+    },
     {
       "version": "1.1.1",
       "date": "2025-01-30",
