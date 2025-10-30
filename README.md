@@ -1,6 +1,6 @@
 # APSYS Backend Development Guides
 
-> **Versión:** 1.2.0 | **Release:** 2025-01-30 | **Estado:** Milestone 2 Completado
+> **Versión:** 1.3.0 | **Release:** 2025-01-30 | **Estado:** Milestone 3 Completado
 
 ## Descripción
 
@@ -12,7 +12,7 @@ El servidor MCP permite a Claude generar automáticamente estructuras completas 
 
 Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
 
-- **Versión actual:** 1.2.0
+- **Versión actual:** 1.3.0
 - **Compatibilidad:** .NET 9.0, MCP Protocol 1.0
 - **Documentación completa:** [VERSIONING.md](VERSIONING.md)
 - **Metadata de versión:** [guides-version.json](guides-version.json)
@@ -60,12 +60,11 @@ apsys-backend-development-guides/
 │   │   ├── README.md
 │   │   ├── 01-estructura-base.md
 │   │   ├── 02-domain-layer.md
-│   │   ├── 03-infrastructure-filtering.md       (pendiente)
-│   │   ├── 04-infrastructure-repositories.md    (pendiente)
-│   │   ├── 05-application-layer.md              (pendiente)
-│   │   ├── 06-webapi-base.md                    (pendiente)
-│   │   ├── 07-migrations-base.md                (pendiente)
-│   │   └── 08-testing-projects.md               (pendiente)
+│   │   ├── 03-application-layer.md
+│   │   ├── 04-infrastructure-layer.md
+│   │   ├── 05-webapi-configuration.md           (pendiente)
+│   │   ├── 06-migrations-base.md                (pendiente)
+│   │   └── 07-testing-support.md                (pendiente)
 │   │
 │   └── configure-database/                   # Tool #2: Configuración BD
 │       ├── README.md                            (pendiente)
@@ -80,7 +79,7 @@ apsys-backend-development-guides/
 
 ### 1. init-clean-architecture
 
-**Estado:** 🟡 En desarrollo (Milestone 1 completado)
+**Estado:** 🟡 En desarrollo (Milestone 3 completado)
 
 Crea la estructura completa de un proyecto backend con Clean Architecture, independiente de cualquier base de datos específica.
 
@@ -93,12 +92,13 @@ init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\mi
 
 **Genera:**
 - Solución .NET con gestión centralizada de paquetes
-- Capa de dominio con entidades y validaciones
-- Sistema de filtering avanzado con LINQ dinámico
-- Implementaciones base de repositorios
-- API REST con FastEndpoints
-- Sistema de migraciones con FluentMigrator
-- Proyectos de testing completos
+- Capa de dominio con entidades, validaciones y repositorios de interfaces
+- Capa de aplicación con use cases, DTOs, validadores y FastEndpoints
+- Capa de infraestructura con repositorios NHibernate y sistema de filtering
+- Sistema de filtering avanzado con query string parsing y LINQ dinámico
+- API REST con FastEndpoints (pendiente)
+- Sistema de migraciones con FluentMigrator (pendiente)
+- Proyectos de testing con AutoFixture y Moq
 
 ---
 
@@ -262,21 +262,22 @@ Las guías también pueden seguirse manualmente:
 ### ✅ Completado
 
 - [x] Estructura de carpetas para guías
-- [x] Tool: init-clean-architecture (Milestone 1)
+- [x] Tool: init-clean-architecture (Milestone 3)
   - [x] 01-estructura-base.md
   - [x] 02-domain-layer.md
+  - [x] 03-application-layer.md
+  - [x] 04-infrastructure-layer.md
+- [x] Templates de código (dominio, aplicación e infraestructura)
 - [x] Documentación de arquitectura
 - [x] Manual técnico completo
+- [x] Sistema de versionado semántico
 
 ### 🟡 En Progreso
 
-- [ ] Tool: init-clean-architecture (Milestone 2 y 3)
-  - [ ] 03-infrastructure-filtering.md
-  - [ ] 04-infrastructure-repositories.md
-  - [ ] 05-application-layer.md
-  - [ ] 06-webapi-base.md
-  - [ ] 07-migrations-base.md
-  - [ ] 08-testing-projects.md
+- [ ] Tool: init-clean-architecture (Milestone 4 y 5)
+  - [ ] 05-webapi-configuration.md
+  - [ ] 06-migrations-base.md
+  - [ ] 07-testing-support.md
 
 ### ⏳ Pendiente
 
@@ -438,6 +439,6 @@ Para preguntas, sugerencias o problemas:
 
 ---
 
-**Última actualización:** 2025-01-29
-**Versión:** 1.0.0-milestone1
+**Última actualización:** 2025-01-30
+**Versión:** 1.3.0-milestone3
 **Mantenedores:** Equipo de Desarrollo APSYS

@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,19 +7,18 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.2.0",
-      "milestone": 2,
+      "version": "1.3.0",
+      "milestone": 3,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
         "01-estructura-base.md": "1.0.0",
         "02-domain-layer.md": "1.1.1",
         "03-application-layer.md": "1.2.0",
-        "04-infrastructure-filtering.md": "pending",
-        "05-infrastructure-repositories.md": "pending",
-        "06-webapi-base.md": "pending",
-        "07-migrations-base.md": "pending",
-        "08-testing-projects.md": "pending"
+        "04-infrastructure-layer.md": "1.3.0",
+        "05-webapi-configuration.md": "pending",
+        "06-migrations-base.md": "pending",
+        "07-testing-support.md": "pending"
       }
     },
     "configure-database": {
@@ -29,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.2.0",
+    "version": "1.3.0",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -47,9 +46,39 @@
     },
     "application.tests": {
       "ApplicationTestBase.cs": "1.2.0"
+    },
+    "infrastructure": {
+      "NHReadOnlyRepository.cs": "1.3.0",
+      "NHRepository.cs": "1.3.0",
+      "NHUnitOfWork.cs": "1.3.0",
+      "SortingCriteriaExtender.cs": "1.3.0",
+      "filtering/FilterExpressionParser.cs": "1.3.0",
+      "filtering/FilterOperator.cs": "1.3.0",
+      "filtering/InvalidQueryStringArgumentException.cs": "1.3.0",
+      "filtering/QueryOperations.cs": "1.3.0",
+      "filtering/QueryStringParser.cs": "1.3.0",
+      "filtering/QuickSearch.cs": "1.3.0",
+      "filtering/RelationalOperator.cs": "1.3.0",
+      "filtering/Sorting.cs": "1.3.0",
+      "filtering/StringExtender.cs": "1.3.0"
     }
   },
   "changelog": [
+    {
+      "version": "1.3.0",
+      "date": "2025-01-30",
+      "changes": [
+        "Added Infrastructure Layer guide (04-infrastructure-layer.md) - Milestone 3",
+        "Created 13 infrastructure templates: repositories, unit of work, and complete filtering system",
+        "NHReadOnlyRepository: Full implementation with NHibernate, GetManyAndCount with query string parsing",
+        "NHRepository: CRUD operations with FluentValidation integration",
+        "NHUnitOfWork: Transaction management template (requires manual repository configuration)",
+        "Filtering system (9 files): QueryStringParser, FilterExpressionParser, operators, sorting, quick search",
+        "Supports dynamic queries from HTTP query strings with pagination, sorting, and filtering",
+        "Updated milestone from 2 to 3 (Infrastructure Layer complete)"
+      ],
+      "breaking": false
+    },
     {
       "version": "1.2.0",
       "date": "2025-01-30",
