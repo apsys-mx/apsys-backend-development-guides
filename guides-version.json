@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "1.1.0",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,13 +7,13 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "milestone": 1,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
         "01-estructura-base.md": "1.0.0",
-        "02-domain-layer.md": "1.0.1",
+        "02-domain-layer.md": "1.1.0",
         "03-infrastructure-filtering.md": "pending",
         "04-infrastructure-repositories.md": "pending",
         "05-application-layer.md": "pending",
@@ -29,13 +29,36 @@
     }
   },
   "templates": {
-    "version": "1.0.1",
+    "version": "1.1.0",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
+    },
+    "domain": {
+      "IReadOnlyRepository.cs": "1.1.0",
+      "IRepository.cs": "1.1.0",
+      "IUnitOfWork.cs": "1.1.0",
+      "GetManyAndCountResult.cs": "1.1.0",
+      "SortingCriteria.cs": "1.1.0",
+      "IGetManyAndCountResultWithSorting.cs": "1.1.0"
     }
   },
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2025-01-30",
+      "changes": [
+        "Updated domain repository interfaces to modern versions with comprehensive XML documentation",
+        "IReadOnlyRepository: Added Expression queries, pagination with SortingCriteria, Count methods, GetManyAndCount with string query support, CancellationToken support",
+        "IRepository: Added complete XML documentation, updated constraint to include new()",
+        "IUnitOfWork: Added ResetTransaction and IsActiveTransaction methods, organized in CRUD/read-only sections with documentation",
+        "GetManyAndCountResult: Added PageNumber, PageSize, Sorting properties, changed Count to long, added constructors and DEFAULT_PAGE_SIZE constant",
+        "SortingCriteria: Changed from PropertyName/bool to SortBy/SortingCriteriaType enum, added multiple constructors",
+        "IGetManyAndCountResultWithSorting: Simplified to property-only interface exposing Sorting",
+        "Updated 02-domain-layer.md table with detailed descriptions of updated templates"
+      ],
+      "breaking": false
+    },
     {
       "version": "1.0.1",
       "date": "2025-01-30",

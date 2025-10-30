@@ -1,6 +1,6 @@
 # 02 - Capa de Dominio (Domain Layer)
 
-> **Versión:** 1.0.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.1.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -197,12 +197,12 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 | **entities/AbstractDomainObject.cs** | Clase base abstracta para todas las entidades de dominio. Proporciona propiedades comunes (Id, CreationDate) y métodos de validación integrados con FluentValidation. |
 | **exceptions/InvalidDomainException.cs** | Excepción lanzada cuando una entidad de dominio no cumple con sus reglas de validación. |
 | **exceptions/InvalidFilterArgumentException.cs** | Excepción lanzada cuando los argumentos de filtrado (queries) son inválidos. |
-| **interfaces/repositories/IRepository.cs** | Interfaz genérica para operaciones de escritura en repositorios (CRUD completo). |
-| **interfaces/repositories/IReadOnlyRepository.cs** | Interfaz genérica para operaciones de solo lectura en repositorios. |
-| **interfaces/repositories/IUnitOfWork.cs** | Patrón Unit of Work para gestionar transacciones de base de datos. |
-| **interfaces/repositories/GetManyAndCountResult.cs** | DTO para resultados paginados (items + total count). |
-| **interfaces/repositories/SortingCriteria.cs** | Representa criterios de ordenamiento para consultas. |
-| **interfaces/repositories/IGetManyAndCountResultWithSorting.cs** | Interfaz para consultas paginadas con soporte de filtrado y ordenamiento avanzado. |
+| **interfaces/repositories/IRepository.cs** | Interfaz genérica para operaciones de escritura en repositorios (Add, Save, Delete) con documentación XML completa. |
+| **interfaces/repositories/IReadOnlyRepository.cs** | Interfaz genérica para operaciones de solo lectura con soporte para Expression queries, paginación, Count, GetManyAndCount y CancellationToken. |
+| **interfaces/repositories/IUnitOfWork.cs** | Patrón Unit of Work para gestionar transacciones (BeginTransaction, Commit, Rollback, ResetTransaction, IsActiveTransaction). |
+| **interfaces/repositories/GetManyAndCountResult.cs** | Clase para resultados paginados con Items, Count (long), PageNumber, PageSize, Sorting y constructores completos. |
+| **interfaces/repositories/SortingCriteria.cs** | Clase para criterios de ordenamiento con SortBy (string) y Criteria (enum Ascending/Descending) con múltiples constructores. |
+| **interfaces/repositories/IGetManyAndCountResultWithSorting.cs** | Interfaz simple que expone una property Sorting para objetos con capacidades de ordenamiento. |
 
 ### Archivos de Tests
 
