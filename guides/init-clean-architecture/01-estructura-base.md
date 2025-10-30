@@ -1,5 +1,7 @@
 # 01 - Estructura Base del Proyecto
 
+> **Versión:** 1.0.0 | **Última actualización:** 2025-01-29 | **Estado:** Estable
+
 ## Descripción
 
 Este documento describe cómo crear la **estructura base** de un proyecto backend con Clean Architecture para APSYS. Esta es la primera etapa del proceso de inicialización y es **independiente de cualquier base de datos específica**.

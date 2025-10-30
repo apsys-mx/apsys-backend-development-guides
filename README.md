@@ -1,10 +1,31 @@
 # APSYS Backend Development Guides
 
+> **Versión:** 1.0.0 | **Release:** 2025-01-29 | **Estado:** Milestone 1 Completado
+
 ## Descripción
 
 Este repositorio contiene las **guías de desarrollo** y **templates** utilizados por el servidor MCP (Model Context Protocol) de APSYS para automatizar la creación de proyectos backend con **Clean Architecture**.
 
 El servidor MCP permite a Claude generar automáticamente estructuras completas de proyectos .NET siguiendo las mejores prácticas y estándares de APSYS, eliminando el trabajo manual repetitivo y asegurando consistencia entre proyectos.
+
+## Versionado
+
+Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
+
+- **Versión actual:** 1.0.0
+- **Compatibilidad:** .NET 9.0, MCP Protocol 1.0
+- **Documentación completa:** [VERSIONING.md](VERSIONING.md)
+- **Metadata de versión:** [guides-version.json](guides-version.json)
+
+**Para el servidor MCP:**
+```typescript
+// Leer versión
+const version = await fetch(
+  'https://raw.githubusercontent.com/.../guides-version.json'
+).then(r => r.json())
+
+console.log(`Using APSYS Guides v${version.version}`)
+```
 
 ## ¿Qué es MCP?
 

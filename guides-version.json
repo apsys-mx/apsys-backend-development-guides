@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "releaseDate": "2025-01-29",
+  "compatibility": {
+    "dotnetVersion": "9.0",
+    "mcpProtocol": "1.0"
+  },
+  "guides": {
+    "init-clean-architecture": {
+      "version": "1.0.0",
+      "milestone": 1,
+      "status": "stable",
+      "lastModified": "2025-01-29",
+      "documents": {
+        "01-estructura-base.md": "1.0.0",
+        "02-domain-layer.md": "1.0.0",
+        "03-infrastructure-filtering.md": "pending",
+        "04-infrastructure-repositories.md": "pending",
+        "05-application-layer.md": "pending",
+        "06-webapi-base.md": "pending",
+        "07-migrations-base.md": "pending",
+        "08-testing-projects.md": "pending"
+      }
+    },
+    "configure-database": {
+      "version": "0.0.0",
+      "status": "pending",
+      "lastModified": null
+    }
+  },
+  "templates": {
+    "version": "1.0.0",
+    "lastModified": "2025-01-29",
+    "packages": {
+      "Directory.Packages.props": "1.0.0"
+    }
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-01-29",
+      "changes": [
+        "Initial release with Milestone 1",
+        "Created init-clean-architecture tool (01-estructura-base, 02-domain-layer)",
+        "Added templates system with GitHub integration",
+        "Fixed Castle.Core dependency warning"
+      ]
+    }
+  ]
+}

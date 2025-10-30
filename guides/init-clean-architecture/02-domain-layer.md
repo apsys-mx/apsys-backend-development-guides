@@ -1,5 +1,7 @@
 # 02 - Capa de Dominio (Domain Layer)
 
+> **Versión:** 1.0.0 | **Última actualización:** 2025-01-29 | **Estado:** Estable
+
 ## Descripción
 
 Este documento describe cómo crear la **capa de dominio (Domain Layer)** de un proyecto backend con Clean Architecture para APSYS. Esta capa contiene:
