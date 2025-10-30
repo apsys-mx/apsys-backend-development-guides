@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,13 +7,13 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.1.0",
+      "version": "1.1.1",
       "milestone": 1,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
         "01-estructura-base.md": "1.0.0",
-        "02-domain-layer.md": "1.1.0",
+        "02-domain-layer.md": "1.1.1",
         "03-infrastructure-filtering.md": "pending",
         "04-infrastructure-repositories.md": "pending",
         "05-application-layer.md": "pending",
@@ -29,7 +29,7 @@
     }
   },
   "templates": {
-    "version": "1.1.0",
+    "version": "1.1.1",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -41,9 +41,25 @@
       "GetManyAndCountResult.cs": "1.1.0",
       "SortingCriteria.cs": "1.1.0",
       "IGetManyAndCountResultWithSorting.cs": "1.1.0"
+    },
+    "domain.tests": {
+      "DomainTestBase.cs": "1.1.1"
     }
   },
   "changelog": [
+    {
+      "version": "1.1.1",
+      "date": "2025-01-30",
+      "changes": [
+        "Updated DomainTestBase.cs to modern version with AutoFixture setup",
+        "Changed from concrete class to abstract class",
+        "Added protected IFixture field for test data generation",
+        "Configured AutoFixture with OmitOnRecursionBehavior to handle circular references",
+        "Changed from [SetUp] to [OneTimeSetUp] for better test performance",
+        "Updated 02-domain-layer.md table description for DomainTestBase.cs"
+      ],
+      "breaking": false
+    },
     {
       "version": "1.1.0",
       "date": "2025-01-30",

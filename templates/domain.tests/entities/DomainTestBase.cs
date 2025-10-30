@@ -1,12 +1,21 @@
+using AutoFixture;
 using NUnit.Framework;
 
 namespace {ProjectName}.domain.tests.entities;
 
-public class DomainTestBase
+/// <summary>
+/// Base class for domain entity tests that provides common test setup functionality
+/// </summary>
+public abstract class DomainTestBase
 {
-    [SetUp]
-    public void Setup()
+    protected internal IFixture fixture;
+
+    [OneTimeSetUp]
+    public void BaseOneTimeSetUp()
     {
-        // Inicialización común para tests de dominio
+        fixture = new Fixture();
+        fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+            .ForEach(b => fixture.Behaviors.Remove(b));
+        fixture.Behaviors.Add(new OmitOnRecursionBehavior());
     }
 }

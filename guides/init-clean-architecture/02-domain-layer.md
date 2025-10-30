@@ -1,6 +1,6 @@
 # 02 - Capa de Dominio (Domain Layer)
 
-> **Versión:** 1.1.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.1.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -208,7 +208,7 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 
 | Archivo | Propósito |
 |---------|-----------|
-| **entities/DomainTestBase.cs** | Clase base para tests de entidades de dominio, proporciona setup común con NUnit. |
+| **entities/DomainTestBase.cs** | Clase base abstracta para tests de entidades de dominio. Configura AutoFixture con manejo de recursión (OmitOnRecursionBehavior) en OneTimeSetUp. |
 
 > **Nota:** Todos los archivos usan el placeholder `{ProjectName}` en sus namespaces, que el servidor MCP debe reemplazar con el nombre real del proyecto.
 
