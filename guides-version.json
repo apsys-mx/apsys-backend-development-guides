@@ -1,5 +1,5 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,7 +7,7 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.4.1",
+      "version": "1.4.2",
       "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
@@ -16,7 +16,7 @@
         "02-domain-layer.md": "1.1.1",
         "03-application-layer.md": "1.2.0",
         "04-infrastructure-layer.md": "1.3.4",
-        "05-webapi-configuration.md": "1.4.1",
+        "05-webapi-configuration.md": "1.4.2",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
       }
@@ -28,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.4.1",
+    "version": "1.4.2",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -74,6 +74,20 @@
     }
   },
   "changelog": [
+    {
+      "version": "1.4.2",
+      "date": "2025-01-30",
+      "changes": [
+        "BUGFIX: 05-webapi-configuration.md - Removed trailing whitespace from code block closing lines (```)",
+        "Fixed 32 lines with ``` followed by spaces that broke MCP parser's code block detection",
+        "Parser expects lines to end with ```$ (three backticks followed immediately by end-of-line)",
+        "Improves code extraction and command parsing from guide"
+      ],
+      "breaking": false,
+      "fixes": [
+        "Code block closing lines with trailing whitespace preventing parser from correctly identifying code blocks"
+      ]
+    },
     {
       "version": "1.4.1",
       "date": "2025-01-30",

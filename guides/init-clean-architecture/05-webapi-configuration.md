@@ -1,6 +1,6 @@
 # 05 - Configuración de WebApi (Presentation Layer)
 
-> **Versión:** 1.4.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.4.2 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -585,6 +585,24 @@ services.AddScoped<IUnitOfWork, NHUnitOfWork>();
 3. Agregar política: `Policies("DefaultAuthorizationPolicy")`
 
 ## Historial de Versiones
+
+### v1.4.2 (2025-01-30)
+
+**Correcciones:**
+- ✅ **Bloques de código**: Eliminados espacios en blanco al final de todas las líneas de cierre de bloques de código (```)
+- ✅ Afectó 32 líneas de cierre de bloques de código en toda la guía
+- ✅ El parser del MCP espera que las líneas terminen con ```$ (tres backticks seguidos por fin de línea)
+- ✅ Los espacios en blanco al final rompían la detección de bloques de código
+
+**Impacto:**
+- El parser del servidor MCP ahora puede detectar correctamente el inicio y fin de bloques de código
+- Mejora la extracción de comandos y ejemplos de código de la guía
+
+**Patrón correcto:**
+```bash
+comando aqui
+```
+(sin espacios después de los backticks de cierre)
 
 ### v1.4.1 (2025-01-30)
 
