@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
+  "version": "1.4.1",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,7 +7,7 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.4.0",
+      "version": "1.4.1",
       "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
@@ -16,7 +16,7 @@
         "02-domain-layer.md": "1.1.1",
         "03-application-layer.md": "1.2.0",
         "04-infrastructure-layer.md": "1.3.4",
-        "05-webapi-configuration.md": "1.4.0",
+        "05-webapi-configuration.md": "1.4.1",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
       }
@@ -28,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.4.0",
+    "version": "1.4.1",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -74,6 +74,22 @@
     }
   },
   "changelog": [
+    {
+      "version": "1.4.1",
+      "date": "2025-01-30",
+      "changes": [
+        "BUGFIX: 05-webapi-configuration.md - Fixed template copy patterns to match MCP parser regex",
+        "Fixed Steps 6-9: Changed from '📁 COPIAR ARCHIVOS:' to '📄 COPIAR TEMPLATE:' for individual files",
+        "Fixed Steps 7-8: Changed to '📁 COPIAR DIRECTORIO COMPLETO:' for directory copies",
+        "MCP parser now correctly recognizes and processes template copy instructions",
+        "Parser expected patterns: '📄 COPIAR TEMPLATE: source → destination' or '📁 COPIAR DIRECTORIO COMPLETO: source → destination'",
+        "Templates will now be properly copied when guide is executed by MCP server"
+      ],
+      "breaking": false,
+      "fixes": [
+        "Template copy patterns in 05-webapi-configuration.md not matching parser regex in src/services/markdown-parser.ts:153-167"
+      ]
+    },
     {
       "version": "1.4.0",
       "date": "2025-01-30",

@@ -1,6 +1,6 @@
 # 05 - Configuración de WebApi (Presentation Layer)
 
-> **Versión:** 1.4.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.4.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -100,38 +100,42 @@ mkdir src/{ProjectName}.webapi/Properties
 
 ### Paso 6: Copiar templates de configuración base
 
-**📁 COPIAR ARCHIVOS:** `templates/webapi/` → `src/{ProjectName}.webapi/`
+📄 COPIAR TEMPLATE: `templates/webapi/Program.cs` → `src/{ProjectName}.webapi/Program.cs`
 
-> Copiar archivos individuales reemplazando `{ProjectName}`:
+📄 COPIAR TEMPLATE: `templates/webapi/IPrincipalExtender.cs` → `src/{ProjectName}.webapi/IPrincipalExtender.cs`
 
-**Archivos base (3 archivos):**
-- `Program.cs` - Configuración principal y pipeline de middleware
-- `IPrincipalExtender.cs` - Extensiones para obtener claims del usuario autenticado
-- `Properties/InternalsVisibleTo.cs` - Configuración de visibilidad para tests
+📄 COPIAR TEMPLATE: `templates/webapi/Properties/InternalsVisibleTo.cs` → `src/{ProjectName}.webapi/Properties/InternalsVisibleTo.cs`
+
+> **Archivos copiados (3):**
+> - `Program.cs` - Configuración principal y pipeline de middleware
+> - `IPrincipalExtender.cs` - Extensiones para obtener claims del usuario autenticado
+> - `Properties/InternalsVisibleTo.cs` - Configuración de visibilidad para tests
 
 ### Paso 7: Copiar templates de infrastructure
 
-**📁 COPIAR ARCHIVOS:** `templates/webapi/infrastructure/` → `src/{ProjectName}.webapi/infrastructure/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/webapi/infrastructure/` → `src/{ProjectName}.webapi/infrastructure/`
 
-**Archivos de infrastructure (2 archivos):**
-- `ServiceCollectionExtender.cs` - Métodos de extensión para configuración de DI
-- `authorization/MustBeApplicationUser.cs` - Ejemplo de autorización personalizada
+> **Archivos incluidos (2):**
+> - `ServiceCollectionExtender.cs` - Métodos de extensión para configuración de DI
+> - `authorization/MustBeApplicationUser.cs` - Ejemplo de autorización personalizada
 
 ### Paso 8: Copiar templates de features
 
-**📁 COPIAR ARCHIVOS:** `templates/webapi/features/` → `src/{ProjectName}.webapi/features/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/webapi/features/` → `src/{ProjectName}.webapi/features/`
 
-**Archivos de features (2 archivos):**
-- `BaseEndpoint.cs` - Clase base con helpers de manejo de errores
-- `hello/HelloEndpoint.cs` - Endpoint de ejemplo (GET /hello)
+> **Archivos incluidos (2):**
+> - `BaseEndpoint.cs` - Clase base con helpers de manejo de errores
+> - `hello/HelloEndpoint.cs` - Endpoint de ejemplo (GET /hello)
 
 ### Paso 9: Copiar templates de DTOs y mapping
 
-**📁 COPIAR ARCHIVOS:** `templates/webapi/dtos/` y `templates/webapi/mappingprofiles/`
+📄 COPIAR TEMPLATE: `templates/webapi/dtos/GetManyAndCountResultDto.cs` → `src/{ProjectName}.webapi/dtos/GetManyAndCountResultDto.cs`
 
-**Archivos de DTOs y mapping (2 archivos):**
-- `dtos/GetManyAndCountResultDto.cs` - DTO genérico para resultados paginados
-- `mappingprofiles/MappingProfile.cs` - Perfil de AutoMapper con mapeo genérico
+📄 COPIAR TEMPLATE: `templates/webapi/mappingprofiles/MappingProfile.cs` → `src/{ProjectName}.webapi/mappingprofiles/MappingProfile.cs`
+
+> **Archivos copiados (2):**
+> - `GetManyAndCountResultDto.cs` - DTO genérico para resultados paginados
+> - `MappingProfile.cs` - Perfil de AutoMapper con mapeo genérico
 
 ### Paso 10: Crear proyecto de tests para webapi
 
@@ -579,6 +583,32 @@ services.AddScoped<IUnitOfWork, NHUnitOfWork>();
 1. Verificar que el endpoint NO use `AllowAnonymous()`
 2. Verificar que Identity Server esté configurado correctamente
 3. Agregar política: `Policies("DefaultAuthorizationPolicy")`
+
+## Historial de Versiones
+
+### v1.4.1 (2025-01-30)
+
+**Correcciones:**
+- ✅ **Pasos 6-9**: Corregidos patrones de copia de templates para ser compatibles con el parser del servidor MCP
+- ✅ **Paso 6**: Cambiado de `📁 COPIAR ARCHIVOS:` a `📄 COPIAR TEMPLATE:` para archivos individuales
+- ✅ **Paso 7-8**: Cambiado de `📁 COPIAR ARCHIVOS:` a `📁 COPIAR DIRECTORIO COMPLETO:` para directorios
+- ✅ **Paso 9**: Cambiado de `📁 COPIAR ARCHIVOS:` a `📄 COPIAR TEMPLATE:` para archivos individuales
+
+**Impacto:**
+- El servidor MCP ahora puede parsear correctamente los pasos y copiar los templates
+- Los proyectos generados ahora incluyen todos los archivos de webapi correctamente
+
+**Patrones correctos:**
+- Archivo individual: `📄 COPIAR TEMPLATE: source → destination`
+- Directorio completo: `📁 COPIAR DIRECTORIO COMPLETO: source → destination`
+
+### v1.4.0 (2025-01-30)
+
+**Release inicial:**
+- ✅ Guía completa de WebApi Layer
+- ✅ 9 templates de webapi (Program.cs, ServiceCollectionExtender, BaseEndpoint, etc.)
+- ✅ Configuración de FastEndpoints, Swagger, JWT Bearer, CORS, AutoMapper
+- ✅ Ejemplos de endpoints y autorización personalizada
 
 ---
 

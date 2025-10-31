@@ -1,6 +1,6 @@
 # APSYS Backend Development Guides
 
-> **Versión:** 1.4.0 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado
+> **Versión:** 1.4.1 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado
 
 ## Descripción
 
@@ -12,7 +12,7 @@ El servidor MCP permite a Claude generar automáticamente estructuras completas 
 
 Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
 
-- **Versión actual:** 1.4.0
+- **Versión actual:** 1.4.1
 - **Compatibilidad:** .NET 9.0, MCP Protocol 1.0
 - **Documentación completa:** [VERSIONING.md](VERSIONING.md)
 - **Metadata de versión:** [guides-version.json](guides-version.json)
@@ -440,5 +440,5 @@ Para preguntas, sugerencias o problemas:
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 1.4.0-milestone4
+**Versión:** 1.4.1-milestone4
 **Mantenedores:** Equipo de Desarrollo APSYS

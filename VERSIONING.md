@@ -336,5 +336,5 @@ Para preguntas sobre versionado:
 
 ---
 
-**Versión de este documento:** 1.4.0
+**Versión de este documento:** 1.4.1
 **Última actualización:** 2025-01-30
