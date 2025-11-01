@@ -1,5 +1,5 @@
 {
-  "version": "1.4.2",
+  "version": "1.4.6",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0",
@@ -7,16 +7,16 @@
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.4.2",
+      "version": "1.4.6",
       "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
-        "01-estructura-base.md": "1.0.0",
-        "02-domain-layer.md": "1.1.1",
-        "03-application-layer.md": "1.2.0",
-        "04-infrastructure-layer.md": "1.3.4",
-        "05-webapi-configuration.md": "1.4.2",
+        "01-estructura-base.md": "1.0.1",
+        "02-domain-layer.md": "1.1.2",
+        "03-application-layer.md": "1.2.1",
+        "04-infrastructure-layer.md": "1.3.5",
+        "05-webapi-configuration.md": "1.4.4",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
       }
@@ -28,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.4.2",
+    "version": "1.4.6",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -74,6 +74,72 @@
     }
   },
   "changelog": [
+    {
+      "version": "1.4.6",
+      "date": "2025-01-30",
+      "changes": [
+        "IMPROVEMENT: 05-webapi-configuration.md - Reorganized template copy steps to follow dependency order",
+        "Program.cs now copied last (Step 9) instead of first - reflects it orchestrates all other components",
+        "Logical flow: Infrastructure → Features → DTOs → Extensions → Program.cs",
+        "Renumbered steps 5-16 to reflect new organization",
+        "Added clarifying note explaining Program.cs references all previous components",
+        "Better pedagogical flow - dependencies created before the file that uses them"
+      ],
+      "breaking": false,
+      "improvements": [
+        "Easier to understand guide flow - follows actual code dependencies",
+        "Program.cs position emphasizes its role as main orchestrator"
+      ]
+    },
+    {
+      "version": "1.4.5",
+      "date": "2025-01-30",
+      "changes": [
+        "OPTIMIZATION: 05-webapi-configuration.md - Removed unsupported commands and redundant steps",
+        "Removed Step 2 (rm Program.cs) - redundant, COPIAR TEMPLATE overwrites automatically",
+        "Removed mkdir commands from Step 4 - folders created automatically when copying templates",
+        "Optimized from 16 steps to 15 steps (more concise)",
+        "Guide now only contains executable dotnet commands (aligned with current parser capabilities)",
+        "Added clarifications about automatic file/folder creation behavior"
+      ],
+      "breaking": false,
+      "improvements": [
+        "Guide execution more reliable - only uses currently supported commands",
+        "Clearer understanding of template copy behavior (automatic overwrite, folder creation)"
+      ]
+    },
+    {
+      "version": "1.4.4",
+      "date": "2025-01-30",
+      "changes": [
+        "BUGFIX: 01-estructura-base.md - Removed bold formatting from template instruction (line 190)",
+        "Fixed: Changed **📄 COPIAR TEMPLATE:** to 📄 COPIAR TEMPLATE: (without asterisks)",
+        "Guide 01 now fully complies with ESPECIFICACION_GUIAS.md",
+        "NOTE: Validation errors in guide 05 (lines 611-621) are false positives - they are documentation in version history, not actual instructions"
+      ],
+      "breaking": false,
+      "fixes": [
+        "Template instruction with bold formatting in guide 01-estructura-base.md line 190"
+      ]
+    },
+    {
+      "version": "1.4.3",
+      "date": "2025-01-30",
+      "changes": [
+        "COMPLIANCE: Fixed template instruction format in guides 02, 03, 04 to match ESPECIFICACION_GUIAS.md",
+        "BUGFIX: Removed bold formatting from template instructions (changed **📁 COPIAR...** to 📁 COPIAR...)",
+        "BUGFIX: 02-domain-layer.md - Fixed 2 template instructions (steps 10-11)",
+        "BUGFIX: 03-application-layer.md - Fixed 1 template instruction (step 12)",
+        "BUGFIX: 04-infrastructure-layer.md - Fixed 2 template instructions (steps 7-8)",
+        "BUGFIX: 04-infrastructure-layer.md - Replaced invalid pattern '📁 COPIAR ARCHIVOS:' with 4 individual '📄 COPIAR TEMPLATE:' instructions",
+        "All guides now strictly comply with specification patterns: '📄 COPIAR TEMPLATE:' and '📁 COPIAR DIRECTORIO COMPLETO:'"
+      ],
+      "breaking": false,
+      "fixes": [
+        "Template instructions with bold formatting preventing correct MCP parser recognition",
+        "Invalid template pattern '📁 COPIAR ARCHIVOS:' not recognized by parser"
+      ]
+    },
     {
       "version": "1.4.2",
       "date": "2025-01-30",

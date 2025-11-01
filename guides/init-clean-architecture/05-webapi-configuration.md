@@ -1,6 +1,6 @@
 # 05 - Configuración de WebApi (Presentation Layer)
 
-> **Versión:** 1.4.2 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.4.4 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -35,22 +35,13 @@ Antes de ejecutar los comandos, verifica:
 ### Paso 1: Crear proyecto web para WebApi
 
 ```bash
-mkdir src/{ProjectName}.webapi
 dotnet new web -n {ProjectName}.webapi -o src/{ProjectName}.webapi
 dotnet sln add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj
 ```
 
-> Se usa `dotnet new web` (minimal API) en lugar de `webapi` para tener control total sobre la configuración.
+> Se usa `dotnet new web` (minimal API) en lugar de `webapi` para tener control total sobre la configuración. El archivo `Program.cs` autogenerado será reemplazado por nuestro template en pasos posteriores.
 
-### Paso 2: Eliminar archivo Program.cs autogenerado
-
-```bash
-rm src/{ProjectName}.webapi/Program.cs
-```
-
-> Lo reemplazaremos con nuestra versión personalizada usando templates.
-
-### Paso 3: Instalar paquetes NuGet en webapi
+### Paso 2: Instalar paquetes NuGet en webapi
 
 ```bash
 dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj package FastEndpoints
@@ -69,7 +60,7 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj package DotNetEn
 > - **FluentResults**: Manejo de resultados con éxito/error
 > - **DotNetEnv**: Carga de variables de entorno desde archivo .env
 
-### Paso 4: Agregar referencias de proyectos
+### Paso 3: Agregar referencias de proyectos
 
 ```bash
 dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
@@ -79,39 +70,20 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 
 > WebApi depende de todas las capas: Domain (interfaces), Application (use cases), Infrastructure (implementaciones).
 
-### Paso 5: Crear estructura de carpetas
+### Paso 4: Estructura de carpetas
 
-```bash
-mkdir src/{ProjectName}.webapi/features
-mkdir src/{ProjectName}.webapi/features/hello
-mkdir src/{ProjectName}.webapi/infrastructure
-mkdir src/{ProjectName}.webapi/infrastructure/authorization
-mkdir src/{ProjectName}.webapi/dtos
-mkdir src/{ProjectName}.webapi/mappingprofiles
-mkdir src/{ProjectName}.webapi/Properties
-```
+> **Nota:** Las siguientes carpetas se crearán automáticamente al copiar los templates en los pasos siguientes. Este paso es solo informativo.
 
-> **Estructura:**
-> - `features/`: Endpoints organizados por feature (vertical slicing)
-> - `infrastructure/`: Configuración de DI, autorización, etc.
-> - `dtos/`: Data Transfer Objects para API
-> - `mappingprofiles/`: Perfiles de AutoMapper
-> - `Properties/`: Configuración del assembly (InternalsVisibleTo)
+**Estructura de carpetas que se creará:**
+- `features/` - Endpoints organizados por feature (vertical slicing)
+- `features/hello/` - Endpoint de ejemplo
+- `infrastructure/` - Configuración de DI, autorización, etc.
+- `infrastructure/authorization/` - Handlers de autorización personalizada
+- `dtos/` - Data Transfer Objects para API
+- `mappingprofiles/` - Perfiles de AutoMapper
+- `Properties/` - Configuración del assembly (InternalsVisibleTo)
 
-### Paso 6: Copiar templates de configuración base
-
-📄 COPIAR TEMPLATE: `templates/webapi/Program.cs` → `src/{ProjectName}.webapi/Program.cs`
-
-📄 COPIAR TEMPLATE: `templates/webapi/IPrincipalExtender.cs` → `src/{ProjectName}.webapi/IPrincipalExtender.cs`
-
-📄 COPIAR TEMPLATE: `templates/webapi/Properties/InternalsVisibleTo.cs` → `src/{ProjectName}.webapi/Properties/InternalsVisibleTo.cs`
-
-> **Archivos copiados (3):**
-> - `Program.cs` - Configuración principal y pipeline de middleware
-> - `IPrincipalExtender.cs` - Extensiones para obtener claims del usuario autenticado
-> - `Properties/InternalsVisibleTo.cs` - Configuración de visibilidad para tests
-
-### Paso 7: Copiar templates de infrastructure
+### Paso 5: Copiar templates de infrastructure
 
 📁 COPIAR DIRECTORIO COMPLETO: `templates/webapi/infrastructure/` → `src/{ProjectName}.webapi/infrastructure/`
 
@@ -119,7 +91,7 @@ mkdir src/{ProjectName}.webapi/Properties
 > - `ServiceCollectionExtender.cs` - Métodos de extensión para configuración de DI
 > - `authorization/MustBeApplicationUser.cs` - Ejemplo de autorización personalizada
 
-### Paso 8: Copiar templates de features
+### Paso 6: Copiar templates de features (endpoints)
 
 📁 COPIAR DIRECTORIO COMPLETO: `templates/webapi/features/` → `src/{ProjectName}.webapi/features/`
 
@@ -127,7 +99,7 @@ mkdir src/{ProjectName}.webapi/Properties
 > - `BaseEndpoint.cs` - Clase base con helpers de manejo de errores
 > - `hello/HelloEndpoint.cs` - Endpoint de ejemplo (GET /hello)
 
-### Paso 9: Copiar templates de DTOs y mapping
+### Paso 7: Copiar templates de DTOs y mapping
 
 📄 COPIAR TEMPLATE: `templates/webapi/dtos/GetManyAndCountResultDto.cs` → `src/{ProjectName}.webapi/dtos/GetManyAndCountResultDto.cs`
 
@@ -136,6 +108,25 @@ mkdir src/{ProjectName}.webapi/Properties
 > **Archivos copiados (2):**
 > - `GetManyAndCountResultDto.cs` - DTO genérico para resultados paginados
 > - `MappingProfile.cs` - Perfil de AutoMapper con mapeo genérico
+
+### Paso 8: Copiar templates de extensiones y configuración
+
+📄 COPIAR TEMPLATE: `templates/webapi/IPrincipalExtender.cs` → `src/{ProjectName}.webapi/IPrincipalExtender.cs`
+
+📄 COPIAR TEMPLATE: `templates/webapi/Properties/InternalsVisibleTo.cs` → `src/{ProjectName}.webapi/Properties/InternalsVisibleTo.cs`
+
+> **Archivos copiados (2):**
+> - `IPrincipalExtender.cs` - Extensiones para obtener claims del usuario autenticado
+> - `Properties/InternalsVisibleTo.cs` - Configuración de visibilidad para tests
+
+### Paso 9: Copiar Program.cs (archivo principal)
+
+📄 COPIAR TEMPLATE: `templates/webapi/Program.cs` → `src/{ProjectName}.webapi/Program.cs`
+
+> **Archivo principal:**
+> - `Program.cs` - Configuración principal y pipeline de middleware
+>
+> **Nota:** Este archivo se copia al final porque referencia y configura todos los componentes anteriores (ServiceCollectionExtender, endpoints, DTOs, AutoMapper, etc.)
 
 ### Paso 10: Crear proyecto de tests para webapi
 
@@ -585,6 +576,44 @@ services.AddScoped<IUnitOfWork, NHUnitOfWork>();
 3. Agregar política: `Policies("DefaultAuthorizationPolicy")`
 
 ## Historial de Versiones
+
+### v1.4.4 (2025-01-30)
+
+**Reorganización:**
+- ✅ **Orden de pasos mejorado**: Program.cs se copia al final (Paso 9) en lugar de al principio
+- ✅ **Lógica de dependencias**: Ahora los templates se copian en orden lógico:
+  1. Infrastructure (ServiceCollectionExtender, autorización)
+  2. Features (BaseEndpoint, HelloEndpoint)
+  3. DTOs y mapping profiles
+  4. Extensiones (IPrincipalExtender, InternalsVisibleTo)
+  5. Program.cs (archivo principal que usa todo lo anterior)
+- ✅ **Pasos renumerados**: Ajustados del 5 al 16 para reflejar el nuevo orden
+
+**Impacto:**
+- Flujo más lógico: se crean primero las dependencias, luego el archivo que las orquesta
+- Más fácil de entender: el orden refleja las dependencias reales del código
+- Program.cs al final enfatiza que es el punto de entrada que configura todo
+
+**Nota:**
+Este cambio es puramente organizativo. Todos los archivos se siguen copiando, solo en un orden diferente que refleja mejor la arquitectura.
+
+### v1.4.3 (2025-01-30)
+
+**Mejoras:**
+- ✅ **Paso 2 eliminado**: Removido comando `rm Program.cs` (no ejecutable por el parser, redundante)
+- ✅ **Paso 1 mejorado**: Agregada nota explicando que Program.cs será reemplazado por template
+- ✅ **Paso 4 optimizado**: Cambiado de ejecutable a informativo - carpetas se crean automáticamente al copiar templates
+- ✅ **Pasos renumerados**: 16 pasos → 15 pasos (más conciso)
+- ✅ Eliminado comando `mkdir` que no es soportado actualmente por el parser MCP
+
+**Impacto:**
+- La guía ahora solo contiene comandos ejecutables (`dotnet`)
+- COPIAR TEMPLATE sobrescribe automáticamente archivos existentes (no necesita `rm` previo)
+- Las carpetas se crean automáticamente al copiar templates (no necesita `mkdir` previo)
+- Guía más simple y alineada con capacidades actuales del parser MCP
+
+**Nota técnica:**
+Según ESPECIFICACION_GUIAS.md, comandos `rm` y `mkdir` están marcados como "⏳ Próximamente soportados". Esta versión prepara la guía para trabajar solo con comandos actualmente soportados.
 
 ### v1.4.2 (2025-01-30)
 

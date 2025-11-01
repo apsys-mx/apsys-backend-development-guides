@@ -1,6 +1,6 @@
 # 04 - Capa de Infraestructura (Infrastructure Layer)
 
-> **Versión:** 1.3.4 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.3.5 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -100,7 +100,7 @@ mkdir src/{ProjectName}.infrastructure/nhibernate/repositories
 
 ### Paso 7: Copiar templates del sistema de filtrado
 
-**📁 COPIAR DIRECTORIO COMPLETO:** `templates/infrastructure/nhibernate/filtering/` → `src/{ProjectName}.infrastructure/nhibernate/filtering/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/infrastructure/nhibernate/filtering/` → `src/{ProjectName}.infrastructure/nhibernate/filtering/`
 
 > El servidor MCP debe:
 > 1. Descargar todos los archivos desde `templates/infrastructure/nhibernate/filtering/` en GitHub
@@ -119,17 +119,19 @@ mkdir src/{ProjectName}.infrastructure/nhibernate/repositories
 
 ### Paso 8: Copiar templates de repositorios base
 
-**📁 COPIAR ARCHIVOS:** `templates/infrastructure/nhibernate/` → `src/{ProjectName}.infrastructure/nhibernate/`
+📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/NHReadOnlyRepository.cs` → `src/{ProjectName}.infrastructure/nhibernate/NHReadOnlyRepository.cs`
 
-> Copiar archivos individuales (NO directorio completo, solo archivos raíz):
+📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/NHRepository.cs` → `src/{ProjectName}.infrastructure/nhibernate/NHRepository.cs`
 
-**Archivos core de NHibernate (4 archivos):**
-- `NHReadOnlyRepository.cs` - Repositorio base de solo lectura con GetManyAndCount
-- `NHRepository.cs` - Repositorio base CRUD con validación FluentValidation
-- `NHUnitOfWork.cs` - Unit of Work (template vacío - requiere configuración)
-- `SortingCriteriaExtender.cs` - Extensiones para convertir SortingCriteria a expresiones
+📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/NHUnitOfWork.cs` → `src/{ProjectName}.infrastructure/nhibernate/NHUnitOfWork.cs`
 
-> **Reemplazar** `{ProjectName}` en todos los archivos.
+📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/SortingCriteriaExtender.cs` → `src/{ProjectName}.infrastructure/nhibernate/SortingCriteriaExtender.cs`
+
+> **Archivos core de NHibernate (4 archivos):**
+> - `NHReadOnlyRepository.cs` - Repositorio base de solo lectura con GetManyAndCount
+> - `NHRepository.cs` - Repositorio base CRUD con validación FluentValidation
+> - `NHUnitOfWork.cs` - Unit of Work (template vacío - requiere configuración)
+> - `SortingCriteriaExtender.cs` - Extensiones para convertir SortingCriteria a expresiones
 
 ### Paso 9: Crear proyecto de tests para infrastructure
 

@@ -1,6 +1,6 @@
 # 02 - Capa de Dominio (Domain Layer)
 
-> **Versión:** 1.1.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.1.2 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -155,7 +155,7 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 
 ### Paso 10: Copiar archivos de código desde templates
 
-**📁 COPIAR DIRECTORIO COMPLETO:** `templates/domain/` → `src/{ProjectName}.domain/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/domain/` → `src/{ProjectName}.domain/`
 
 > El servidor MCP debe:
 > 1. Descargar todos los archivos desde `templates/domain/` en el repositorio de GitHub
@@ -175,7 +175,7 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 
 ### Paso 11: Copiar archivos de tests desde templates
 
-**📁 COPIAR DIRECTORIO COMPLETO:** `templates/domain.tests/` → `tests/{ProjectName}.domain.tests/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/domain.tests/` → `tests/{ProjectName}.domain.tests/`
 
 > El servidor MCP debe:
 > 1. Descargar todos los archivos desde `templates/domain.tests/` en el repositorio de GitHub

@@ -1,6 +1,6 @@
 # 01 - Estructura Base del Proyecto
 
-> **Versión:** 1.0.0 | **Última actualización:** 2025-01-29 | **Estado:** Estable
+> **Versión:** 1.0.1 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -187,7 +187,7 @@ dotnet new sln -n {ProjectName}
 
 Este archivo habilita la gestión centralizada de paquetes NuGet. Todas las versiones se definen aquí una sola vez.
 
-**📄 COPIAR TEMPLATE:** `templates/Directory.Packages.props` → `./Directory.Packages.props`
+📄 COPIAR TEMPLATE: `templates/Directory.Packages.props` → `./Directory.Packages.props`
 
 > El servidor MCP debe:
 > 1. Descargar el archivo desde `templates/Directory.Packages.props` en el repositorio de GitHub
