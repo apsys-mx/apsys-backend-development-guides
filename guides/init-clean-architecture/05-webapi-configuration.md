@@ -1,6 +1,6 @@
 # 05 - Configuración de WebApi (Presentation Layer)
 
-> **Versión:** 1.4.4 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.4.5 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -87,6 +87,11 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 
 📁 COPIAR DIRECTORIO COMPLETO: `templates/webapi/infrastructure/` → `src/{ProjectName}.webapi/infrastructure/`
 
+> El servidor MCP debe:
+> 1. Descargar todos los archivos desde `templates/webapi/infrastructure/` en GitHub
+> 2. Copiarlos a `src/{ProjectName}.webapi/infrastructure/` respetando estructura de subdirectorios
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+>
 > **Archivos incluidos (2):**
 > - `ServiceCollectionExtender.cs` - Métodos de extensión para configuración de DI
 > - `authorization/MustBeApplicationUser.cs` - Ejemplo de autorización personalizada
@@ -95,6 +100,11 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 
 📁 COPIAR DIRECTORIO COMPLETO: `templates/webapi/features/` → `src/{ProjectName}.webapi/features/`
 
+> El servidor MCP debe:
+> 1. Descargar todos los archivos desde `templates/webapi/features/` en GitHub
+> 2. Copiarlos a `src/{ProjectName}.webapi/features/` respetando estructura de subdirectorios
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+>
 > **Archivos incluidos (2):**
 > - `BaseEndpoint.cs` - Clase base con helpers de manejo de errores
 > - `hello/HelloEndpoint.cs` - Endpoint de ejemplo (GET /hello)
@@ -105,6 +115,11 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 
 📄 COPIAR TEMPLATE: `templates/webapi/mappingprofiles/MappingProfile.cs` → `src/{ProjectName}.webapi/mappingprofiles/MappingProfile.cs`
 
+> El servidor MCP debe:
+> 1. Descargar cada archivo desde `templates/webapi/` en GitHub
+> 2. Copiar a las rutas de destino indicadas (creando carpetas si no existen)
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+>
 > **Archivos copiados (2):**
 > - `GetManyAndCountResultDto.cs` - DTO genérico para resultados paginados
 > - `MappingProfile.cs` - Perfil de AutoMapper con mapeo genérico
@@ -115,6 +130,11 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 
 📄 COPIAR TEMPLATE: `templates/webapi/Properties/InternalsVisibleTo.cs` → `src/{ProjectName}.webapi/Properties/InternalsVisibleTo.cs`
 
+> El servidor MCP debe:
+> 1. Descargar cada archivo desde `templates/webapi/` en GitHub
+> 2. Copiar a las rutas de destino indicadas (creando carpetas si no existen)
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+>
 > **Archivos copiados (2):**
 > - `IPrincipalExtender.cs` - Extensiones para obtener claims del usuario autenticado
 > - `Properties/InternalsVisibleTo.cs` - Configuración de visibilidad para tests
@@ -123,6 +143,11 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 
 📄 COPIAR TEMPLATE: `templates/webapi/Program.cs` → `src/{ProjectName}.webapi/Program.cs`
 
+> El servidor MCP debe:
+> 1. Descargar el archivo desde `templates/webapi/Program.cs` en GitHub
+> 2. Copiar a `src/{ProjectName}.webapi/Program.cs` (sobrescribiendo el archivo autogenerado)
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+>
 > **Archivo principal:**
 > - `Program.cs` - Configuración principal y pipeline de middleware
 >
@@ -576,6 +601,25 @@ services.AddScoped<IUnitOfWork, NHUnitOfWork>();
 3. Agregar política: `Policies("DefaultAuthorizationPolicy")`
 
 ## Historial de Versiones
+
+### v1.4.5 (2025-01-30)
+
+**Mejora de documentación:**
+- ✅ **Bloques explicativos agregados**: Todas las instrucciones de copia de templates ahora incluyen bloques explicativos para el servidor MCP
+- ✅ **Consistencia con guía 04**: Formato estandarizado con instrucciones explícitas de:
+  1. Descargar archivos desde GitHub
+  2. Copiar respetando estructura
+  3. Reemplazar placeholders `{ProjectName}`
+- ✅ **Pasos 5-9 mejorados**: Cada paso de copia ahora tiene instrucciones claras para el implementador del servidor MCP
+- ✅ **Sin cambios funcionales**: Solo mejora la documentación, no afecta la ejecución
+
+**Impacto:**
+- Más claro para el desarrollador del servidor MCP qué debe hacer en cada paso
+- Reduce ambigüedad sobre el reemplazo de placeholders
+- Consistencia entre todas las guías del sistema
+
+**Rationale:**
+La guía 04 ya tenía estos bloques explicativos. Agregarlos a la guía 05 mantiene consistencia y hace las instrucciones más completas y claras.
 
 ### v1.4.4 (2025-01-30)
 
