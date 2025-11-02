@@ -1,23 +1,23 @@
 # APSYS Backend Development Guides
 
-> **Versión:** 1.4.7 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado
+> **Versión:** 1.4.8 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado
 
 ## Descripción
 
-Este repositorio contiene las **guías de desarrollo** y **templates** utilizados por el servidor MCP (Model Context Protocol) de APSYS para automatizar la creación de proyectos backend con **Clean Architecture**.
+Este repositorio contiene las **guías de desarrollo** y **templates** de APSYS para crear proyectos backend con **Clean Architecture**.
 
-El servidor MCP permite a Claude generar automáticamente estructuras completas de proyectos .NET siguiendo las mejores prácticas y estándares de APSYS, eliminando el trabajo manual repetitivo y asegurando consistencia entre proyectos.
+Las guías pueden seguirse manualmente o ejecutarse automáticamente mediante agentes de IA, permitiendo generar estructuras completas de proyectos .NET siguiendo las mejores prácticas y estándares de APSYS, eliminando el trabajo manual repetitivo y asegurando consistencia entre proyectos.
 
 ## Versionado
 
 Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
 
-- **Versión actual:** 1.4.7
-- **Compatibilidad:** .NET 9.0, MCP Protocol 1.0
+- **Versión actual:** 1.4.8
+- **Compatibilidad:** .NET 9.0
 - **Documentación completa:** [VERSIONING.md](VERSIONING.md)
 - **Metadata de versión:** [guides-version.json](guides-version.json)
 
-**Para el servidor MCP:**
+**Para agentes automatizados:**
 ```typescript
 // Leer versión
 const version = await fetch(
@@ -27,20 +27,12 @@ const version = await fetch(
 console.log(`Using APSYS Guides v${version.version}`)
 ```
 
-## ¿Qué es MCP?
-
-**Model Context Protocol (MCP)** es un protocolo estándar que permite a modelos de IA como Claude acceder a diferentes servicios y herramientas de manera unificada.
-
-En lugar de que Claude tenga que aprender APIs individuales de cada servicio, MCP proporciona un conjunto de "tools" estandarizados que Claude puede invocar directamente.
-
-**Analogía:** Piensa en MCP como las "puertas y ventanas" de una casa que permiten interactuar con el exterior de manera estándar, en lugar de tener que romper una pared cada vez que quieres salir.
-
 ## Propósito del Repositorio
 
 Este repositorio sirve como la **fuente de verdad** para:
 
 1. **Guías paso a paso** de cómo construir proyectos backend
-2. **Templates** de código que el servidor MCP utiliza
+2. **Templates** de código reutilizables
 3. **Documentación técnica** de la arquitectura y componentes
 4. **Estándares** de desarrollo del equipo APSYS
 
@@ -75,18 +67,16 @@ apsys-backend-development-guides/
     └── (por definir)
 ```
 
-## Tools del Servidor MCP
+## Guías Disponibles
 
-### 1. init-clean-architecture
+### 1. Inicialización de Clean Architecture
 
 **Estado:** 🟡 En desarrollo (Milestone 4 completado)
 
 Crea la estructura completa de un proyecto backend con Clean Architecture, independiente de cualquier base de datos específica.
 
-**Uso:**
-```bash
-init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\miproyecto
-```
+**Proceso:**
+Ejecutar las guías secuenciales desde `guides/init-clean-architecture/` siguiendo el orden de los milestones (ver README de la guía para el mapa detallado).
 
 **Documentación:** [guides/init-clean-architecture/README.md](guides/init-clean-architecture/README.md)
 
@@ -102,18 +92,14 @@ init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\mi
 
 ---
 
-### 2. configure-database
+### 2. Configuración de Base de Datos
 
 **Estado:** ⏳ Pendiente
 
 Configura un proyecto existente para trabajar con una base de datos específica (PostgreSQL o SQL Server).
 
-**Uso:**
-```bash
-configure-database --project-path=C:\projects\miproyecto --db=PostgreSQL
-# o
-configure-database --project-path=C:\projects\miproyecto --db=SQLServer
-```
+**Proceso:**
+Ejecutar las guías desde `guides/configure-database/` después de completar la inicialización de Clean Architecture.
 
 **Documentación:** [guides/configure-database/README.md](guides/configure-database/README.md) *(pendiente)*
 
@@ -234,16 +220,18 @@ configure-database --project-path=C:\projects\miproyecto --db=PostgreSQL
 
 ## Uso de las Guías
 
-### Automático (Vía Servidor MCP)
+### Opción 1: Automatizado (con agente IA)
 
-El servidor MCP ejecuta automáticamente todos los pasos. Claude invoca el tool:
+Un agente de IA puede ejecutar automáticamente todos los pasos leyendo las guías secuencialmente:
 
 ```
-# Claude ejecuta internamente:
-init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\miproyecto
+# El agente lee y ejecuta:
+1. guides/init-clean-architecture/01-estructura-base.md
+2. guides/init-clean-architecture/02-domain-layer.md
+3. ... y así sucesivamente
 ```
 
-### Manual (Para Aprendizaje o Debugging)
+### Opción 2: Manual (paso a paso)
 
 Las guías también pueden seguirse manualmente:
 
@@ -275,19 +263,17 @@ Las guías también pueden seguirse manualmente:
 
 ### 🟡 En Progreso
 
-- [ ] Tool: init-clean-architecture (Milestone 5)
+- [ ] Guía: init-clean-architecture (Milestone 5)
   - [ ] 06-migrations-base.md
   - [ ] 07-testing-support.md
 
 ### ⏳ Pendiente
 
-- [ ] Tool: configure-database
+- [ ] Guía: configure-database
   - [ ] Documentación completa
   - [ ] Guía de PostgreSQL
   - [ ] Guía de SQL Server
-- [ ] Templates de código
-- [ ] Implementación del servidor MCP
-- [ ] Testing end-to-end del servidor MCP
+- [ ] Templates adicionales de código
 
 ## Ventajas de este Enfoque
 
@@ -311,10 +297,10 @@ Todos los proyectos APSYS siguen:
 
 ### 3. Velocidad
 
-De horas de setup manual a minutos con MCP:
+De horas de setup manual a minutos con automatización:
 
 - ⏰ **Manual:** 2-3 horas configurando proyecto
-- ⚡ **Con MCP:** 2-3 minutos ejecutando tools
+- ⚡ **Automatizado:** 2-3 minutos ejecutando las guías
 
 ### 4. Reducción de Errores
 
@@ -369,7 +355,7 @@ configure-database --project-path=./services/usuarios --db=PostgreSQL
 
 - Describe el caso de uso
 - Explica qué se podría automatizar
-- Propón la estructura de la nueva guía/tool
+- Propón la estructura de la nueva guía
 
 ## Recursos Adicionales
 
@@ -379,7 +365,6 @@ configure-database --project-path=./services/usuarios --db=PostgreSQL
 - **FastEndpoints:** [Documentación oficial](https://fast-endpoints.com/)
 - **NHibernate:** [Documentación oficial](https://nhibernate.info/)
 - **FluentMigrator:** [Documentación oficial](https://fluentmigrator.github.io/)
-- **MCP Protocol:** [Especificación oficial](https://modelcontextprotocol.io/)
 
 ### Dentro del Repositorio
 
@@ -412,10 +397,10 @@ Decisión del equipo APSYS basada en:
 - Mejor soporte para escenarios complejos
 - Experiencia previa del equipo
 
-### ¿Puedo usar estas guías sin el servidor MCP?
+### ¿Puedo usar estas guías manualmente?
 
 ¡Sí! Las guías están diseñadas para ser:
-- Ejecutables manualmente
+- Ejecutables manualmente paso a paso
 - Autocontenidas
 - Educativas
 - Referencia de mejores prácticas
@@ -440,5 +425,5 @@ Para preguntas, sugerencias o problemas:
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 1.4.7-milestone4
+**Versión:** 1.4.8-milestone4
 **Mantenedores:** Equipo de Desarrollo APSYS

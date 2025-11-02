@@ -1,43 +1,44 @@
-# Tool: init-clean-architecture
+# Guía: Inicialización de Clean Architecture
 
 ## Descripción General
 
-Este tool del servidor MCP crea la estructura completa de un proyecto backend con **Clean Architecture** para APSYS. El proyecto generado es independiente de cualquier base de datos específica, permitiendo máxima flexibilidad en la elección de tecnología de persistencia.
+Esta guía documenta el proceso completo para crear un proyecto backend con **Clean Architecture** para APSYS. El proyecto generado es independiente de cualquier base de datos específica, permitiendo máxima flexibilidad en la elección de tecnología de persistencia.
 
 ## Propósito
 
-Automatizar la creación de:
+Esta guía cubre la creación de:
 - Solución .NET con gestión centralizada de paquetes
-- Capa de dominio con entidades, validaciones y repositorios
-- Capa de infraestructura con sistema de filtering avanzado
-- Capa de aplicación con casos de uso
-- API REST con FastEndpoints
-- Sistema de migraciones de base de datos
-- Proyectos de testing completos
+- Capa de dominio con entidades, validaciones y repositorios de interfaces
+- Capa de aplicación con casos de uso, DTOs y validadores
+- Capa de infraestructura con repositorios NHibernate y sistema de filtering
+- API REST con FastEndpoints, Swagger, JWT y AutoMapper
+- Sistema de migraciones de base de datos (pendiente)
+- Proyectos de testing completos (pendiente)
 
-## Arquitectura Generada
+## Arquitectura del Proyecto
 
-El tool genera un proyecto siguiendo los principios de **Clean Architecture**:
+La guía genera un proyecto siguiendo los principios de **Clean Architecture**:
 
 ```
 ┌─────────────────────────────────────────┐
 │           WebApi Layer                  │
-│  (FastEndpoints + Controllers)          │
+│      (FastEndpoints + Swagger)          │
 └──────────────┬──────────────────────────┘
-               │
+               │ depende de
 ┌──────────────▼──────────────────────────┐
 │        Application Layer                │
-│     (Use Cases + Services)              │
+│       (Use Cases + DTOs)                │
 └──────────────┬──────────────────────────┘
-               │
+               │ depende de
 ┌──────────────▼──────────────────────────┐
 │          Domain Layer                   │
 │  (Entities + Interfaces + Rules)        │
+│         ★ NÚCLEO ★                      │
 └──────────────▲──────────────────────────┘
-               │
+               │ implementado por
 ┌──────────────┴──────────────────────────┐
 │      Infrastructure Layer               │
-│  (Repositories + ORM + External)        │
+│   (Repositories + NHibernate)           │
 └─────────────────────────────────────────┘
 ```
 
@@ -47,209 +48,267 @@ El tool genera un proyecto siguiendo los principios de **Clean Architecture**:
 ✅ **Testing First:** Proyectos de test para cada capa
 ✅ **Gestión Centralizada:** Paquetes NuGet versionados en un solo lugar
 ✅ **Filtering Avanzado:** Sistema de filtrado con LINQ dinámico
-✅ **Validaciones:** FluentValidation integrado en entidades
-✅ **API Moderna:** FastEndpoints como framework de API
-✅ **Migraciones:** FluentMigrator con UI interactiva
-
-## Parámetros de Entrada
-
-```bash
-init-clean-architecture --name=<NombreProyecto> --version=<VersionNET> --path=<RutaDestino>
-```
-
-| Parámetro   | Descripción                        | Requerido | Ejemplo                  |
-| ----------- | ---------------------------------- | --------- | ------------------------ |
-| `--name`    | Nombre de la solución y proyectos  | ✅ Sí     | `MiProyecto`             |
-| `--version` | Versión del framework .NET         | ✅ Sí     | `net9.0`                 |
-| `--path`    | Ruta donde crear el proyecto       | ✅ Sí     | `C:\projects\miproyecto` |
-
-**Nota:** El parámetro `--db` NO se usa en este tool. La configuración de base de datos se realiza posteriormente con el tool `configure-database`.
+✅ **Validaciones:** FluentValidation integrado
+✅ **API Moderna:** FastEndpoints + Swagger + JWT Bearer
 
 ## Estructura Final Generada
 
 ```
-{name}/
-├── {name}.sln
+{ProjectName}/
+├── {ProjectName}.sln
 ├── Directory.Packages.props
 ├── src/
-│   ├── {name}.domain/
-│   ├── {name}.application/
-│   ├── {name}.infrastructure/
-│   ├── {name}.webapi/
-│   └── {name}.migrations/
+│   ├── {ProjectName}.domain/
+│   ├── {ProjectName}.application/
+│   ├── {ProjectName}.infrastructure/
+│   └── {ProjectName}.webapi/
 └── tests/
-    ├── {name}.domain.tests/
-    ├── {name}.application.tests/
-    ├── {name}.infrastructure.tests/
-    ├── {name}.webapi.tests/
-    ├── {name}.common.tests/
-    └── {name}.scenarios/
+    ├── {ProjectName}.domain.tests/
+    ├── {ProjectName}.application.tests/
+    ├── {ProjectName}.infrastructure.tests/
+    ├── {ProjectName}.webapi.tests/
+    ├── {ProjectName}.ndbunit/           (auxiliar)
+    └── {ProjectName}.common.tests/      (auxiliar)
 ```
 
-## Documentación por Milestones
+## 📋 Mapa de Guías - Orden de Ejecución
 
-La implementación está organizada en **3 milestones** para facilitar desarrollo y testing incremental:
+La guía está organizada en **4 milestones** para facilitar desarrollo y testing incremental. Cada archivo debe ejecutarse en orden secuencial.
 
-### 📦 Milestone 1: Fundamentos (ACTUAL)
-
-Documentos completados:
-
-- **[01-estructura-base.md](./01-estructura-base.md)**
-  - Solución .sln
-  - Carpetas src/ y tests/
-  - Directory.Packages.props
-
-- **[02-domain-layer.md](./02-domain-layer.md)**
-  - Proyecto domain + tests
-  - Entidades base
-  - Interfaces de repositorios
-  - Excepciones de dominio
+### 📦 Milestone 1: Estructura Base y Dominio
 
 **Estado:** ✅ Completado
 
-### 🔧 Milestone 2: Infrastructure (PRÓXIMO)
+1. **[01-estructura-base.md](./01-estructura-base.md)** (v1.0.1)
+   - Crear solución .sln y carpetas src/ y tests/
+   - Configurar Directory.Packages.props con gestión centralizada de paquetes
+   - **Duración estimada:** 5-10 minutos
 
-Documentos pendientes:
+2. **[02-domain-layer.md](./02-domain-layer.md)** (v1.1.2)
+   - Crear proyecto domain + tests
+   - Copiar templates de interfaces de repositorios (IRepository, IReadOnlyRepository, IUnitOfWork)
+   - Instalar FluentValidation
+   - **Duración estimada:** 10-15 minutos
+   - **Depende de:** 01-estructura-base.md
 
-- **03-infrastructure-filtering.md**
-  - Sistema de parsing de querystring
-  - Operadores relacionales (equal, contains, between, etc.)
-  - Construcción de expresiones LINQ dinámicas
-  - Soporte para ordenamiento y paginación
+**Total Milestone 1:** ~20 minutos
 
-- **04-infrastructure-repositories.md**
-  - Implementación base de repositorios
-  - UnitOfWork
-  - Extensiones de NHibernate (sin configuración de BD específica)
+---
+
+### 🎯 Milestone 2: Capa de Aplicación
+
+**Estado:** ✅ Completado
+
+3. **[03-application-layer.md](./03-application-layer.md)** (v1.2.1)
+   - Crear proyecto application + tests
+   - Copiar templates de testing con AutoFixture
+   - Configurar MediaTR y AutoMapper
+   - Estructura para casos de uso (Commands/Queries)
+   - **Duración estimada:** 15-20 minutos
+   - **Depende de:** 02-domain-layer.md
+
+**Total Milestone 2:** ~15 minutos
+
+---
+
+### 🔧 Milestone 3: Infraestructura
+
+**Estado:** ✅ Completado
+
+4. **[04-infrastructure-layer.md](./04-infrastructure-layer.md)** (v1.3.5)
+   - Crear proyectos auxiliares (ndbunit, common.tests)
+   - Crear proyecto infrastructure + tests
+   - Copiar templates de repositorios NHibernate (NHRepository, NHReadOnlyRepository, NHUnitOfWork)
+   - Copiar sistema de filtering completo (8 archivos: QueryStringParser, FilterExpressionParser, operators, sorting)
+   - Instalar NHibernate y System.Linq.Dynamic.Core
+   - **Duración estimada:** 20-25 minutos
+   - **Depende de:** 02-domain-layer.md
+   - **Recomendado:** 03-application-layer.md (para entender qué necesita Application)
+
+**Total Milestone 3:** ~25 minutos
+
+---
+
+### 🚀 Milestone 4: WebApi
+
+**Estado:** ✅ Completado
+
+5. **[05-webapi-configuration.md](./05-webapi-configuration.md)** (v1.4.5)
+   - Crear proyecto webapi + tests
+   - Copiar templates de infrastructure (ServiceCollectionExtender, authorization)
+   - Copiar templates de features (BaseEndpoint, HelloEndpoint)
+   - Copiar templates de DTOs y mapping profiles
+   - Copiar Program.cs configurado
+   - Configurar FastEndpoints, Swagger, JWT Bearer, CORS
+   - Configurar AutoMapper con mapeo genérico
+   - Configurar DotNetEnv para variables de entorno
+   - **Duración estimada:** 25-30 minutos
+   - **Depende de:** 02-domain-layer.md, 03-application-layer.md, 04-infrastructure-layer.md
+
+**Total Milestone 4:** ~30 minutos
+
+---
+
+### ⏳ Milestone 5: Migraciones y Testing (PENDIENTE)
 
 **Estado:** ⏳ Pendiente
 
-### 🚀 Milestone 3: Application, API y Testing (FUTURO)
+6. **06-migrations-base.md** (pendiente)
+   - Crear proyecto migrations con FluentMigrator
+   - CLI interactivo con Spectre.Console
+   - Program.cs genérico (sin provider específico)
+   - **Duración estimada:** 20-25 minutos
+   - **Depende de:** 04-infrastructure-layer.md
 
-Documentos pendientes:
+7. **07-testing-support.md** (pendiente)
+   - Configurar proyectos ndbunit y common.tests
+   - Schemas XSD para datos de prueba
+   - Generadores de datos
+   - **Duración estimada:** 15-20 minutos
+   - **Depende de:** Todos los anteriores
 
-- **05-application-layer.md**
-  - Proyecto application + tests
-  - Estructura para casos de uso
+**Total Milestone 5:** ~40 minutos
 
-- **06-webapi-base.md**
-  - Proyecto webapi + tests
-  - Configuración de FastEndpoints
-  - Program.cs base (sin connection string)
-  - Estructura de endpoints
+---
 
-- **07-migrations-base.md**
-  - Proyecto migrations
-  - CLI interactivo con Spectre.Console
-  - Program.cs genérico (sin provider específico)
+## ⏱️ Tiempo Total Estimado
 
-- **08-testing-projects.md**
-  - common.tests (schemas XSD)
-  - scenarios (generador de datos)
+| Milestone | Estado | Duración |
+|-----------|--------|----------|
+| Milestone 1: Base + Domain | ✅ Completado | ~20 min |
+| Milestone 2: Application | ✅ Completado | ~15 min |
+| Milestone 3: Infrastructure | ✅ Completado | ~25 min |
+| Milestone 4: WebApi | ✅ Completado | ~30 min |
+| Milestone 5: Migrations + Testing | ⏳ Pendiente | ~40 min |
+| **TOTAL (hasta M4)** | | **~90 min** |
+| **TOTAL (completo)** | | **~130 min** |
 
-**Estado:** ⏳ Pendiente
+## 🎯 Cómo Usar Esta Guía
 
-## Orden de Ejecución de Documentos
+### Opción 1: Ejecución Automatizada (con agente IA)
 
-Los documentos deben ejecutarse en orden secuencial dentro de cada milestone:
+Un agente de IA puede leer estos archivos secuencialmente y ejecutar los comandos automáticamente:
 
 ```
-1. Milestone 1
-   └─> 01-estructura-base.md
-       └─> 02-domain-layer.md
-
-2. Milestone 2
-    └─> 03-infrastructure-filtering.md
-        └─> 04-infrastructure-repositories.md
-
-3. Milestone 3
-    └─> 05-application-layer.md
-        └─> 06-webapi-base.md
-            └─> 07-migrations-base.md
-                └─> 08-testing-projects.md
+1. Leer 01-estructura-base.md → Ejecutar comandos bash → Copiar templates
+2. Leer 02-domain-layer.md → Ejecutar comandos bash → Copiar templates
+3. Leer 03-application-layer.md → Ejecutar comandos bash → Copiar templates
+4. Leer 04-infrastructure-layer.md → Ejecutar comandos bash → Copiar templates
+5. Leer 05-webapi-configuration.md → Ejecutar comandos bash → Copiar templates
 ```
 
-Cada documento tiene una sección **"Dependencias"** que indica qué pasos previos deben completarse.
+**Reemplazo de placeholders:**
+- Todos los templates usan `{ProjectName}` que debe reemplazarse con el nombre real del proyecto
+- Los comandos bash también usan `{ProjectName}` que debe reemplazarse antes de ejecutar
 
-## Uso Independiente de Documentos
+### Opción 2: Ejecución Manual (paso a paso)
 
-Aunque el tool MCP ejecutará todos los documentos automáticamente, cada documento puede usarse de forma independiente para:
+Un desarrollador puede seguir la guía manualmente:
 
-- **Consulta:** Entender cómo funciona cada componente
-- **Troubleshooting:** Depurar problemas en componentes específicos
-- **Extensión manual:** Agregar componentes adicionales siguiendo los patrones establecidos
+1. Abrir el primer archivo del milestone deseado
+2. Leer las instrucciones y ejecutar los comandos en la terminal
+3. Copiar los templates desde la carpeta `templates/` y reemplazar `{ProjectName}` manualmente
+4. Verificar que cada paso funcione antes de continuar al siguiente
+5. Pasar al siguiente archivo cuando el actual esté completo
 
-## Siguiente Tool
+**Útil para:**
+- Aprendizaje: Entender cómo funciona cada componente
+- Debugging: Identificar problemas en pasos específicos
+- Customización: Modificar componentes según necesidades específicas
 
-Una vez completado `init-clean-architecture`, el proyecto está listo para configurar una base de datos específica con:
+### Opción 3: Ejecución por Milestones (incremental)
 
-**[configure-database](../configure-database/README.md)** - Configura PostgreSQL o SQL Server
+Puedes ejecutar milestone por milestone para validar el progreso:
 
-## Stack Tecnológico
+```bash
+# Milestone 1: Base + Domain
+./execute 01-estructura-base.md
+./execute 02-domain-layer.md
+dotnet build  # Verificar que compile
+
+# Milestone 2: Application
+./execute 03-application-layer.md
+dotnet build  # Verificar que compile
+
+# Milestone 3: Infrastructure
+./execute 04-infrastructure-layer.md
+dotnet build  # Verificar que compile
+
+# Milestone 4: WebApi
+./execute 05-webapi-configuration.md
+dotnet build  # Verificar que compile
+dotnet run --project src/{ProjectName}.webapi  # Probar la API
+```
+
+## 📝 Formato de los Documentos
+
+Cada documento de guía tiene la siguiente estructura estándar:
+
+1. **Descripción:** Qué construye este paso
+2. **Dependencias:** Qué pasos previos se requieren
+3. **Validaciones Previas:** Qué verificar antes de empezar
+4. **Pasos de Construcción:** Comandos bash secuenciales
+5. **Referencia de Templates:** Tabla con descripción de cada template
+6. **Verificación:** Cómo validar que todo funcionó
+7. **Próximos Pasos:** Qué hacer después
+8. **Historial de Versiones:** Cambios del documento
+
+### Instrucciones de Templates
+
+Las guías usan dos formatos para indicar operaciones con templates:
+
+#### Copiar archivo individual
+```markdown
+📄 COPIAR TEMPLATE: `templates/domain/IRepository.cs` → `src/{ProjectName}.domain/IRepository.cs`
+```
+
+#### Copiar directorio completo
+```markdown
+📁 COPIAR DIRECTORIO COMPLETO: `templates/domain/` → `src/{ProjectName}.domain/`
+```
+
+Después de cada instrucción hay un bloque que explica qué se debe hacer:
+```markdown
+> El agente/usuario debe:
+> 1. Descargar todos los archivos desde `templates/...` en GitHub
+> 2. Copiarlos a `src/{ProjectName}...` respetando estructura
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+```
+
+## 🔄 Siguiente Paso
+
+Una vez completada esta guía (todos los milestones), el proyecto está listo para configurar una base de datos específica con:
+
+**[../configure-database/README.md](../configure-database/README.md)** - Configuración de PostgreSQL o SQL Server
+
+## 🛠️ Stack Tecnológico
 
 ### Frameworks y Bibliotecas
-
 - **.NET 9.0** - Framework base
-- **FastEndpoints** - API REST framework
-- **NHibernate** - ORM
-- **FluentMigrator** - Migraciones de BD
-- **FluentValidation** - Validaciones
-- **AutoMapper** - Mapeo de objetos
-- **Scrutor** - Inyección de dependencias por convención
+- **C# 13** - Lenguaje
+- **FastEndpoints 7.0** - API REST framework
+- **NHibernate 5.5** - ORM
+- **FluentValidation 12.0** - Validaciones declarativas
+- **AutoMapper 15.0** - Mapeo de objetos
+- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico para filtering
 
 ### Testing
+- **NUnit 4.2** - Framework de testing
+- **Moq 4.20** - Mocking framework
+- **AutoFixture 4.18** - Generación automática de datos de prueba
+- **FluentAssertions 8.5** - Aserciones expresivas
 
-- **NUnit** - Framework de testing
-- **Moq** - Mocking
-- **AutoFixture** - Generación de datos de prueba
-- **FluentAssertions** - Aserciones fluidas
+### Utilidades
+- **Spectre.Console 0.50** - CLI interactiva
+- **DotNetEnv 3.1** - Variables de entorno
 
-### DevOps
-
-- **Spectre.Console** - CLI interactiva
-- **DotNetEnv** - Variables de entorno
-
-## Notas de Implementación para el Servidor MCP
-
-### Substituciones de Variables
-
-El servidor MCP debe reemplazar los siguientes placeholders en todos los archivos:
-
-| Placeholder  | Fuente          | Ejemplo          |
-| ------------ | --------------- | ---------------- |
-| `{name}`     | `--name`        | `MiProyecto`     |
-| `{path}`     | `--path`        | `C:\projects\..` |
-| `{version}`  | `--version`     | `net9.0`         |
-
-### Manejo de Rutas
-
-- Todas las rutas en los documentos usan formato POSIX (`/`)
-- El servidor MCP debe convertir a formato Windows (`\`) cuando corresponda
-- Soportar tanto rutas absolutas como relativas
-
-### Validaciones Pre-ejecución
-
-Antes de ejecutar el tool, validar:
-
-1. ✅ .NET SDK está instalado con la versión especificada
-2. ✅ El path de destino existe y tiene permisos de escritura
-3. ✅ No existe ya una solución con el mismo nombre en el path
-4. ✅ El nombre del proyecto es un identificador C# válido
-
-### Manejo de Errores
-
-Si algún paso falla:
-- Registrar el error con contexto (qué paso, qué comando)
-- Mostrar mensaje descriptivo al usuario
-- Opcionalmente, ofrecer rollback de cambios parciales
-
-## Referencias
+## 📚 Referencias
 
 - **Manual completo:** [MANUAL_CONSTRUCCION_PROYECTO.md](../../MANUAL_CONSTRUCCION_PROYECTO.md)
-- **Conversación de diseño:** [conversacion-mcp-servers.txt](../../conversacion-mcp-servers.txt)
-- **Repositorio:** [apsys-backend-development-guides](../../README.md)
+- **Repositorio:** [README.md](../../README.md)
+- **Templates:** [templates/README.md](../../templates/README.md)
 
-## Contribuir
+## 🤝 Contribuir
 
 Para agregar o modificar componentes:
 
@@ -258,7 +317,9 @@ Para agregar o modificar componentes:
 3. Actualizar este README con los cambios
 4. Probar manualmente los comandos antes de commitear
 
-## Changelog
+## 📅 Changelog
 
-- **2025-01-29:** Milestone 1 completado (estructura base + domain layer)
-- **2025-01-29:** Creación inicial del tool y documentación
+- **2025-01-30:** Milestone 4 completado (WebApi Layer) - v1.4.7
+- **2025-01-30:** Milestone 3 completado (Infrastructure Layer) - v1.3.0
+- **2025-01-30:** Milestone 2 completado (Application Layer) - v1.2.0
+- **2025-01-29:** Milestone 1 completado (Base + Domain Layer) - v1.0.0

@@ -1,13 +1,12 @@
 {
-  "version": "1.4.7",
+  "version": "1.4.8",
   "releaseDate": "2025-01-30",
   "compatibility": {
-    "dotnetVersion": "9.0",
-    "mcpProtocol": "1.0"
+    "dotnetVersion": "9.0"
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.4.7",
+      "version": "1.4.8",
       "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
@@ -28,7 +27,7 @@
     }
   },
   "templates": {
-    "version": "1.4.7",
+    "version": "1.4.8",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -74,6 +73,28 @@
     }
   },
   "changelog": [
+    {
+      "version": "1.4.8",
+      "date": "2025-01-30",
+      "changes": [
+        "DOCUMENTATION: Eliminadas todas las referencias al 'servidor MCP' de archivos README",
+        "DOCUMENTATION: Reescrita documentación como guías genéricas usables manual o automatizadamente",
+        "DOCUMENTATION: guides/init-clean-architecture/README.md - Creado mapa detallado de guías con milestones y tiempos estimados",
+        "DOCUMENTATION: README.md principal - Actualizado de 'servidor MCP' a 'agentes de IA' y 'automatización'",
+        "DOCUMENTATION: guides/README.md - Reescrito como guía genérica con opciones de ejecución manual/automatizada/híbrida",
+        "DOCUMENTATION: templates/README.md - Eliminadas referencias MCP, enfoque en uso manual y automatizado",
+        "CONSISTENCY: Eliminado campo 'mcpProtocol' de compatibilidad en guides-version.json",
+        "CONSISTENCY: Cambiado 'Tool' a 'Guía' en toda la documentación",
+        "Las guías ahora son agnósticas de implementación - pueden usarse con cualquier herramienta de automatización o manualmente"
+      ],
+      "breaking": false,
+      "improvements": [
+        "Documentación más clara y accesible para uso manual",
+        "Mapa de guías con tiempos estimados para cada milestone",
+        "Guías genéricas compatibles con cualquier forma de automatización",
+        "Mejor experiencia de usuario para desarrolladores que siguen las guías manualmente"
+      ]
+    },
     {
       "version": "1.4.7",
       "date": "2025-01-30",

@@ -2,60 +2,56 @@
 
 ## Descripción General
 
-Este directorio contiene las **guías de desarrollo** que utiliza el servidor MCP (Model Context Protocol) de APSYS para automatizar la creación y configuración de proyectos backend con Clean Architecture.
+Este directorio contiene las **guías de desarrollo** de APSYS para crear y configurar proyectos backend con Clean Architecture.
 
-Cada carpeta representa un **tool** del servidor MCP, con documentación detallada de todos los pasos necesarios para su ejecución.
+Cada carpeta representa una **guía completa** con documentación detallada de todos los pasos necesarios para su ejecución, ya sea manual o automatizada.
 
 ## Estructura del Directorio
 
 ```
 guides/
 ├── README.md                          # Este archivo
-├── init-clean-architecture/           # Tool #1: Inicialización de proyecto
-│   ├── README.md
+├── init-clean-architecture/           # Guía #1: Inicialización de proyecto
+│   ├── README.md                      # Mapa completo de la guía
 │   ├── 01-estructura-base.md
 │   ├── 02-domain-layer.md
-│   ├── 03-infrastructure-filtering.md       (pendiente)
-│   ├── 04-infrastructure-repositories.md    (pendiente)
-│   ├── 05-application-layer.md              (pendiente)
-│   ├── 06-webapi-base.md                    (pendiente)
-│   ├── 07-migrations-base.md                (pendiente)
-│   └── 08-testing-projects.md               (pendiente)
+│   ├── 03-application-layer.md
+│   ├── 04-infrastructure-layer.md
+│   ├── 05-webapi-configuration.md
+│   ├── 06-migrations-base.md          (pendiente)
+│   └── 07-testing-support.md          (pendiente)
 │
-└── configure-database/                # Tool #2: Configuración de BD
-    ├── README.md                             (pendiente)
-    ├── 01-setup-postgresql.md                (pendiente)
-    └── 02-setup-sqlserver.md                 (pendiente)
+└── configure-database/                # Guía #2: Configuración de BD
+    ├── README.md                      (pendiente)
+    ├── 01-setup-postgresql.md         (pendiente)
+    └── 02-setup-sqlserver.md          (pendiente)
 ```
 
-## Tools Disponibles
+## Guías Disponibles
 
 ### 1. init-clean-architecture
 
-**Estado:** 🟡 En desarrollo (Milestone 1 completado)
+**Estado:** 🟡 En desarrollo (Milestone 4 completado)
 
 **Propósito:** Crea la estructura completa de un proyecto backend con Clean Architecture, independiente de cualquier base de datos específica.
 
 **Documentación:** [init-clean-architecture/README.md](./init-clean-architecture/README.md)
 
-**Parámetros:**
-```bash
-init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\miproyecto
-```
-
 **Componentes generados:**
 - ✅ Solución .NET con gestión centralizada de paquetes
 - ✅ Capa de dominio completa
-- ⏳ Sistema de filtering e infrastructure
-- ⏳ Capa de aplicación
-- ⏳ API REST con FastEndpoints
-- ⏳ Sistema de migraciones
-- ⏳ Proyectos de testing
+- ✅ Capa de aplicación con use cases y DTOs
+- ✅ Capa de infraestructura con repositorios y filtering
+- ✅ API REST con FastEndpoints
+- ⏳ Sistema de migraciones (pendiente)
+- ⏳ Proyectos de testing completos (pendiente)
 
 **Progreso de Milestones:**
-- ✅ Milestone 1: Estructura base + Domain layer (Completado)
-- ⏳ Milestone 2: Infrastructure (Pendiente)
-- ⏳ Milestone 3: Application, API y Testing (Pendiente)
+- ✅ Milestone 1: Estructura base + Domain layer
+- ✅ Milestone 2: Application layer
+- ✅ Milestone 3: Infrastructure layer
+- ✅ Milestone 4: WebApi configuration
+- ⏳ Milestone 5: Migrations + Testing support
 
 ---
 
@@ -66,13 +62,6 @@ init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\mi
 **Propósito:** Configura un proyecto existente para trabajar con una base de datos específica (PostgreSQL o SQL Server).
 
 **Documentación:** [configure-database/README.md](./configure-database/README.md) *(pendiente)*
-
-**Parámetros:**
-```bash
-configure-database --project-path=C:\projects\miproyecto --db=PostgreSQL
-# o
-configure-database --project-path=C:\projects\miproyecto --db=SQLServer
-```
 
 **Componentes que configura:**
 - Paquetes NuGet específicos de BD
@@ -97,17 +86,21 @@ graph LR
 
 ### Paso 1: Inicializar arquitectura base
 
-```bash
-init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\miproyecto
-```
+Ejecutar las guías de `init-clean-architecture/` en orden secuencial:
+
+1. 01-estructura-base.md
+2. 02-domain-layer.md
+3. 03-application-layer.md
+4. 04-infrastructure-layer.md
+5. 05-webapi-configuration.md
+
+Ver [init-clean-architecture/README.md](./init-clean-architecture/README.md) para el mapa detallado.
 
 **Resultado:** Proyecto con Clean Architecture, sin configuración de BD específica.
 
 ### Paso 2: Configurar base de datos
 
-```bash
-configure-database --project-path=C:\projects\miproyecto --db=PostgreSQL
-```
+Ejecutar las guías de `configure-database/` según la base de datos deseada.
 
 **Resultado:** Proyecto completamente configurado y listo para desarrollo.
 
@@ -200,48 +193,69 @@ Cada documento de guía sigue un formato estándar:
 
 1. **Descripción:** Qué hace este componente
 2. **Dependencias:** Qué pasos previos se requieren
-3. **Parámetros de Entrada:** Qué datos necesita
-4. **Estructura de Archivos:** Qué se creará
-5. **Paquetes NuGet:** Qué dependencias se instalan
-6. **Proceso de Construcción:** Comandos paso a paso
-7. **Código Fuente:** Contenido completo de archivos
-8. **Validación:** Cómo verificar que funcionó
-9. **Siguientes Pasos:** Qué hacer después
-10. **Troubleshooting:** Problemas comunes
+3. **Validaciones Previas:** Qué verificar antes de empezar
+4. **Parámetros de Entrada:** Qué datos necesita (para automatización)
+5. **Estructura de Archivos:** Qué se creará
+6. **Paquetes NuGet:** Qué dependencias se instalan
+7. **Proceso de Construcción:** Comandos paso a paso
+8. **Referencia de Templates:** Descripción de templates usados
+9. **Verificación:** Cómo verificar que funcionó
+10. **Próximos Pasos:** Qué hacer después
+11. **Historial de Versiones:** Cambios del documento
 
 ### Variables de Sustitución
 
-Los documentos usan placeholders que el servidor MCP debe reemplazar:
+Los documentos usan placeholders que deben reemplazarse:
 
 | Placeholder | Descripción            | Ejemplo          |
 | ----------- | ---------------------- | ---------------- |
-| `{name}`    | Nombre del proyecto    | `MiProyecto`     |
-| `{path}`    | Ruta del proyecto      | `C:\projects\..` |
-| `{version}` | Versión de .NET        | `net9.0`         |
-| `{db}`      | Tipo de base de datos  | `PostgreSQL`     |
+| `{ProjectName}` | Nombre del proyecto    | `MiProyecto`     |
+
+**Nota:** Los comandos bash y templates usan `{ProjectName}` que debe reemplazarse con el nombre real del proyecto antes de ejecutar.
 
 ---
 
 ## Uso de las Guías
 
-### Para Usuarios del Servidor MCP
+### Opción 1: Ejecución Automatizada (con agente IA)
 
-El servidor MCP ejecutará automáticamente todos los pasos. Simplemente invoca el tool:
+Un agente de IA puede leer estos archivos secuencialmente y ejecutar los comandos automáticamente:
 
-```bash
-# Vía MCP
-init-clean-architecture --name=MiProyecto --version=net9.0 --path=C:\projects\miproyecto
+```
+1. Leer 01-estructura-base.md
+2. Ejecutar comandos bash (reemplazando {ProjectName})
+3. Copiar templates (reemplazando {ProjectName})
+4. Verificar que el paso funcionó
+5. Continuar con el siguiente archivo
 ```
 
-### Para Desarrollo Manual
+**Proceso:**
+- El agente lee las instrucciones en orden
+- Ejecuta los comandos bash
+- Copia los templates desde `templates/` reemplazando placeholders
+- Verifica que cada paso compile antes de continuar
 
-Las guías también pueden seguirse manualmente para:
+### Opción 2: Ejecución Manual (paso a paso)
 
+Un desarrollador puede seguir la guía manualmente:
+
+1. Abrir el primer archivo del milestone deseado
+2. Leer las instrucciones paso a paso
+3. Ejecutar los comandos bash en la terminal
+4. Copiar templates manualmente y reemplazar `{ProjectName}`
+5. Verificar que cada paso funcione antes de continuar
+6. Pasar al siguiente archivo cuando el actual esté completo
+
+**Útil para:**
 - **Aprendizaje:** Entender cómo funciona cada componente
 - **Debugging:** Identificar problemas en pasos específicos
 - **Extensión:** Agregar componentes personalizados
 
-Simplemente abre el documento relevante y ejecuta los comandos secuencialmente.
+### Opción 3: Ejecución Híbrida
+
+Combinar automatización y manual según necesidades:
+- Automatizar pasos repetitivos (creación de proyectos, instalación de paquetes)
+- Ejecutar manualmente pasos que requieren decisiones (customización de templates)
 
 ---
 
@@ -250,26 +264,27 @@ Simplemente abre el documento relevante y ejecuta los comandos secuencialmente.
 ### Completado ✅
 
 - [x] Estructura de carpetas para guías
-- [x] Tool: init-clean-architecture
+- [x] Guía: init-clean-architecture
   - [x] Milestone 1: Estructura base + Domain layer
-    - [x] 01-estructura-base.md
-    - [x] 02-domain-layer.md
+    - [x] 01-estructura-base.md (v1.0.1)
+    - [x] 02-domain-layer.md (v1.1.2)
+  - [x] Milestone 2: Application layer
+    - [x] 03-application-layer.md (v1.2.1)
+  - [x] Milestone 3: Infrastructure layer
+    - [x] 04-infrastructure-layer.md (v1.3.5)
+  - [x] Milestone 4: WebApi configuration
+    - [x] 05-webapi-configuration.md (v1.4.5)
 
 ### En Progreso 🟡
 
-- [ ] Tool: init-clean-architecture
-  - [ ] Milestone 2: Infrastructure
-    - [ ] 03-infrastructure-filtering.md
-    - [ ] 04-infrastructure-repositories.md
-  - [ ] Milestone 3: Application, API y Testing
-    - [ ] 05-application-layer.md
-    - [ ] 06-webapi-base.md
-    - [ ] 07-migrations-base.md
-    - [ ] 08-testing-projects.md
+- [ ] Guía: init-clean-architecture
+  - [ ] Milestone 5: Migrations + Testing
+    - [ ] 06-migrations-base.md
+    - [ ] 07-testing-support.md
 
 ### Pendiente ⏳
 
-- [ ] Tool: configure-database
+- [ ] Guía: configure-database
   - [ ] README.md
   - [ ] 01-setup-postgresql.md
   - [ ] 02-setup-sqlserver.md
@@ -285,6 +300,7 @@ Para agregar o modificar guías:
 3. **Probar comandos:** Ejecutar manualmente antes de documentar
 4. **Actualizar README:** Agregar referencias al nuevo contenido
 5. **Documentar dependencias:** Indicar qué pasos previos se requieren
+6. **Actualizar versiones:** Incrementar versión del documento y actualizar changelog
 
 ### Reglas de Escritura
 
@@ -293,15 +309,40 @@ Para agregar o modificar guías:
 - ✅ **Código completo:** Nunca usar "// resto del código aquí"
 - ✅ **Paths multiplataforma:** Usar `/` en ejemplos genéricos
 - ✅ **Validación explícita:** Cómo verificar que cada paso funcionó
+- ✅ **Placeholders consistentes:** Usar `{ProjectName}` (no `${ProjectName}` o `<ProjectName>`)
+
+### Formato de Instrucciones de Templates
+
+Usar los formatos estandarizados:
+
+**Para archivos individuales:**
+```markdown
+📄 COPIAR TEMPLATE: `templates/path/file.cs` → `dest/{ProjectName}/file.cs`
+
+> El agente/usuario debe:
+> 1. Descargar el archivo desde `templates/path/file.cs`
+> 2. Copiar a `dest/{ProjectName}/file.cs`
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+```
+
+**Para directorios completos:**
+```markdown
+📁 COPIAR DIRECTORIO COMPLETO: `templates/domain/` → `src/{ProjectName}.domain/`
+
+> El agente/usuario debe:
+> 1. Descargar todos los archivos desde `templates/domain/` en GitHub
+> 2. Copiarlos a `src/{ProjectName}.domain/` respetando estructura de subdirectorios
+> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+```
 
 ---
 
 ## Referencias
 
 - **Manual completo:** [MANUAL_CONSTRUCCION_PROYECTO.md](../MANUAL_CONSTRUCCION_PROYECTO.md)
-- **Conversación de diseño:** [conversacion-mcp-servers.txt](../conversacion-mcp-servers.txt)
 - **Repositorio principal:** [README.md](../README.md)
-- **Documentación MCP:** https://modelcontextprotocol.io/
+- **Templates:** [templates/README.md](../templates/README.md)
+- **Versionado:** [VERSIONING.md](../VERSIONING.md)
 
 ---
 
@@ -315,16 +356,16 @@ Permite máxima flexibilidad:
 - Testing sin dependencias de infraestructura
 - Proyectos portables entre equipos
 
-### ¿Puedo usar estas guías sin el servidor MCP?
+### ¿Puedo usar estas guías manualmente?
 
 Sí, absolutamente. Las guías están diseñadas para ser:
-- Ejecutables manualmente
+- Ejecutables manualmente paso a paso
 - Autocontenidas
 - Educativas
 
 ### ¿Qué pasa si ya tengo un proyecto existente?
 
-Los tools están diseñados para proyectos nuevos. Para proyectos existentes:
+Las guías están diseñadas para proyectos nuevos. Para proyectos existentes:
 - Usa las guías como referencia para agregar componentes
 - Adapta los comandos a tu estructura actual
 - Revisa el manual completo para casos especiales
@@ -343,5 +384,5 @@ Este proyecto es de uso interno de APSYS.
 
 ---
 
-**Última actualización:** 2025-01-29
-**Versión:** 1.0.0-milestone1
+**Última actualización:** 2025-01-30
+**Versión:** 1.4.8-milestone4
