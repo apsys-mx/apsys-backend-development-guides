@@ -1,0 +1,176 @@
+{
+  "$schema": "./docs/catalog-schema.json",
+  "version": "1.4.8",
+  "repository": {
+    "name": "apsys-backend-development-guides",
+    "owner": "apsys-mx",
+    "url": "https://github.com/apsys-mx/apsys-backend-development-guides",
+    "type": "backend",
+    "description": "Guías de desarrollo backend para crear y configurar proyectos .NET con Clean Architecture"
+  },
+  "lastUpdated": "2025-01-30",
+  "compatibility": {
+    "dotnet": "9.0",
+    "csharp": "13",
+    "fastendpoints": "7.x",
+    "nhibernate": "5.x",
+    "fluentmigrator": "7.x"
+  },
+  "commands": {
+    "init-clean-architecture": {
+      "type": "one-time",
+      "version": "1.4.8",
+      "status": "active",
+      "description": "Inicializa proyecto .NET con Clean Architecture, FastEndpoints y NHibernate",
+      "longDescription": "Crea la estructura completa de un proyecto backend con Clean Architecture, independiente de cualquier base de datos específica. Incluye Domain Layer (entidades, validaciones, repositorios), Application Layer (use cases, DTOs, validadores, FastEndpoints), Infrastructure Layer (repositorios NHibernate, sistema de filtering) y WebApi (configuración, Swagger, JWT Bearer, CORS, AutoMapper).",
+      "commandFile": "commands/init-clean-architecture.md",
+      "guides": [
+        "guides/init-clean-architecture/README.md",
+        "guides/init-clean-architecture/01-estructura-base.md",
+        "guides/init-clean-architecture/02-domain-layer.md",
+        "guides/init-clean-architecture/03-application-layer.md",
+        "guides/init-clean-architecture/04-infrastructure-layer.md",
+        "guides/init-clean-architecture/05-webapi-configuration.md"
+      ],
+      "templates": [
+        "templates/init-clean-architecture/"
+      ],
+      "estimatedSize": "350KB",
+      "usesPlaceholders": true,
+      "placeholderPattern": "{ProjectName}",
+      "milestones": 5,
+      "steps": 30,
+      "tags": [
+        "dotnet",
+        "initialization",
+        "clean-architecture",
+        "fastendpoints",
+        "nhibernate",
+        "webapi",
+        "swagger",
+        "jwt",
+        "filtering",
+        "automapper"
+      ],
+      "techStack": {
+        "core": [
+          ".NET 9.0",
+          "C# 13",
+          "FastEndpoints 7.0"
+        ],
+        "persistence": [
+          "NHibernate 5.5",
+          "FluentMigrator 7.1"
+        ],
+        "validation": [
+          "FluentValidation 12.0",
+          "AutoMapper 15.0"
+        ],
+        "testing": [
+          "NUnit 4.2",
+          "Moq 4.20",
+          "AutoFixture 4.18",
+          "FluentAssertions 8.5"
+        ],
+        "utilities": [
+          "Spectre.Console 0.50",
+          "DotNetEnv 3.1",
+          "System.Linq.Dynamic.Core 1.6"
+        ]
+      }
+    },
+    "configure-database": {
+      "type": "recurring",
+      "version": "1.0.0",
+      "status": "pending",
+      "description": "Configura base de datos específica en proyecto .NET existente",
+      "longDescription": "Configura un proyecto existente para trabajar con PostgreSQL o SQL Server. Incluye paquetes NuGet específicos de BD, driver y dialect de NHibernate, ConnectionStringBuilder, proyecto NDbUnit para datos de prueba, sistema de migraciones y variables de entorno.",
+      "commandFile": "commands/configure-database.md",
+      "guides": [
+        "guides/configure-database/README.md",
+        "guides/configure-database/01-setup-postgresql.md",
+        "guides/configure-database/02-setup-sqlserver.md"
+      ],
+      "templates": [
+        "templates/configure-database/"
+      ],
+      "estimatedSize": "100KB",
+      "usesPlaceholders": true,
+      "placeholderPattern": "{ProjectName}",
+      "prerequisites": [
+        "init-clean-architecture"
+      ],
+      "options": {
+        "databases": [
+          {
+            "name": "postgresql",
+            "guide": "guides/configure-database/01-setup-postgresql.md",
+            "status": "pending",
+            "version": null,
+            "description": "Configura PostgreSQL con Npgsql"
+          },
+          {
+            "name": "sqlserver",
+            "guide": "guides/configure-database/02-setup-sqlserver.md",
+            "status": "pending",
+            "version": null,
+            "description": "Configura SQL Server con Microsoft.Data.SqlClient"
+          }
+        ]
+      },
+      "tags": [
+        "dotnet",
+        "database",
+        "postgresql",
+        "sqlserver",
+        "nhibernate",
+        "migrations",
+        "configuration",
+        "ndbunit"
+      ],
+      "techStack": {
+        "postgresql": [
+          "Npgsql 9.0",
+          "NHibernate.Driver.NpgsqlDriver"
+        ],
+        "sqlserver": [
+          "Microsoft.Data.SqlClient 6.0",
+          "NHibernate.Driver.MicrosoftDataSqlClientDriver"
+        ],
+        "testing": [
+          "NDbUnit.Core 1.8"
+        ]
+      },
+      "externalServices": {
+        "database": {
+          "required": true,
+          "options": [
+            "PostgreSQL 14+",
+            "SQL Server 2019+"
+          ],
+          "description": "Requiere instancia de base de datos accesible con credenciales válidas"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "totalCommands": 2,
+    "commandsByType": {
+      "one-time": 1,
+      "recurring": 1
+    },
+    "commandsByStatus": {
+      "completed": 0,
+      "active": 1,
+      "pending": 1,
+      "deprecated": 0
+    },
+    "totalEstimatedSize": "450KB",
+    "availableOptions": {
+      "databases": [
+        "postgresql (pending)",
+        "sqlserver (pending)"
+      ]
+    }
+  }
+}
