@@ -17,7 +17,10 @@ guides/
 │   ├── 02-domain-layer.md
 │   ├── 03-application-layer.md
 │   ├── 04-infrastructure-layer.md
-│   ├── 05-webapi-configuration.md
+│   ├── 05-webapi-layer.md
+│   ├── webapi-implementations/        # Implementaciones específicas de WebApi
+│   │   └── fastendpoints/
+│   │       └── setup-fastendpoints.md
 │   ├── 06-migrations-base.md          (pendiente)
 │   └── 07-testing-support.md          (pendiente)
 │
@@ -41,16 +44,18 @@ guides/
 - ✅ Solución .NET con gestión centralizada de paquetes
 - ✅ Capa de dominio completa
 - ✅ Capa de aplicación con use cases y DTOs
-- ✅ Capa de infraestructura con repositorios y filtering
-- ✅ API REST con FastEndpoints
+- ✅ Capa de infraestructura (estructura base agnóstica)
+- ✅ API REST (estructura base + implementación FastEndpoints por defecto)
 - ⏳ Sistema de migraciones (pendiente)
 - ⏳ Proyectos de testing completos (pendiente)
 
 **Progreso de Milestones:**
 - ✅ Milestone 1: Estructura base + Domain layer
 - ✅ Milestone 2: Application layer
-- ✅ Milestone 3: Infrastructure layer
+- ✅ Milestone 3: Infrastructure layer (estructura base)
 - ✅ Milestone 4: WebApi configuration
+  - ✅ 4a: Estructura base agnóstica (v2.0.0)
+  - ✅ 4b: Implementación FastEndpoints (v1.0.0)
 - ⏳ Milestone 5: Migrations + Testing support
 
 ---
@@ -91,12 +96,13 @@ Ejecutar las guías de `init-clean-architecture/` en orden secuencial:
 1. 01-estructura-base.md
 2. 02-domain-layer.md
 3. 03-application-layer.md
-4. 04-infrastructure-layer.md
-5. 05-webapi-configuration.md
+4. 04-infrastructure-layer.md (estructura base agnóstica)
+5. 05-webapi-layer.md (estructura base mínima)
+6. webapi-implementations/fastendpoints/setup-fastendpoints.md (opcional, por defecto)
 
 Ver [init-clean-architecture/README.md](./init-clean-architecture/README.md) para el mapa detallado.
 
-**Resultado:** Proyecto con Clean Architecture, sin configuración de BD específica.
+**Resultado:** Proyecto con Clean Architecture, con estructura agnóstica de framework y opcionalmente configurado con FastEndpoints.
 
 ### Paso 2: Configurar base de datos
 
@@ -136,9 +142,10 @@ Todos los proyectos siguen los principios de **Clean Architecture**:
 ┌──────────────┴──────────────────────────┐
 │      Capa de Infraestructura            │
 │        (Infrastructure)                 │
-│   - Repositorios                        │
-│   - NHibernate                          │
-│   - BD específica                       │
+│   - Repositorios (interfaces)           │
+│   - Implementación ORM (opcional)       │
+│     · NHibernate / EF / Dapper          │
+│   - BD específica (opcional)            │
 └─────────────────────────────────────────┘
 ```
 
@@ -154,25 +161,28 @@ Todos los proyectos siguen los principios de **Clean Architecture**:
 
 ## Stack Tecnológico
 
-### Backend Core
+### Backend Core (Base)
 - **.NET 9.0** - Framework base
 - **C# 13** - Lenguaje
-
-### API & Web
-- **FastEndpoints 7.0** - Framework de API REST
 - **Swagger/OpenAPI** - Documentación de API
-- **JWT Bearer** - Autenticación
+- **DotNetEnv 3.1** - Variables de entorno
 
-### Persistencia
-- **NHibernate 5.5** - ORM
+### Implementaciones Opcionales
+
+#### API & Web
+- **FastEndpoints 7.0** - Framework de API REST (default)
+- **JWT Bearer** - Autenticación (con FastEndpoints)
+- **AutoMapper 15.0** - Mapeo de objetos (con FastEndpoints)
+- **FluentValidation 12.0** - Validaciones (con FastEndpoints)
+- *Próximamente: Minimal APIs, MVC*
+
+#### Persistencia
+- **NHibernate 5.5** - ORM (disponible en configure-database)
 - **FluentMigrator 7.1** - Migraciones de BD
 - **PostgreSQL** o **SQL Server** - Base de datos
+- *Próximamente: Entity Framework, Dapper*
 
-### Validación & Mapeo
-- **FluentValidation 12.0** - Validaciones
-- **AutoMapper 15.0** - Mapeo de objetos
-
-### Testing
+### Testing (Pendiente)
 - **NUnit 4.2** - Framework de testing
 - **Moq 4.20** - Mocking
 - **AutoFixture 4.18** - Generación de datos de prueba
@@ -180,8 +190,7 @@ Todos los proyectos siguen los principios de **Clean Architecture**:
 
 ### Utilidades
 - **Spectre.Console 0.50** - CLI interactiva
-- **DotNetEnv 3.1** - Variables de entorno
-- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico
+- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico (con NHibernate)
 
 ---
 
@@ -271,9 +280,10 @@ Combinar automatización y manual según necesidades:
   - [x] Milestone 2: Application layer
     - [x] 03-application-layer.md (v1.2.1)
   - [x] Milestone 3: Infrastructure layer
-    - [x] 04-infrastructure-layer.md (v1.3.5)
+    - [x] 04-infrastructure-layer.md (v2.0.0 - base agnóstica)
   - [x] Milestone 4: WebApi configuration
-    - [x] 05-webapi-configuration.md (v1.4.5)
+    - [x] 05-webapi-layer.md (v2.0.0 - base agnóstica)
+    - [x] webapi-implementations/fastendpoints/setup-fastendpoints.md (v1.0.0)
 
 ### En Progreso 🟡
 
@@ -385,4 +395,20 @@ Este proyecto es de uso interno de APSYS.
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 1.4.8-milestone4
+**Versión:** 2.0.0-milestone4
+
+## Historial de Versiones
+
+### v2.0.0 (2025-01-30) - Arquitectura Modular
+- **BREAKING CHANGE**: Reestructuración de guías a arquitectura modular
+- Guía 04 (Infrastructure): Convertida a estructura base agnóstica
+- Guía 05 (WebApi): Convertida a estructura base + implementaciones opcionales
+- Nueva estructura: `webapi-implementations/` con implementaciones específicas
+- FastEndpoints movido a guía de implementación opcional (pero default)
+- Templates NHibernate movidos a `templates/configure-database/`
+- Templates actualizados con estructura modular
+- Stack tecnológico separado en: Base + Implementaciones Opcionales
+
+### v1.4.8 (2025-01-30) - Milestone 4 completado
+- Completado Milestone 4: WebApi configuration
+- Actualización de documentación completa

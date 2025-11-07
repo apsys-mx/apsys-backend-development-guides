@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Esta guía documenta el proceso completo para crear un proyecto backend con **Clean Architecture** para APSYS. El proyecto generado es independiente de cualquier base de datos específica, permitiendo máxima flexibilidad en la elección de tecnología de persistencia.
+Esta guía documenta el proceso completo para crear un proyecto backend con **Clean Architecture** para APSYS. El proyecto generado es **agnóstico de frameworks específicos**, permitiendo máxima flexibilidad en la elección de tecnologías de persistencia y presentación.
 
 ## Propósito
 
@@ -10,10 +10,13 @@ Esta guía cubre la creación de:
 - Solución .NET con gestión centralizada de paquetes
 - Capa de dominio con entidades, validaciones y repositorios de interfaces
 - Capa de aplicación con casos de uso, DTOs y validadores
-- Capa de infraestructura con repositorios NHibernate y sistema de filtering
-- API REST con FastEndpoints, Swagger, JWT y AutoMapper
-- Sistema de migraciones de base de datos (pendiente)
-- Proyectos de testing completos (pendiente)
+- Capa de infraestructura base (estructura agnóstica)
+- Capa de WebApi base (estructura mínima)
+- Implementaciones opcionales:
+  - **FastEndpoints** para WebApi (disponible)
+  - **NHibernate** para persistencia (disponible vía configure-database)
+  - **Minimal APIs** (próximamente)
+  - **Entity Framework** (próximamente)
 
 ## Arquitectura del Proyecto
 
@@ -22,7 +25,10 @@ La guía genera un proyecto siguiendo los principios de **Clean Architecture**:
 ```
 ┌─────────────────────────────────────────┐
 │           WebApi Layer                  │
-│      (FastEndpoints + Swagger)          │
+│    (Base + Implementación opcional)     │
+│     ├─ FastEndpoints (disponible)      │
+│     ├─ Minimal APIs (futuro)           │
+│     └─ MVC (futuro)                    │
 └──────────────┬──────────────────────────┘
                │ depende de
 ┌──────────────▼──────────────────────────┐
@@ -38,18 +44,21 @@ La guía genera un proyecto siguiendo los principios de **Clean Architecture**:
                │ implementado por
 ┌──────────────┴──────────────────────────┐
 │      Infrastructure Layer               │
-│   (Repositories + NHibernate)           │
+│   (Base + Implementación opcional)      │
+│     ├─ NHibernate (disponible)         │
+│     ├─ Entity Framework (futuro)       │
+│     └─ Dapper (futuro)                 │
 └─────────────────────────────────────────┘
 ```
 
 ### Características Clave
 
-✅ **Independencia de BD:** Sin código específico de PostgreSQL o SQL Server
+✅ **Agnóstico de tecnología:** Domain y Application sin dependencias específicas
+✅ **Infraestructura modular:** Elige tu ORM (NHibernate, EF, Dapper)
+✅ **WebApi flexible:** Elige tu framework (FastEndpoints, Minimal APIs, MVC)
 ✅ **Testing First:** Proyectos de test para cada capa
 ✅ **Gestión Centralizada:** Paquetes NuGet versionados en un solo lugar
-✅ **Filtering Avanzado:** Sistema de filtrado con LINQ dinámico
-✅ **Validaciones:** FluentValidation integrado
-✅ **API Moderna:** FastEndpoints + Swagger + JWT Bearer
+✅ **Extensible:** Fácil agregar nuevas implementaciones
 
 ## Estructura Final Generada
 
@@ -60,20 +69,20 @@ La guía genera un proyecto siguiendo los principios de **Clean Architecture**:
 ├── src/
 │   ├── {ProjectName}.domain/
 │   ├── {ProjectName}.application/
-│   ├── {ProjectName}.infrastructure/
-│   └── {ProjectName}.webapi/
+│   ├── {ProjectName}.infrastructure/      # Solo estructura base
+│   └── {ProjectName}.webapi/              # Solo estructura base
 └── tests/
     ├── {ProjectName}.domain.tests/
     ├── {ProjectName}.application.tests/
     ├── {ProjectName}.infrastructure.tests/
-    ├── {ProjectName}.webapi.tests/
-    ├── {ProjectName}.ndbunit/           (auxiliar)
-    └── {ProjectName}.common.tests/      (auxiliar)
+    └── {ProjectName}.webapi.tests/
 ```
+
+> **Nota:** Proyectos auxiliares (`ndbunit`, `common.tests`) se crean al configurar la base de datos con una implementación específica.
 
 ## 📋 Mapa de Guías - Orden de Ejecución
 
-La guía está organizada en **4 milestones** para facilitar desarrollo y testing incremental. Cada archivo debe ejecutarse en orden secuencial.
+La guía está organizada en **4 milestones principales** para desarrollo incremental. Cada archivo debe ejecutarse en orden secuencial.
 
 ### 📦 Milestone 1: Estructura Base y Dominio
 
@@ -111,63 +120,88 @@ La guía está organizada en **4 milestones** para facilitar desarrollo y testin
 
 ---
 
-### 🔧 Milestone 3: Infraestructura
+### 🔧 Milestone 3: Capa de Infraestructura (Base Agnóstica)
 
 **Estado:** ✅ Completado
 
-4. **[04-infrastructure-layer.md](./04-infrastructure-layer.md)** (v1.3.5)
-   - Crear proyectos auxiliares (ndbunit, common.tests)
+4. **[04-infrastructure-layer.md](./04-infrastructure-layer.md)** (v2.0.0)
    - Crear proyecto infrastructure + tests
-   - Copiar templates de repositorios NHibernate (NHRepository, NHReadOnlyRepository, NHUnitOfWork)
-   - Copiar sistema de filtering completo (8 archivos: QueryStringParser, FilterExpressionParser, operators, sorting)
-   - Instalar NHibernate y System.Linq.Dynamic.Core
-   - **Duración estimada:** 20-25 minutos
+   - Copiar READMEs explicativos para estructura de carpetas:
+     - `repositories/` - Guía para implementar repositorios
+     - `persistence/` - Guía para configurar ORM
+     - `services/` - Guía para servicios externos
+     - `configuration/` - Guía para Dependency Injection
+   - **Sin código específico de tecnología** (agnóstico)
+   - **Duración estimada:** 10-15 minutos
    - **Depende de:** 02-domain-layer.md
-   - **Recomendado:** 03-application-layer.md (para entender qué necesita Application)
 
-**Total Milestone 3:** ~25 minutos
+**Total Milestone 3:** ~15 minutos
 
 ---
 
-### 🚀 Milestone 4: WebApi
+### 🚀 Milestone 4: Capa de WebApi (Base + Implementación)
 
 **Estado:** ✅ Completado
 
-5. **[05-webapi-configuration.md](./05-webapi-configuration.md)** (v1.4.5)
+#### 4a. Estructura Base (Agnóstica)
+
+5. **[05-webapi-layer.md](./05-webapi-layer.md)** (v2.0.0)
    - Crear proyecto webapi + tests
-   - Copiar templates de infrastructure (ServiceCollectionExtender, authorization)
-   - Copiar templates de features (BaseEndpoint, HelloEndpoint)
-   - Copiar templates de DTOs y mapping profiles
-   - Copiar Program.cs configurado
-   - Configurar FastEndpoints, Swagger, JWT Bearer, CORS
-   - Configurar AutoMapper con mapeo genérico
-   - Configurar DotNetEnv para variables de entorno
-   - **Duración estimada:** 25-30 minutos
+   - Copiar estructura base mínima:
+     - Program.cs con endpoint /health
+     - READMEs explicativos (endpoints/, dtos/, configuration/)
+     - Configuración de variables de entorno (.env)
+   - Instalar solo DotNetEnv
+   - **Sin framework específico** (agnóstico)
+   - **Duración estimada:** 10-15 minutos
    - **Depende de:** 02-domain-layer.md, 03-application-layer.md, 04-infrastructure-layer.md
 
-**Total Milestone 4:** ~30 minutos
+#### 4b. Implementación de Framework (Opcional)
+
+**Seleccionar UNA implementación según parámetro `--webapi-framework`:**
+
+**Opción A: FastEndpoints (disponible)**
+
+6a. **[webapi-implementations/fastendpoints/setup-fastendpoints.md](./webapi-implementations/fastendpoints/setup-fastendpoints.md)** (v1.0.0)
+   - Instalar FastEndpoints, JWT Bearer, AutoMapper, FluentResults
+   - Copiar templates específicos:
+     - Program.cs completo con configuración
+     - BaseEndpoint con manejo de errores
+     - ServiceCollectionExtender para DI
+     - Autorización personalizada (MustBeApplicationUser)
+     - DTOs y mapping profiles
+   - Configurar CORS, Swagger, JWT
+   - **Duración estimada:** 20-25 minutos
+   - **Depende de:** 05-webapi-layer.md
+
+**Opción B: Minimal APIs (próximamente)**
+
+6b. **[webapi-implementations/minimal-apis/setup-minimal-apis.md](./webapi-implementations/minimal-apis/)** (pendiente)
+   - Configuración de Minimal APIs
+   - Endpoints con métodos de extensión
+   - **Estado:** 🔜 Próximamente
+
+**Opción C: MVC (próximamente)**
+
+6c. **[webapi-implementations/mvc/setup-mvc.md](./webapi-implementations/mvc/)** (pendiente)
+   - Configuración de MVC Controllers
+   - Controladores tradicionales
+   - **Estado:** 🔜 Próximamente
+
+**Total Milestone 4:** ~30-40 minutos (base + implementación)
 
 ---
 
-### ⏳ Milestone 5: Migraciones y Testing (PENDIENTE)
+### ⏳ Milestone 5: Configuración de Base de Datos (Opcional)
 
 **Estado:** ⏳ Pendiente
 
-6. **06-migrations-base.md** (pendiente)
-   - Crear proyecto migrations con FluentMigrator
-   - CLI interactivo con Spectre.Console
-   - Program.cs genérico (sin provider específico)
-   - **Duración estimada:** 20-25 minutos
-   - **Depende de:** 04-infrastructure-layer.md
+Después de completar la estructura base, configurar persistencia específica con:
 
-7. **07-testing-support.md** (pendiente)
-   - Configurar proyectos ndbunit y common.tests
-   - Schemas XSD para datos de prueba
-   - Generadores de datos
-   - **Duración estimada:** 15-20 minutos
-   - **Depende de:** Todos los anteriores
-
-**Total Milestone 5:** ~40 minutos
+**📁 ../configure-database/** - Guías para configurar base de datos:
+- **NHibernate + PostgreSQL** (disponible)
+- **Entity Framework + SQL Server** (futuro)
+- **Dapper + MySQL** (futuro)
 
 ---
 
@@ -177,24 +211,29 @@ La guía está organizada en **4 milestones** para facilitar desarrollo y testin
 |-----------|--------|----------|
 | Milestone 1: Base + Domain | ✅ Completado | ~20 min |
 | Milestone 2: Application | ✅ Completado | ~15 min |
-| Milestone 3: Infrastructure | ✅ Completado | ~25 min |
-| Milestone 4: WebApi | ✅ Completado | ~30 min |
-| Milestone 5: Migrations + Testing | ⏳ Pendiente | ~40 min |
-| **TOTAL (hasta M4)** | | **~90 min** |
-| **TOTAL (completo)** | | **~130 min** |
+| Milestone 3: Infrastructure (base) | ✅ Completado | ~15 min |
+| Milestone 4a: WebApi (base) | ✅ Completado | ~15 min |
+| Milestone 4b: FastEndpoints | ✅ Disponible | ~25 min |
+| Milestone 5: Database | ⏳ Pendiente | ~30 min |
+| **TOTAL (base agnóstica)** | | **~65 min** |
+| **TOTAL (con FastEndpoints)** | | **~90 min** |
+| **TOTAL (completo con DB)** | | **~120 min** |
 
 ## 🎯 Cómo Usar Esta Guía
 
-### Opción 1: Ejecución Automatizada (con agente IA)
+### Opción 1: Ejecución Automatizada (con comando MCP/IA)
 
-Un agente de IA puede leer estos archivos secuencialmente y ejecutar los comandos automáticamente:
+Un comando automatizado puede ejecutar las guías secuencialmente:
 
-```
-1. Leer 01-estructura-base.md → Ejecutar comandos bash → Copiar templates
-2. Leer 02-domain-layer.md → Ejecutar comandos bash → Copiar templates
-3. Leer 03-application-layer.md → Ejecutar comandos bash → Copiar templates
-4. Leer 04-infrastructure-layer.md → Ejecutar comandos bash → Copiar templates
-5. Leer 05-webapi-configuration.md → Ejecutar comandos bash → Copiar templates
+```bash
+# Base agnóstica (sin tecnologías específicas)
+/init-clean-architecture --project-name=MyProject
+
+# Con FastEndpoints (default)
+/init-clean-architecture --project-name=MyProject --webapi-framework=fastendpoints
+
+# Con Minimal APIs (futuro)
+/init-clean-architecture --project-name=MyProject --webapi-framework=minimal-apis
 ```
 
 **Reemplazo de placeholders:**
@@ -207,7 +246,7 @@ Un desarrollador puede seguir la guía manualmente:
 
 1. Abrir el primer archivo del milestone deseado
 2. Leer las instrucciones y ejecutar los comandos en la terminal
-3. Copiar los templates desde la carpeta `templates/` y reemplazar `{ProjectName}` manualmente
+3. Copiar los templates desde la carpeta `templates/init-clean-architecture/` y reemplazar `{ProjectName}` manualmente
 4. Verificar que cada paso funcione antes de continuar al siguiente
 5. Pasar al siguiente archivo cuando el actual esté completo
 
@@ -230,14 +269,19 @@ dotnet build  # Verificar que compile
 ./execute 03-application-layer.md
 dotnet build  # Verificar que compile
 
-# Milestone 3: Infrastructure
+# Milestone 3: Infrastructure (base)
 ./execute 04-infrastructure-layer.md
 dotnet build  # Verificar que compile
 
-# Milestone 4: WebApi
-./execute 05-webapi-configuration.md
+# Milestone 4a: WebApi (base)
+./execute 05-webapi-layer.md
 dotnet build  # Verificar que compile
-dotnet run --project src/{ProjectName}.webapi  # Probar la API
+dotnet run --project src/{ProjectName}.webapi  # Probar /health
+
+# Milestone 4b: FastEndpoints (opcional)
+./execute webapi-implementations/fastendpoints/setup-fastendpoints.md
+dotnet build  # Verificar que compile
+dotnet run --project src/{ProjectName}.webapi  # Probar API completa
 ```
 
 ## 📝 Formato de los Documentos
@@ -259,48 +303,100 @@ Las guías usan dos formatos para indicar operaciones con templates:
 
 #### Copiar archivo individual
 ```markdown
-📄 COPIAR TEMPLATE: `templates/domain/IRepository.cs` → `src/{ProjectName}.domain/IRepository.cs`
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/domain/IRepository.cs` → `src/{ProjectName}.domain/IRepository.cs`
 ```
 
 #### Copiar directorio completo
 ```markdown
-📁 COPIAR DIRECTORIO COMPLETO: `templates/domain/` → `src/{ProjectName}.domain/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/init-clean-architecture/domain/` → `src/{ProjectName}.domain/`
 ```
 
 Después de cada instrucción hay un bloque que explica qué se debe hacer:
 ```markdown
 > El agente/usuario debe:
-> 1. Descargar todos los archivos desde `templates/...` en GitHub
+> 1. Descargar todos los archivos desde `templates/init-clean-architecture/...` en GitHub
 > 2. Copiarlos a `src/{ProjectName}...` respetando estructura
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
 ```
 
+## 📁 Estructura de Templates
+
+Los templates están organizados para reflejar la estructura modular:
+
+```
+templates/init-clean-architecture/
+├── domain/                          # Templates de Domain
+├── domain.tests/                    # Templates de tests de Domain
+├── application.tests/               # Templates de tests de Application
+├── infrastructure/                  # Templates base (READMEs)
+│   ├── README.md
+│   ├── repositories/README.md
+│   ├── persistence/README.md
+│   ├── services/README.md
+│   └── configuration/README.md
+├── webapi/                          # Templates base (mínimo)
+│   ├── Program.cs
+│   ├── README.md
+│   ├── .env.example
+│   ├── endpoints/README.md
+│   ├── dtos/README.md
+│   ├── configuration/README.md
+│   └── Properties/InternalsVisibleTo.cs
+└── webapi-implementations/          # Implementaciones específicas
+    └── fastendpoints/
+        ├── Program.cs (completo)
+        ├── features/BaseEndpoint.cs
+        ├── infrastructure/ServiceCollectionExtender.cs
+        ├── dtos/GetManyAndCountResultDto.cs
+        └── ...
+```
+
 ## 🔄 Siguiente Paso
 
-Una vez completada esta guía (todos los milestones), el proyecto está listo para configurar una base de datos específica con:
+Una vez completada la estructura base, elige tu camino:
 
-**[../configure-database/README.md](../configure-database/README.md)** - Configuración de PostgreSQL o SQL Server
+### Opción A: Configurar Base de Datos
+**[../configure-database/](../configure-database/)** - Configuración de persistencia:
+- NHibernate + PostgreSQL (disponible)
+- Entity Framework + SQL Server (futuro)
+- Dapper + MySQL (futuro)
+
+### Opción B: Implementar Endpoints
+Si elegiste **solo la base** en Milestone 4a, ahora implementa el framework:
+- **[webapi-implementations/fastendpoints/](./webapi-implementations/fastendpoints/)** (disponible)
+- Minimal APIs (futuro)
+- MVC (futuro)
 
 ## 🛠️ Stack Tecnológico
 
-### Frameworks y Bibliotecas
+### Base (Incluido en estructura agnóstica)
 - **.NET 9.0** - Framework base
 - **C# 13** - Lenguaje
-- **FastEndpoints 7.0** - API REST framework
-- **NHibernate 5.5** - ORM
 - **FluentValidation 12.0** - Validaciones declarativas
-- **AutoMapper 15.0** - Mapeo de objetos
-- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico para filtering
 
-### Testing
+### Testing (Incluido)
 - **NUnit 4.2** - Framework de testing
 - **Moq 4.20** - Mocking framework
 - **AutoFixture 4.18** - Generación automática de datos de prueba
 - **FluentAssertions 8.5** - Aserciones expresivas
 
-### Utilidades
-- **Spectre.Console 0.50** - CLI interactiva
-- **DotNetEnv 3.1** - Variables de entorno
+### Implementaciones Opcionales
+
+#### WebApi (elegir una)
+- **FastEndpoints 7.0** ✅ Disponible
+- **Minimal APIs** (nativo .NET) 🔜 Próximamente
+- **ASP.NET Core MVC** (nativo .NET) 🔜 Próximamente
+
+#### Persistencia (elegir una)
+- **NHibernate 5.5** ✅ Disponible (vía configure-database)
+- **Entity Framework Core** 🔜 Próximamente
+- **Dapper** 🔜 Próximamente
+
+#### Complementos opcionales
+- **AutoMapper 15.0** - Mapeo de objetos (con FastEndpoints)
+- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico (con NHibernate)
+- **DotNetEnv 3.1** - Variables de entorno (base WebApi)
+- **Spectre.Console 0.50** - CLI interactiva (migrations)
 
 ## 📚 Referencias
 
@@ -314,11 +410,17 @@ Para agregar o modificar componentes:
 
 1. Revisar el manual completo para extraer información
 2. Seguir el formato de los documentos existentes
-3. Actualizar este README con los cambios
-4. Probar manualmente los comandos antes de commitear
+3. Mantener el principio de modularidad (base + implementaciones)
+4. Actualizar este README con los cambios
+5. Probar manualmente los comandos antes de commitear
 
 ## 📅 Changelog
 
+- **2025-01-30:** Reestructuración modular - v2.0.0
+  - Infrastructure y WebApi ahora son capas base agnósticas
+  - Implementaciones específicas separadas en subcarpetas
+  - FastEndpoints disponible como implementación opcional
+  - Templates reorganizados en `templates/init-clean-architecture/`
 - **2025-01-30:** Milestone 4 completado (WebApi Layer) - v1.4.7
 - **2025-01-30:** Milestone 3 completado (Infrastructure Layer) - v1.3.0
 - **2025-01-30:** Milestone 2 completado (Application Layer) - v1.2.0
