@@ -1,6 +1,6 @@
 {
   "$schema": "./docs/catalog-schema.json",
-  "version": "1.4.8",
+  "version": "2.0.0",
   "repository": {
     "name": "apsys-backend-development-guides",
     "owner": "apsys-mx",
@@ -19,10 +19,10 @@
   "commands": {
     "init-clean-architecture": {
       "type": "one-time",
-      "version": "1.4.8",
+      "version": "2.0.0",
       "status": "active",
-      "description": "Inicializa proyecto .NET con Clean Architecture, FastEndpoints y NHibernate",
-      "longDescription": "Crea la estructura completa de un proyecto backend con Clean Architecture, independiente de cualquier base de datos específica. Incluye Domain Layer (entidades, validaciones, repositorios), Application Layer (use cases, DTOs, validadores, FastEndpoints), Infrastructure Layer (repositorios NHibernate, sistema de filtering) y WebApi (configuración, Swagger, JWT Bearer, CORS, AutoMapper).",
+      "description": "Inicializa proyecto .NET con Clean Architecture modular (base agnóstica + implementaciones opcionales)",
+      "longDescription": "Crea la estructura completa de un proyecto backend con Clean Architecture modular. Incluye Domain Layer (entidades, validaciones, repositorios), Application Layer (use cases, DTOs, validadores), Infrastructure Layer (estructura base agnóstica), WebApi Layer (estructura base mínima) y opcionalmente FastEndpoints como implementación de API. La arquitectura permite elegir frameworks específicos posteriormente.",
       "commandFile": "commands/init-clean-architecture.md",
       "guides": [
         "guides/init-clean-architecture/README.md",
@@ -30,7 +30,8 @@
         "guides/init-clean-architecture/02-domain-layer.md",
         "guides/init-clean-architecture/03-application-layer.md",
         "guides/init-clean-architecture/04-infrastructure-layer.md",
-        "guides/init-clean-architecture/05-webapi-configuration.md"
+        "guides/init-clean-architecture/05-webapi-layer.md",
+        "guides/init-clean-architecture/webapi-implementations/fastendpoints/setup-fastendpoints.md"
       ],
       "templates": [
         "templates/init-clean-architecture/"
@@ -56,26 +57,36 @@
         "core": [
           ".NET 9.0",
           "C# 13",
-          "FastEndpoints 7.0"
+          "Swagger/OpenAPI",
+          "DotNetEnv 3.1"
         ],
-        "persistence": [
-          "NHibernate 5.5",
-          "FluentMigrator 7.1"
-        ],
-        "validation": [
-          "FluentValidation 12.0",
-          "AutoMapper 15.0"
-        ],
+        "webapi_implementations": {
+          "fastendpoints": [
+            "FastEndpoints 7.0",
+            "JWT Bearer",
+            "AutoMapper 15.0",
+            "FluentValidation 12.0"
+          ],
+          "minimal_apis": ["Próximamente"],
+          "mvc": ["Próximamente"]
+        },
+        "persistence_implementations": {
+          "nhibernate": [
+            "NHibernate 5.5 (configure-database)",
+            "FluentMigrator 7.1",
+            "System.Linq.Dynamic.Core 1.6"
+          ],
+          "entity_framework": ["Próximamente"],
+          "dapper": ["Próximamente"]
+        },
         "testing": [
-          "NUnit 4.2",
-          "Moq 4.20",
-          "AutoFixture 4.18",
-          "FluentAssertions 8.5"
+          "NUnit 4.2 (pendiente)",
+          "Moq 4.20 (pendiente)",
+          "AutoFixture 4.18 (pendiente)",
+          "FluentAssertions 8.5 (pendiente)"
         ],
         "utilities": [
-          "Spectre.Console 0.50",
-          "DotNetEnv 3.1",
-          "System.Linq.Dynamic.Core 1.6"
+          "Spectre.Console 0.50"
         ]
       }
     },

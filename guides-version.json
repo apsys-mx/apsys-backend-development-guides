@@ -1,12 +1,12 @@
 {
-  "version": "1.4.8",
+  "version": "2.0.0",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0"
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "1.4.8",
+      "version": "2.0.0",
       "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
@@ -14,8 +14,9 @@
         "01-estructura-base.md": "1.0.1",
         "02-domain-layer.md": "1.1.2",
         "03-application-layer.md": "1.2.1",
-        "04-infrastructure-layer.md": "1.3.5",
-        "05-webapi-configuration.md": "1.4.5",
+        "04-infrastructure-layer.md": "2.0.0",
+        "05-webapi-layer.md": "2.0.0",
+        "webapi-implementations/fastendpoints/setup-fastendpoints.md": "1.0.0",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
       }
@@ -27,7 +28,7 @@
     }
   },
   "templates": {
-    "version": "1.4.8",
+    "version": "2.0.0",
     "lastModified": "2025-01-30",
     "packages": {
       "Directory.Packages.props": "1.0.1"
@@ -73,6 +74,39 @@
     }
   },
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2025-01-30",
+      "changes": [
+        "BREAKING CHANGE: Reestructuración de guías a arquitectura modular",
+        "REFACTOR: 04-infrastructure-layer.md v2.0.0 - Convertida a estructura base agnóstica (sin ORM específico)",
+        "REFACTOR: 05-webapi-layer.md v2.0.0 (renamed from 05-webapi-configuration.md) - Convertida a estructura base mínima",
+        "NEW: guides/init-clean-architecture/webapi-implementations/fastendpoints/setup-fastendpoints.md v1.0.0",
+        "NEW: commands/init-clean-architecture.md v2.0.0 - Comando para ejecutar guías automáticamente",
+        "TEMPLATES: Movidos templates de NHibernate a templates/configure-database/",
+        "TEMPLATES: Creada estructura templates/init-clean-architecture/webapi-implementations/fastendpoints/",
+        "TEMPLATES: Agregados 5 README.md en infrastructure/ para guiar implementación",
+        "TEMPLATES: Agregados 5 README.md en webapi/ para estructura base",
+        "DOCUMENTATION: guides/init-clean-architecture/README.md v2.0.0 - Actualizado para reflejar arquitectura modular",
+        "DOCUMENTATION: guides/README.md v2.0.0 - Actualizado stack tecnológico (base + implementaciones opcionales)",
+        "DOCUMENTATION: README.md v2.0.0 - Actualizado para arquitectura modular",
+        "DOCUMENTATION: catalog.json v2.0.0 - Actualizado techStack con estructura modular"
+      ],
+      "breaking": true,
+      "improvements": [
+        "Arquitectura modular permite elegir frameworks específicos posteriormente",
+        "FastEndpoints ahora es implementación opcional (pero recomendada por defecto)",
+        "Infrastructure y WebApi tienen estructura base + implementaciones separadas",
+        "Mejor separación de responsabilidades: base agnóstica + implementaciones específicas",
+        "Facilita agregar nuevas implementaciones (Minimal APIs, MVC, Entity Framework, Dapper)"
+      ],
+      "migration": [
+        "Guía 04: Ahora solo crea estructura de carpetas con README.md",
+        "Guía 05: Ahora solo crea estructura base con endpoint /health",
+        "FastEndpoints: Ahora se configura ejecutando webapi-implementations/fastendpoints/setup-fastendpoints.md",
+        "NHibernate: Ahora se configura con comando configure-database (separado)"
+      ]
+    },
     {
       "version": "1.4.8",
       "date": "2025-01-30",

@@ -1,6 +1,6 @@
 # APSYS Backend Development Guides
 
-> **Versión:** 1.4.8 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado
+> **Versión:** 2.0.0 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado (Arquitectura Modular)
 
 ## Descripción
 
@@ -12,7 +12,7 @@ Las guías pueden seguirse manualmente o ejecutarse automáticamente mediante ag
 
 Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
 
-- **Versión actual:** 1.4.8
+- **Versión actual:** 2.0.0
 - **Compatibilidad:** .NET 9.0
 - **Documentación completa:** [VERSIONING.md](VERSIONING.md)
 - **Metadata de versión:** [guides-version.json](guides-version.json)
@@ -54,7 +54,10 @@ apsys-backend-development-guides/
 │   │   ├── 02-domain-layer.md
 │   │   ├── 03-application-layer.md
 │   │   ├── 04-infrastructure-layer.md
-│   │   ├── 05-webapi-configuration.md
+│   │   ├── 05-webapi-layer.md
+│   │   ├── webapi-implementations/           # Implementaciones específicas
+│   │   │   └── fastendpoints/
+│   │   │       └── setup-fastendpoints.md
 │   │   ├── 06-migrations-base.md                (pendiente)
 │   │   └── 07-testing-support.md                (pendiente)
 │   │
@@ -83,12 +86,12 @@ Ejecutar las guías secuenciales desde `guides/init-clean-architecture/` siguien
 **Genera:**
 - Solución .NET con gestión centralizada de paquetes
 - Capa de dominio con entidades, validaciones y repositorios de interfaces
-- Capa de aplicación con use cases, DTOs, validadores y FastEndpoints
-- Capa de infraestructura con repositorios NHibernate y sistema de filtering
-- Sistema de filtering avanzado con query string parsing y LINQ dinámico
-- API REST con FastEndpoints, Swagger, JWT Bearer, CORS y AutoMapper
+- Capa de aplicación con use cases, DTOs y validadores
+- Capa de infraestructura con estructura base agnóstica (sin ORM específico)
+- API REST con estructura base mínima + Swagger
+- Implementación opcional de FastEndpoints (JWT Bearer, CORS, AutoMapper)
 - Sistema de migraciones con FluentMigrator (pendiente)
-- Proyectos de testing con AutoFixture y Moq
+- Proyectos de testing con AutoFixture y Moq (pendiente)
 
 ---
 
@@ -150,21 +153,28 @@ Los proyectos generados siguen los principios de **Clean Architecture**:
 
 ## Stack Tecnológico
 
-### Backend Core
+### Backend Core (Base)
 - **.NET 9.0** - Framework base
 - **C# 13** - Lenguaje
-- **FastEndpoints 7.0** - Framework de API REST (alternativa ligera a MVC)
+- **Swagger/OpenAPI** - Documentación de API
+- **DotNetEnv 3.1** - Gestión de variables de entorno
 
-### Persistencia
-- **NHibernate 5.5** - ORM
+### Implementaciones Opcionales
+
+#### API & Web
+- **FastEndpoints 7.0** - Framework de API REST (default)
+- **JWT Bearer** - Autenticación (con FastEndpoints)
+- **AutoMapper 15.0** - Mapeo de objetos (con FastEndpoints)
+- **FluentValidation 12.0** - Validaciones (con FastEndpoints)
+- *Próximamente: Minimal APIs, MVC*
+
+#### Persistencia
+- **NHibernate 5.5** - ORM (disponible en configure-database)
 - **FluentMigrator 7.1** - Migraciones de BD
 - **PostgreSQL** o **SQL Server** - Base de datos
+- *Próximamente: Entity Framework, Dapper*
 
-### Validación & Mapeo
-- **FluentValidation 12.0** - Validaciones declarativas
-- **AutoMapper 15.0** - Mapeo automático de objetos
-
-### Testing
+### Testing (Pendiente)
 - **NUnit 4.2** - Framework de testing
 - **Moq 4.20** - Mocking framework
 - **AutoFixture 4.18** - Generación automática de datos de prueba
@@ -172,8 +182,7 @@ Los proyectos generados siguen los principios de **Clean Architecture**:
 
 ### Utilidades
 - **Spectre.Console 0.50** - CLI interactiva elegante
-- **DotNetEnv 3.1** - Gestión de variables de entorno
-- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico para filtering
+- **System.Linq.Dynamic.Core 1.6** - LINQ dinámico (con NHibernate)
 
 ## Flujo de Trabajo
 
@@ -250,13 +259,15 @@ Las guías también pueden seguirse manualmente:
 ### ✅ Completado
 
 - [x] Estructura de carpetas para guías
-- [x] Tool: init-clean-architecture (Milestone 4)
-  - [x] 01-estructura-base.md
-  - [x] 02-domain-layer.md
-  - [x] 03-application-layer.md
-  - [x] 04-infrastructure-layer.md
-  - [x] 05-webapi-configuration.md
-- [x] Templates de código (dominio, aplicación, infraestructura y webapi)
+- [x] Tool: init-clean-architecture (Milestone 4 - Arquitectura Modular v2.0.0)
+  - [x] 01-estructura-base.md (v1.0.1)
+  - [x] 02-domain-layer.md (v1.1.2)
+  - [x] 03-application-layer.md (v1.2.1)
+  - [x] 04-infrastructure-layer.md (v2.0.0 - base agnóstica)
+  - [x] 05-webapi-layer.md (v2.0.0 - base mínima)
+  - [x] webapi-implementations/fastendpoints/setup-fastendpoints.md (v1.0.0)
+- [x] Templates de código (dominio, aplicación, infraestructura, webapi base y webapi implementations)
+- [x] Comando init-clean-architecture.md (v2.0.0)
 - [x] Documentación de arquitectura
 - [x] Manual técnico completo
 - [x] Sistema de versionado semántico
@@ -425,5 +436,5 @@ Para preguntas, sugerencias o problemas:
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 1.4.8-milestone4
+**Versión:** 2.0.0-milestone4
 **Mantenedores:** Equipo de Desarrollo APSYS
