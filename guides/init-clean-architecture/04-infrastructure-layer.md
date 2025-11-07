@@ -1,16 +1,19 @@
 # 04 - Capa de Infraestructura (Infrastructure Layer)
 
-> **Versión:** 1.3.5 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 2.0.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
-Este documento describe cómo crear la **capa de infraestructura (Infrastructure Layer)** de un proyecto backend con Clean Architecture para APSYS. Esta capa contiene:
+Este documento describe cómo crear la **capa de infraestructura (Infrastructure Layer)** de un proyecto backend con Clean Architecture para APSYS. Esta versión crea una estructura **agnóstica de tecnología** que podrá ser implementada posteriormente con diferentes frameworks de persistencia.
 
-- **Repositorios NHibernate**: Implementaciones concretas de IRepository e IReadOnlyRepository
-- **Unit of Work**: Gestión de transacciones y coordinación de repositorios
-- **Sistema de filtrado**: Parsing y construcción de queries dinámicas desde query strings
-- **Mappers**: Configuración de ORM con ClassMapping de NHibernate
-- **Session Factory**: Configuración centralizada de NHibernate
+Esta capa contendrá:
+
+- **Repositorios**: Implementaciones concretas de IRepository e IReadOnlyRepository
+- **Persistencia**: Configuración de acceso a datos (ORM, conexiones, etc.)
+- **Servicios externos**: Clientes HTTP, APIs externas, servicios de email, etc.
+- **Configuración**: Setup de infraestructura y servicios
+
+> **Nota:** Esta guía crea solo la estructura base. Para implementaciones específicas (NHibernate, Entity Framework, etc.), consulta las guías en `guides/stack-implementations/`.
 
 ## Dependencias
 
@@ -25,123 +28,58 @@ Antes de ejecutar los comandos, verifica:
 1. ✅ SDK de .NET 9.0 instalado: `dotnet --version`
 2. ✅ Proyecto Domain existe: verificar `src/{ProjectName}.domain/`
 3. ✅ Archivo `{ProjectName}.sln` existe en la raíz
-4. ✅ Proyectos de testing auxiliares existen (se crearán si no existen)
 
 ## Pasos de Construcción
 
-### Paso 1: Crear proyectos auxiliares de testing (si no existen)
-
-Infrastructure depende de proyectos auxiliares de testing. Si aún no existen, créalos:
-
-**Crear proyecto ndbunit:**
-```bash
-mkdir tests/{ProjectName}.ndbunit
-dotnet new classlib -n {ProjectName}.ndbunit -o tests/{ProjectName}.ndbunit
-dotnet sln add tests/{ProjectName}.ndbunit/{ProjectName}.ndbunit.csproj
-rm tests/{ProjectName}.ndbunit/Class1.cs
-```
-
-**Crear proyecto common.tests:**
-```bash
-mkdir tests/{ProjectName}.common.tests
-dotnet new classlib -n {ProjectName}.common.tests -o tests/{ProjectName}.common.tests
-dotnet sln add tests/{ProjectName}.common.tests/{ProjectName}.common.tests.csproj
-rm tests/{ProjectName}.common.tests/Class1.cs
-```
-
-> **Nota:** Estos proyectos contienen utilidades compartidas para tests. Se documentarán en detalle en guías futuras.
-
-### Paso 2: Crear proyecto classlib para infrastructure
+### Paso 1: Crear proyecto classlib para infrastructure
 
 ```bash
-mkdir src/{ProjectName}.infrastructure
 dotnet new classlib -n {ProjectName}.infrastructure -o src/{ProjectName}.infrastructure
 dotnet sln add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj
 ```
 
-### Paso 3: Eliminar archivo Class1.cs autogenerado
+### Paso 2: Eliminar archivo Class1.cs autogenerado
 
 ```bash
 rm src/{ProjectName}.infrastructure/Class1.cs
 ```
 
-### Paso 4: Instalar paquetes NuGet en infrastructure
-
-```bash
-dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package FluentValidation
-dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package NHibernate
-dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package System.Linq.Dynamic.Core
-```
-
-> - **FluentValidation**: Para validar entidades antes de persistirlas
-> - **NHibernate**: ORM para mapeo objeto-relacional
-> - **System.Linq.Dynamic.Core**: Para queries dinámicas desde strings
->
-> **Nota:** No es necesario instalar `Microsoft.AspNetCore.WebUtilities`. Los templates usan `System.Net.WebUtility` que viene incluido en .NET 9.0.
-
-### Paso 5: Agregar referencias de proyectos
+### Paso 3: Agregar referencia a Domain
 
 ```bash
 dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
-dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj reference tests/{ProjectName}.ndbunit/{ProjectName}.ndbunit.csproj
-dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj reference tests/{ProjectName}.common.tests/{ProjectName}.common.tests.csproj
 ```
 
-> Infrastructure implementa las interfaces de Domain y puede usar utilidades de testing para datos de prueba.
+> Infrastructure implementa las interfaces definidas en Domain.
 
-### Paso 6: Crear estructura de carpetas de infrastructure
+### Paso 4: Copiar templates de estructura base
 
-```bash
-mkdir src/{ProjectName}.infrastructure/nhibernate
-mkdir src/{ProjectName}.infrastructure/nhibernate/filtering
-mkdir src/{ProjectName}.infrastructure/nhibernate/mappers
-mkdir src/{ProjectName}.infrastructure/nhibernate/repositories
-```
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/infrastructure/README.md` → `src/{ProjectName}.infrastructure/README.md`
 
-### Paso 7: Copiar templates del sistema de filtrado
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/infrastructure/repositories/README.md` → `src/{ProjectName}.infrastructure/repositories/README.md`
 
-📁 COPIAR DIRECTORIO COMPLETO: `templates/infrastructure/nhibernate/filtering/` → `src/{ProjectName}.infrastructure/nhibernate/filtering/`
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/infrastructure/persistence/README.md` → `src/{ProjectName}.infrastructure/persistence/README.md`
+
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/infrastructure/services/README.md` → `src/{ProjectName}.infrastructure/services/README.md`
+
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/infrastructure/configuration/README.md` → `src/{ProjectName}.infrastructure/configuration/README.md`
 
 > El servidor MCP debe:
-> 1. Descargar todos los archivos desde `templates/infrastructure/nhibernate/filtering/` en GitHub
-> 2. Copiarlos a `src/{ProjectName}.infrastructure/nhibernate/filtering/` respetando estructura
+> 1. Descargar cada archivo desde `templates/init-clean-architecture/infrastructure/` en GitHub
+> 2. Copiar a las rutas de destino indicadas (creando carpetas si no existen)
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
+>
+> **Archivos copiados (5 README.md):**
+> - Cada README explica el propósito de la carpeta y qué tipo de archivos debe contener
 
-**Archivos del sistema de filtrado (8 archivos):**
-- `FilterExpressionParser.cs` - Construye expresiones LINQ desde filtros
-- `FilterOperator.cs` - Modelo de operador de filtro
-- `InvalidQueryStringArgumentException.cs` - Excepción para query strings inválidos
-- `QueryStringParser.cs` - Parser principal de query strings
-- `QuickSearch.cs` - Modelo para búsqueda rápida
-- `RelationalOperator.cs` - Enum de operadores relacionales (Equals, Contains, GreaterThan, etc.)
-- `Sorting.cs` - Modelo de ordenamiento
-- `StringExtender.cs` - Extensiones de string para pascalCase/camelCase
-
-### Paso 8: Copiar templates de repositorios base
-
-📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/NHReadOnlyRepository.cs` → `src/{ProjectName}.infrastructure/nhibernate/NHReadOnlyRepository.cs`
-
-📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/NHRepository.cs` → `src/{ProjectName}.infrastructure/nhibernate/NHRepository.cs`
-
-📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/NHUnitOfWork.cs` → `src/{ProjectName}.infrastructure/nhibernate/NHUnitOfWork.cs`
-
-📄 COPIAR TEMPLATE: `templates/infrastructure/nhibernate/SortingCriteriaExtender.cs` → `src/{ProjectName}.infrastructure/nhibernate/SortingCriteriaExtender.cs`
-
-> **Archivos core de NHibernate (4 archivos):**
-> - `NHReadOnlyRepository.cs` - Repositorio base de solo lectura con GetManyAndCount
-> - `NHRepository.cs` - Repositorio base CRUD con validación FluentValidation
-> - `NHUnitOfWork.cs` - Unit of Work (template vacío - requiere configuración)
-> - `SortingCriteriaExtender.cs` - Extensiones para convertir SortingCriteria a expresiones
-
-### Paso 9: Crear proyecto de tests para infrastructure
+### Paso 5: Crear proyecto de tests para infrastructure
 
 ```bash
-mkdir tests/{ProjectName}.infrastructure.tests
 dotnet new nunit -n {ProjectName}.infrastructure.tests -o tests/{ProjectName}.infrastructure.tests
 dotnet sln add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj
 ```
 
-### Paso 10: Remover versiones de paquetes en .csproj de tests
+### Paso 6: Remover versiones de paquetes en .csproj de tests
 
 **⚠️ IMPORTANTE:** Editar `tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj` y eliminar atributos `Version`:
 
@@ -153,256 +91,133 @@ dotnet sln add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastruc
 <PackageReference Include="NUnit" />
 ```
 
-### Paso 11: Instalar paquetes NuGet adicionales en tests
+### Paso 7: Instalar paquetes NuGet básicos en tests
 
 ```bash
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package AutoFixture.AutoMoq
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package FluentAssertions
-dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package Castle.Core
-dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package NHibernate
 ```
 
-> Se agrega NHibernate para poder hacer tests de integración con bases de datos.
+> Paquetes básicos para testing unitario. Se agregarán más según la tecnología elegida.
 
-### Paso 12: Agregar referencias en tests
+### Paso 8: Agregar referencias en tests
 
 ```bash
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj reference src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj
-dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj reference tests/{ProjectName}.ndbunit/{ProjectName}.ndbunit.csproj
-dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj reference tests/{ProjectName}.common.tests/{ProjectName}.common.tests.csproj
 ```
 
-### Paso 13: Crear estructura de carpetas de tests
-
-```bash
-mkdir tests/{ProjectName}.infrastructure.tests/nhibernate
-mkdir tests/{ProjectName}.infrastructure.tests/nhibernate/repositories
-```
-
-### Paso 14: Eliminar archivo de test autogenerado
+### Paso 9: Eliminar archivo de test autogenerado
 
 ```bash
 rm tests/{ProjectName}.infrastructure.tests/UnitTest1.cs
 ```
 
-## Referencia de Templates
+## Estructura Resultante
 
-### Sistema de Filtrado (filtering/)
-
-| Archivo | Propósito |
-|---------|-----------|
-| **FilterExpressionParser.cs** | Parser que convierte FilterOperators en expresiones LINQ para consultas dinámicas. Soporta operadores relacionales (Contains, GreaterThan, Between, etc.) |
-| **FilterOperator.cs** | Modelo que representa un operador de filtro con nombre de campo, valores y tipo de operador relacional |
-| **InvalidQueryStringArgumentException.cs** | Excepción lanzada cuando un query string contiene argumentos inválidos o mal formados |
-| **QueryStringParser.cs** | Parser principal que extrae paginación (pageNumber, pageSize), ordenamiento (sortBy, sortDirection) y filtros desde query strings HTTP. **Usa `System.Net.WebUtility` para decodificación de URLs (compatible con .NET 9.0)** |
-| **QuickSearch.cs** | Modelo para búsqueda rápida multi-columna con query general |
-| **RelationalOperator.cs** | Enum de operadores relacionales: Equals, Contains, GreaterThan, LessThan, GreaterThanOrEqual, LessThanOrEqual, Between |
-| **Sorting.cs** | Modelo simple con propiedades By (campo) y Direction (asc/desc) |
-| **StringExtender.cs** | Extensiones para convertir strings entre camelCase, PascalCase y otras transformaciones útiles para parsear properties |
-
-### Repositorios Base NHibernate
-
-| Archivo | Propósito |
-|---------|-----------|
-| **NHReadOnlyRepository.cs** | Implementación de IReadOnlyRepository con NHibernate. Incluye Get(), Count(), GetManyAndCount() con soporte completo para filtrado y paginación usando el sistema de filtering |
-| **NHRepository.cs** | Implementación de IRepository que extiende NHReadOnlyRepository. Agrega Add(), Save(), Delete() con validación automática usando FluentValidation antes de persistir |
-| **NHUnitOfWork.cs** | Template de Unit of Work con gestión de transacciones. **Requiere configuración manual** para agregar propiedades de repositorios específicos del proyecto |
-| **SortingCriteriaExtender.cs** | Extensión que convierte SortingCriteria del domain en expresiones string para System.Linq.Dynamic.Core ("PropertyName" o "PropertyName descending") |
-
-## Implementación de Repositorios Específicos
-
-Los templates proporcionan clases BASE genéricas. Cada proyecto debe crear repositorios ESPECÍFICOS para sus entidades.
-
-### Ejemplo: Repositorio de Usuario
-
-**Crear archivo:** `src/{ProjectName}.infrastructure/nhibernate/repositories/NHUserRepository.cs`
-
-```csharp
-using {ProjectName}.domain.entities;
-using {ProjectName}.domain.interfaces.repositories;
-using NHibernate;
-
-namespace {ProjectName}.infrastructure.nhibernate.repositories;
-
-/// <summary>
-/// NHibernate implementation of the user repository
-/// </summary>
-public class NHUserRepository : NHRepository<User, int>, IUserRepository
-{
-    public NHUserRepository(ISession session, IServiceProvider serviceProvider)
-        : base(session, serviceProvider)
-    {
-    }
-
-    // Métodos específicos de IUserRepository si los hay
-    // Por ejemplo: GetUserByEmail, etc.
-}
+```
+src/{ProjectName}.infrastructure/
+├── README.md                          # Propósito general de la capa
+├── repositories/
+│   └── README.md                      # Guía para implementar repositorios
+├── persistence/
+│   └── README.md                      # Guía para configurar ORM/DB
+├── services/
+│   └── README.md                      # Guía para servicios externos
+└── configuration/
+    └── README.md                      # Guía para DI y setup
 ```
 
-### Ejemplo: Repositorio de Solo Lectura
+## Propósito de Cada Carpeta
 
-**Crear archivo:** `src/{ProjectName}.infrastructure/nhibernate/repositories/NHUserDaoRepository.cs`
+### repositories/
 
-```csharp
-using {ProjectName}.domain.daos;
-using {ProjectName}.domain.interfaces.repositories;
-using NHibernate;
+Contiene implementaciones concretas de las interfaces de repositorio definidas en Domain.
 
-namespace {ProjectName}.infrastructure.nhibernate.repositories;
+**Ejemplos futuros:**
+- `NHUserRepository.cs` (si usas NHibernate)
+- `EFUserRepository.cs` (si usas Entity Framework)
+- `DapperUserRepository.cs` (si usas Dapper)
 
-/// <summary>
-/// Read-only repository for User DAOs
-/// </summary>
-public class NHUserDaoRepository : NHReadOnlyRepository<UserDao, int>, IUserDaoRepository
-{
-    public NHUserDaoRepository(ISession session)
-        : base(session)
-    {
-    }
-}
-```
+### persistence/
 
-> **Nota:** Los repositorios de solo lectura (DAOs) NO requieren ServiceProvider porque no validan.
+Configuración de acceso a datos y persistencia.
 
-### Configurar NHUnitOfWork
+**Ejemplos futuros:**
+- `SessionFactory.cs` (NHibernate)
+- `DbContext.cs` (Entity Framework)
+- `ConnectionFactory.cs` (Dapper)
+- Mappers/Configuraciones de entidades
 
-Editar `src/{ProjectName}.infrastructure/nhibernate/NHUnitOfWork.cs` y agregar propiedades de repositorios:
+### services/
 
-```csharp
-#region crud Repositories
-public IUserRepository Users => new NHUserRepository(_session, _serviceProvider);
-public IRoleRepository Roles => new NHRoleRepository(_session, _serviceProvider);
-#endregion
+Implementaciones de servicios externos e integraciones.
 
-#region read-only Repositories
-public IUserDaoRepository UserDaos => new NHUserDaoRepository(_session);
-public IRoleDaoRepository RoleDaos => new NHRoleDaoRepository(_session);
-#endregion
-```
+**Ejemplos:**
+- Clientes HTTP para APIs externas
+- Servicios de email (SMTP)
+- Servicios de almacenamiento (S3, Azure Blob)
+- Servicios de notificaciones
 
-## Mappers de NHibernate
+### configuration/
 
-Cada entidad de dominio necesita un mapper para configurar el mapeo ORM.
+Configuración de Dependency Injection y setup de infraestructura.
 
-### Ejemplo: Mapper de Usuario
-
-**Crear archivo:** `src/{ProjectName}.infrastructure/nhibernate/mappers/UserMapper.cs`
-
-```csharp
-using {ProjectName}.domain.entities;
-using NHibernate.Mapping.ByCode;
-using NHibernate.Mapping.ByCode.Conformist;
-
-namespace {ProjectName}.infrastructure.nhibernate.mappers;
-
-/// <summary>
-/// NHibernate mapping for User entity
-/// </summary>
-public class UserMapper : ClassMapping<User>
-{
-    public UserMapper()
-    {
-        Table("users");
-        Schema("public");
-
-        Id(x => x.Id, m =>
-        {
-            m.Column("id");
-            m.Generator(Generators.Identity);
-        });
-
-        Property(x => x.Name, m =>
-        {
-            m.Column("name");
-            m.NotNullable(true);
-            m.Length(100);
-        });
-
-        Property(x => x.Email, m =>
-        {
-            m.Column("email");
-            m.NotNullable(true);
-            m.Length(255);
-            m.Unique(true);
-        });
-
-        Property(x => x.CreationDate, m =>
-        {
-            m.Column("creation_date");
-            m.NotNullable(true);
-        });
-    }
-}
-```
-
-> Los mappers se autodescubren si están en el mismo assembly que NHibernate Configuration.
+**Ejemplos futuros:**
+- `InfrastructureServiceCollectionExtensions.cs`
+- Configuración de Connection Strings
+- Registro de repositorios y servicios
 
 ## Principios de la Capa de Infraestructura
 
 ### 1. Implementa Interfaces de Domain
 
-Infrastructure implementa las interfaces definidas en Domain:
+Infrastructure **NO debe exponer** detalles de implementación a otras capas.
 
 ```csharp
 // ✅ CORRECTO
-public class NHUserRepository : NHRepository<User, int>, IUserRepository
+// Domain define la interfaz
+public interface IUserRepository : IRepository<User, int>
 {
-    // Implementa IUserRepository del domain
+    Task<User?> GetByEmailAsync(string email);
+}
+
+// Infrastructure la implementa (con la tecnología elegida)
+public class UserRepository : IUserRepository
+{
+    // Implementación específica (NHibernate, EF, Dapper, etc.)
 }
 ```
 
-### 2. Validación Automática
+### 2. Independencia de Framework
 
-Los repositorios CRUD validan automáticamente con FluentValidation:
+El código de negocio (Domain y Application) **NO debe conocer** qué ORM o tecnología usa Infrastructure.
 
 ```csharp
-public T Add(T item)
+// ❌ INCORRECTO en Application
+var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+// ✅ CORRECTO en Application
+var user = await _userRepository.GetByEmailAsync(email);
+```
+
+### 3. Configuración Separada
+
+La configuración de infraestructura debe estar aislada y ser reemplazable.
+
+```csharp
+// ✅ CORRECTO
+public static class InfrastructureServiceCollectionExtensions
 {
-    var validationResult = this.validator.Validate(item);
-    if (!validationResult.IsValid)
-        throw new InvalidDomainException(validationResult.Errors);
-
-    this._session.Save(item);
-    this.FlushWhenNotActiveTransaction();
-    return item;
-}
-```
-
-### 3. Sistema de Filtrado Dinámico
-
-El sistema de filtering permite construir queries complejas desde query strings HTTP:
-
-```
-GET /api/users?pageNumber=1&pageSize=25&sortBy=Name&sortDirection=asc&Email__contains=john&Age__gte=18
-```
-
-Se convierte en:
-```csharp
-var result = repository.GetManyAndCount(queryString, "Name");
-// Filtra: Email.Contains("john") AND Age >= 18
-// Ordena: Name ascending
-// Pagina: página 1, 25 items
-```
-
-### 4. Gestión de Transacciones
-
-NHUnitOfWork coordina transacciones:
-
-```csharp
-using (var uow = new NHUnitOfWork(session, serviceProvider))
-{
-    uow.BeginTransaction();
-    try
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        uow.Users.Add(newUser);
-        uow.Roles.Add(newRole);
-        uow.Commit();
-    }
-    catch
-    {
-        uow.Rollback();
-        throw;
+        // Registrar repositorios
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        // Configurar persistencia
+        services.AddDbContext<AppDbContext>();
+
+        return services;
     }
 }
 ```
@@ -424,13 +239,11 @@ ls -R src/{ProjectName}.infrastructure
 ```
 
 Deberías ver:
-- `nhibernate/filtering/` con 8 archivos del sistema de filtrado
-- `nhibernate/NHReadOnlyRepository.cs`
-- `nhibernate/NHRepository.cs`
-- `nhibernate/NHUnitOfWork.cs`
-- `nhibernate/SortingCriteriaExtender.cs`
-- `nhibernate/mappers/` (vacío - se crean por proyecto)
-- `nhibernate/repositories/` (vacío - se crean por proyecto)
+- `README.md` en raíz
+- `repositories/README.md`
+- `persistence/README.md`
+- `services/README.md`
+- `configuration/README.md`
 
 ### 3. Verificar referencias del proyecto
 
@@ -440,132 +253,88 @@ dotnet list src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj
 
 Debería mostrar:
 - `src/{ProjectName}.domain/{ProjectName}.domain.csproj`
-- `tests/{ProjectName}.ndbunit/{ProjectName}.ndbunit.csproj`
-- `tests/{ProjectName}.common.tests/{ProjectName}.common.tests.csproj`
 
-### 4. Verificar paquetes instalados
+### 4. Verificar que compila sin errores
 
 ```bash
-dotnet list src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj package
+dotnet build src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj
 ```
 
-Debería incluir:
-- `FluentValidation`
-- `NHibernate`
-- `System.Linq.Dynamic.Core`
+> Debería compilar sin warnings ni errores.
 
 ## Próximos Pasos
 
-Una vez completada la capa de infraestructura:
+Una vez completada la estructura base de infraestructura:
 
-1. **WebApi Layer** - Configurar FastEndpoints, DI, SessionFactory de NHibernate
-2. **Migrations** - Crear esquema de base de datos con FluentMigrator
-3. **Testing Support** - Configurar proyectos de testing auxiliares completamente
+1. ✅ **Continuar con WebApi Layer** - [05-webapi-configuration.md](05-webapi-configuration.md)
+2. ⏭️ **Implementar tecnología específica** - Ver guías en `guides/stack-implementations/`:
+   - NHibernate + PostgreSQL
+   - Entity Framework + SQL Server
+   - Dapper + MySQL
+   - MongoDB
 
 ## Notas Importantes
 
-### Repositorios Específicos vs Genéricos
+### Esta es una Estructura Base
 
-- **NHRepository/NHReadOnlyRepository**: Clases BASE genéricas (templates)
-- **NHUserRepository/NHRoleRepository**: Implementaciones ESPECÍFICAS (creadas por proyecto)
+Esta guía crea **solo la estructura de carpetas** con README.md explicativos. No instala paquetes NuGet ni copia templates específicos de tecnología.
 
-### El Sistema de Filtrado es Reutilizable
+**Ventajas:**
+- ✅ Proyecto compila sin dependencias pesadas
+- ✅ Estructura visible para entender organización
+- ✅ Flexibilidad para elegir stack después
+- ✅ README.md en cada carpeta como documentación
 
-El sistema de filtrado en `filtering/` es 100% genérico y reutilizable entre proyectos. No requiere modificación.
+### Implementaciones Específicas
 
-### Mappers son Específicos
+Para agregar una implementación específica (NHibernate, EF, etc.), consulta las guías en:
 
-Cada proyecto define sus propios mappers según su modelo de base de datos. NO hay templates de mappers.
+```
+guides/stack-implementations/
+├── nhibernate-postgresql/
+│   ├── 01-setup-nhibernate.md
+│   └── 02-configure-postgresql.md
+└── entityframework-sqlserver/
+    ├── 01-setup-ef-core.md
+    └── 02-configure-sqlserver.md
+```
 
-### NHUnitOfWork Requiere Configuración
+### Sin Proyectos Auxiliares de Testing
 
-El template de NHUnitOfWork viene VACÍO en las secciones de repositorios. Debes agregar manualmente las propiedades para tus repositorios específicos.
+Esta versión **NO crea** proyectos como `{ProjectName}.ndbunit` o `{ProjectName}.common.tests`. Estos son específicos de NHibernate y se crearán en las guías de implementación específica.
 
 ## Historial de Versiones
 
-### v1.3.4 (2025-01-30)
+### v2.0.0 (2025-01-30)
 
-**Eliminación de template:**
-- ✅ **QueryOperations.cs**: Eliminado completamente del sistema de templates
-- ✅ **Guía actualizada**: Removidas todas las referencias a QueryOperations.cs
-- ✅ **Sistema de filtrado**: Ahora contiene 8 archivos en lugar de 9
-
-**Rationale:**
-- Un archivo vacío/placeholder no aporta valor real al template
-- Genera confusión innecesaria para los desarrolladores
-- Si un proyecto necesita operaciones de query personalizadas, puede crear su propia clase según necesidad
-- Principio YAGNI (You Aren't Gonna Need It): no agregar código hasta que sea necesario
-
-**Impacto:**
-- Template más limpio y enfocado
-- Reduce "ruido" en el sistema de archivos
-- Los proyectos solo crean lo que realmente necesitan
-- Sistema de filtrado sigue siendo completamente funcional con los 8 archivos restantes
-
-### v1.3.3 (2025-01-30)
-
-**Refactorización:**
-- ✅ **QueryOperations.cs**: Removido método `AddOrganizationIdToQuery` (demasiado específico para un template genérico)
-- ✅ **QueryOperations.cs**: Ahora es una clase de utilidad vacía para implementaciones específicas de cada proyecto
-- ✅ **QueryOperations.cs**: Agregada documentación completa con ejemplos de uso
+**Reestructuración mayor:**
+- ✅ **Versión agnóstica**: Ya NO instala paquetes NuGet específicos (NHibernate, FluentValidation, etc.)
+- ✅ **Solo estructura**: Crea carpetas + README.md explicativos
+- ✅ **Sin templates específicos**: No copia código de NHibernate
+- ✅ **Sin proyectos auxiliares**: No crea ndbunit ni common.tests (específicos de NHibernate)
+- ✅ **Documentación clara**: Cada carpeta tiene README explicando su propósito
 
 **Rationale:**
-- El método `AddOrganizationIdToQuery` era demasiado específico para un template reutilizable
-- Cada proyecto tiene diferentes necesidades de filtrado y operaciones de query
-- La clase ahora sirve como placeholder documentado que los desarrolladores pueden extender según sus necesidades
+- Clean Architecture promueve independencia de frameworks
+- Permite elegir tecnología (NHibernate, EF, Dapper) después
+- Estructura más limpia y enfocada
+- Guías específicas de stack separadas en `guides/stack-implementations/`
 
-**Impacto:**
-- Template más genérico y reutilizable
-- Los desarrolladores tienen claridad de dónde agregar operaciones personalizadas
-- No afecta la funcionalidad del sistema de filtrado existente (QueryStringParser, FilterExpressionParser, etc.)
+**Breaking changes:**
+- Ya NO crea estructura específica de NHibernate (`nhibernate/filtering/`, etc.)
+- Ya NO instala FluentValidation, NHibernate, System.Linq.Dynamic.Core
+- Para usar NHibernate, consultar guía en `guides/stack-implementations/nhibernate-postgresql/`
 
-### v1.3.2 (2025-01-30)
+### v1.3.5 (2025-01-30)
 
-**Correcciones:**
-- ✅ **QueryOperations.cs**: Eliminado `using Microsoft.AspNetCore.WebUtilities` (incompatible con .NET 9.0)
-- ✅ **QueryOperations.cs**: Implementados métodos helper nativos `ParseQueryString()` y `BuildQueryString()`
-- ✅ **QueryOperations.cs**: Usa `WebUtility.UrlEncode/UrlDecode` (nativos en .NET 9.0)
-- ✅ **QueryOperations.cs**: Corregido bug en línea 27: `queryDict["user"]` → `queryDict["OrganizationId"]`
-
-**Impacto:**
-- Todo el sistema de filtrado ahora usa únicamente APIs nativas de .NET 9.0
-- No requiere ningún paquete NuGet adicional para query string parsing
-- Los proyectos compilan sin errores en .NET 9.0
-
-**Detalles técnicos:**
-- `ParseQueryString()`: Parsea query strings manualmente con `Split()` y `WebUtility.UrlDecode()`
-- `BuildQueryString()`: Construye query strings con `StringBuilder` y `WebUtility.UrlEncode()`
-- Ambos métodos manejan casos edge: strings vacíos, '?' inicial, pares sin valor
-
-### v1.3.1 (2025-01-30)
-
-**Correcciones:**
-- ✅ **QueryStringParser.cs**: Eliminado `using System.Web` (incompatible con .NET 9.0)
-- ✅ **QueryStringParser.cs**: Cambiado a `using System.Net` y uso de `WebUtility.UrlDecode()` (nativo en .NET 9.0)
-- ✅ **QueryStringParser.cs**: Simplificado método de búsqueda rápida, eliminando dependencia de `.RemoveAccents()`
-- ✅ **Paso 4**: Eliminado paquete `Microsoft.AspNetCore.WebUtilities` (no es necesario)
-
-**Impacto:**
-- Los proyectos ahora compilan correctamente en .NET 9.0 sin dependencias adicionales
-- El sistema de filtrado funciona sin requerir métodos de extensión externos
-- Búsquedas rápidas usan `ToLowerInvariant()` en lugar de normalización de acentos
-
-**Compatibilidad:**
-- ✅ Compatible hacia atrás: Los proyectos existentes seguirán funcionando
-- ⚠️ **Cambio de comportamiento**: Las búsquedas rápidas ya NO normalizan acentos automáticamente
-  - Antes: "Martínez" encontraría "Martinez" y viceversa
-  - Ahora: Búsqueda exacta case-insensitive solamente
-  - **Recomendación**: Si necesitas búsqueda con normalización de acentos, agregar método personalizado en capa de Application
-
-### v1.3.0 (2025-01-30)
-
-**Release inicial:**
-- ✅ Guía completa de Infrastructure Layer
-- ✅ 13 templates de NHibernate (repositorios + sistema de filtrado)
-- ✅ Documentación de Unit of Work, mappers y repositories específicos
+**Versión anterior con NHibernate:**
+- Instalaba NHibernate, FluentValidation, System.Linq.Dynamic.Core
+- Copiaba 12 templates de NHibernate (repositorios + sistema de filtrado)
+- Creaba proyectos auxiliares (ndbunit, common.tests)
+- **Esta versión fue movida a:** `guides/stack-implementations/nhibernate-postgresql/01-setup-nhibernate.md`
 
 ---
 
 > **Guía:** 04-infrastructure-layer.md
 > **Milestone:** 3 - Infrastructure Layer
-> **Siguiente:** 05-webapi-configuration.md
+> **Siguiente:** [05-webapi-configuration.md](05-webapi-configuration.md)

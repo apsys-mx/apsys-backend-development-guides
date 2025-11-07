@@ -1,53 +1,36 @@
-using FastEndpoints;
-using FastEndpoints.Swagger;
-using {ProjectName}.application.usecases;  // TODO: Update with actual use case namespace
-using {ProjectName}.webapi.infrastructure;
+using DotNetEnv;
 
-// Load environment variables from .env file
-// This is necessary to ensure that the connection string and other settings are available
-DotNetEnv.Env.Load();
-
-IConfiguration configuration;
+// Cargar variables de entorno desde .env
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
-configuration = builder.Configuration;
-var environment = builder.Environment;
 
-// Configure dependency injection container
-builder.Services
-    .AddSwaggerGen()
-    .AddEndpointsApiExplorer()
-    .ConfigurePolicy()
-    .ConfigureCors(configuration)
-    .ConfigureIdentityServerClient(configuration)
-    .ConfigureUnitOfWork(configuration)
-    .ConfigureAutoMapper()
-    .ConfigureValidators()
-    .ConfigureDependencyInjections(environment)
-    .AddLogging()
-    .AddAuthorization()
-    .AddFastEndpoints()
-    .SwaggerDocument();
+// Configuración básica para Swagger (útil para todos los frameworks)
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.MapGet("/", () => Results.Redirect("/swagger"));
 
-app.UseCors("CorsPolicy")
-    .UseHttpsRedirection()
-    .UseRouting()
-    .UseAuthentication()
-    .UseAuthorization()
-    .UseFastEndpoints()
-    .UseSwagger()
-    .UseSwaggerUI(opt =>
+// Middleware pipeline básico
+if (app.Environment.IsDevelopment())
 {
-    opt.DefaultModelsExpandDepth(-1); // Hide schemas by default
-    opt.DisplayRequestDuration();
-    opt.EnableTryItOutByDefault();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-// Automatically register all Commands and Handlers from the application assembly
-// TODO: Update with actual use case type from your application layer
-// app.Services.RegisterCommandsFromAssembly(typeof(YourUseCaseClass).Assembly);
+app.UseHttpsRedirection();
 
-await app.RunAsync();
+// Endpoint de health check (común para todos los frameworks)
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}))
+.WithName("HealthCheck")
+.WithOpenApi();
+
+app.Run();
+
+// Hacer Program accesible para tests de integración
+public partial class Program { }

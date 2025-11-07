@@ -137,10 +137,10 @@ rm tests/{ProjectName}.application.tests/UnitTest1.cs
 
 ### Paso 12: Copiar archivos de tests desde templates
 
-📁 COPIAR DIRECTORIO COMPLETO: `templates/application.tests/` → `tests/{ProjectName}.application.tests/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/init-clean-architecture/application.tests/` → `tests/{ProjectName}.application.tests/`
 
 > El servidor MCP debe:
-> 1. Descargar todos los archivos desde `templates/application.tests/` en el repositorio de GitHub
+> 1. Descargar todos los archivos desde `templates/init-clean-architecture/application.tests/` en el repositorio de GitHub
 > 2. Copiarlos a `tests/{ProjectName}.application.tests/` respetando la estructura de carpetas
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
 

@@ -155,10 +155,10 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 
 ### Paso 10: Copiar archivos de código desde templates
 
-📁 COPIAR DIRECTORIO COMPLETO: `templates/domain/` → `src/{ProjectName}.domain/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/init-clean-architecture/domain/` → `src/{ProjectName}.domain/`
 
 > El servidor MCP debe:
-> 1. Descargar todos los archivos desde `templates/domain/` en el repositorio de GitHub
+> 1. Descargar todos los archivos desde `templates/init-clean-architecture/domain/` en el repositorio de GitHub
 > 2. Copiarlos a `src/{ProjectName}.domain/` respetando la estructura de carpetas
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
 
@@ -175,10 +175,10 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 
 ### Paso 11: Copiar archivos de tests desde templates
 
-📁 COPIAR DIRECTORIO COMPLETO: `templates/domain.tests/` → `tests/{ProjectName}.domain.tests/`
+📁 COPIAR DIRECTORIO COMPLETO: `templates/init-clean-architecture/domain.tests/` → `tests/{ProjectName}.domain.tests/`
 
 > El servidor MCP debe:
-> 1. Descargar todos los archivos desde `templates/domain.tests/` en el repositorio de GitHub
+> 1. Descargar todos los archivos desde `templates/init-clean-architecture/domain.tests/` en el repositorio de GitHub
 > 2. Copiarlos a `tests/{ProjectName}.domain.tests/` respetando la estructura de carpetas
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
 
@@ -187,8 +187,8 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 
 ## Referencia de Templates
 
-> Los templates están en el directorio `templates/` del repositorio de GitHub.
-> Para ver el código completo de cada archivo, consulta directamente los archivos en `templates/domain/` y `templates/domain.tests/`.
+> Los templates están en el directorio `templates/init-clean-architecture/` del repositorio de GitHub.
+> Para ver el código completo de cada archivo, consulta directamente los archivos en `templates/init-clean-architecture/domain/` y `templates/init-clean-architecture/domain.tests/`.
 
 ### Archivos del Domain
 
