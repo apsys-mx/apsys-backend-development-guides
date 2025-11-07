@@ -36,7 +36,7 @@ public class HelloEndpoint : EndpointWithoutRequest
         LogConfigValue("IdentityServerConfiguration:Address");
         LogConfigValue("IdentityServerConfiguration:Audience");
 
-        await SendOkAsync(helloWorld, cancellation: ct);
+        await Send.OkAsync(helloWorld, cancellation: ct);
     }
 
     private void LogConfigValue(string configKey)

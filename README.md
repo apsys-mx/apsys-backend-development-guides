@@ -1,6 +1,6 @@
 # APSYS Backend Development Guides
 
-> **Versión:** 2.0.0 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado (Arquitectura Modular)
+> **Versión:** 2.0.1 | **Release:** 2025-01-30 | **Estado:** Milestone 4 Completado (Arquitectura Modular)
 
 ## Descripción
 
@@ -12,7 +12,7 @@ Las guías pueden seguirse manualmente o ejecutarse automáticamente mediante ag
 
 Este repositorio usa **versionado semántico** (MAJOR.MINOR.PATCH):
 
-- **Versión actual:** 2.0.0
+- **Versión actual:** 2.0.1
 - **Compatibilidad:** .NET 9.0
 - **Documentación completa:** [VERSIONING.md](VERSIONING.md)
 - **Metadata de versión:** [guides-version.json](guides-version.json)
@@ -265,9 +265,9 @@ Las guías también pueden seguirse manualmente:
   - [x] 03-application-layer.md (v1.2.1)
   - [x] 04-infrastructure-layer.md (v2.0.0 - base agnóstica)
   - [x] 05-webapi-layer.md (v2.0.0 - base mínima)
-  - [x] webapi-implementations/fastendpoints/setup-fastendpoints.md (v1.0.0)
+  - [x] webapi-implementations/fastendpoints/setup-fastendpoints.md (v1.1.0)
 - [x] Templates de código (dominio, aplicación, infraestructura, webapi base y webapi implementations)
-- [x] Comando init-clean-architecture.md (v2.0.0)
+- [x] Comando init-clean-architecture.md (v2.0.1)
 - [x] Documentación de arquitectura
 - [x] Manual técnico completo
 - [x] Sistema de versionado semántico
@@ -436,5 +436,5 @@ Para preguntas, sugerencias o problemas:
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 2.0.0-milestone4
+**Versión:** 2.0.1-milestone4
 **Mantenedores:** Equipo de Desarrollo APSYS

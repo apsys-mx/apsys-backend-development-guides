@@ -24,7 +24,7 @@ public abstract class BaseEndpoint<TRequest, TResponse> : Endpoint<TRequest, TRe
     {
         this.Logger.LogWarning(message);
         AddError(property, message);
-        await SendErrorsAsync(statusCode: (int)status, cancellation: ct);
+        await Send.ErrorsAsync(statusCode: (int)status, cancellation: ct);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public abstract class BaseEndpoint<TRequest, TResponse> : Endpoint<TRequest, TRe
             this.Logger.LogError(UnexpectedErrorMessage);
 
         AddError(UnexpectedErrorMessage);
-        await SendErrorsAsync(statusCode: (int)status, cancellation: ct);
+        await Send.ErrorsAsync(statusCode: (int)status, cancellation: ct);
     }
 
     /// <summary>
@@ -71,6 +71,6 @@ public abstract class BaseEndpoint<TRequest, TResponse> : Endpoint<TRequest, TRe
             this.Logger.LogError(UnexpectedErrorMessage);
 
         AddError(UnexpectedErrorMessage);
-        await SendErrorsAsync(statusCode: (int)status, cancellation: ct);
+        await Send.ErrorsAsync(statusCode: (int)status, cancellation: ct);
     }
 }

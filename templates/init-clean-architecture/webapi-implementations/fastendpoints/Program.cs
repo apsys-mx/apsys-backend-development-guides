@@ -1,57 +1,52 @@
-using DotNetEnv;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using {ProjectName}.application.usecases;  // TODO: Update with actual use case namespace
 using {ProjectName}.webapi.infrastructure;
 
-// Cargar variables de entorno desde .env
-Env.Load();
+// Load environment variables from .env file
+// This is necessary to ensure that the connection string and other settings are available
+DotNetEnv.Env.Load();
+
+IConfiguration configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
+configuration = builder.Configuration;
 var environment = builder.Environment;
 
-// Configurar servicios (Dependency Injection)
+// Configure dependency injection container
 builder.Services
     .AddSwaggerGen()
     .AddEndpointsApiExplorer()
-    .ConfigurePolicy()                              // Políticas de autorización
-    .ConfigureCors(configuration)                   // CORS
-    .ConfigureIdentityServerClient(configuration)   // JWT Bearer
-    .ConfigureUnitOfWork(configuration)             // UnitOfWork (TODO)
-    .ConfigureAutoMapper()                          // AutoMapper
-    .ConfigureValidators()                          // FluentValidation
-    .ConfigureDependencyInjections(environment)     // DI custom
+    .ConfigurePolicy()
+    .ConfigureCors(configuration)
+    .ConfigureIdentityServerClient(configuration)
+    .ConfigureUnitOfWork(configuration)
+    .ConfigureAutoMapper()
+    .ConfigureValidators()
+    .ConfigureDependencyInjections(environment)
     .AddLogging()
     .AddAuthorization()
-    .AddFastEndpoints()                             // FastEndpoints
-    .SwaggerDocument();                              // Swagger
+    .AddFastEndpoints()
+    .SwaggerDocument();
 
 var app = builder.Build();
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
-// Middleware pipeline
 app.UseCors("CorsPolicy")
     .UseHttpsRedirection()
     .UseRouting()
     .UseAuthentication()
     .UseAuthorization()
-    .UseFastEndpoints(config =>
-    {
-        config.Endpoints.RoutePrefix = "api";
-    })
+    .UseFastEndpoints()
     .UseSwagger()
     .UseSwaggerUI(opt =>
-    {
-        opt.DefaultModelsExpandDepth(-1);  // Ocultar schemas por defecto
-        opt.DisplayRequestDuration();
-        opt.EnableTryItOutByDefault();
-    });
+{
+    opt.DefaultModelsExpandDepth(-1); // Hide schemas by default
+    opt.DisplayRequestDuration();
+    opt.EnableTryItOutByDefault();
+});
 
-// Registrar Commands/Handlers automáticamente
-// TODO: Update with actual use case type from your application layer
-// app.Services.RegisterCommandsFromAssembly(typeof(UseCaseExample).Assembly);
+// Automatically register all Commands and Handlers from the application assembly
+// TODO: Uncomment and update with actual use case type from your application layer
+// Example: app.Services.RegisterCommandsFromAssembly(typeof(GetManyAndCountUsersUseCase).Assembly);
 
-app.Run();
-
-// Hacer Program accesible para tests de integración
-public partial class Program { }
+await app.RunAsync();

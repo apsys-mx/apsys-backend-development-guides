@@ -2,7 +2,6 @@ using FastEndpoints;
 using System.Reflection;
 using FluentValidation;
 using {ProjectName}.domain.interfaces.repositories;
-using {ProjectName}.infrastructure.nhibernate;
 using {ProjectName}.webapi.infrastructure.authorization;
 using {ProjectName}.webapi.mappingprofiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

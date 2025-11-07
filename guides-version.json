@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0"
@@ -16,7 +16,7 @@
         "03-application-layer.md": "1.2.1",
         "04-infrastructure-layer.md": "2.0.0",
         "05-webapi-layer.md": "2.0.0",
-        "webapi-implementations/fastendpoints/setup-fastendpoints.md": "1.0.0",
+        "webapi-implementations/fastendpoints/setup-fastendpoints.md": "1.1.0",
         "06-migrations-base.md": "pending",
         "07-testing-support.md": "pending"
       }
@@ -74,6 +74,28 @@
     }
   },
   "changelog": [
+    {
+      "version": "2.0.1",
+      "date": "2025-01-30",
+      "changes": [
+        "FIX: setup-fastendpoints.md v1.1.0 - Corrected folder structure from 'endpoints/' to 'features/'",
+        "UPDATE: All FastEndpoints templates updated to match reference project (hashira.stone.backend)",
+        "UPDATE: Program.cs - Changed to use await app.RunAsync() and removed partial class",
+        "UPDATE: BaseEndpoint.cs - Changed SendErrorsAsync to Send.ErrorsAsync",
+        "UPDATE: HelloEndpoint.cs - Changed SendOkAsync to Send.OkAsync, added config logging",
+        "UPDATE: ServiceCollectionExtender.cs - Removed NHibernate reference (kept agnos tic)",
+        "UPDATE: .env.example - Changed to PostgreSQL-specific variables format",
+        "FIX: Corrected guide instructions to copy to features/ instead of endpoints/",
+        "DOCS: Updated structure diagram in setup-fastendpoints.md"
+      ],
+      "breaking": false,
+      "improvements": [
+        "Templates now match production reference project exactly",
+        "Correct folder naming convention (features/ not endpoints/)",
+        "Better alignment with FastEndpoints best practices",
+        "Cleaner Program.cs without unnecessary partial class"
+      ]
+    },
     {
       "version": "2.0.0",
       "date": "2025-01-30",

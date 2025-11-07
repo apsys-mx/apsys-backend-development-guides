@@ -1,6 +1,6 @@
 # Setup FastEndpoints - WebApi Implementation
 
-> **Versión:** 1.0.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 1.1.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
@@ -66,15 +66,15 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj package FluentRe
 > - `ServiceCollectionExtender.cs` - Métodos de extensión para configuración de DI
 > - `authorization/MustBeApplicationUser.cs` - Ejemplo de autorización personalizada
 
-### Paso 4: Copiar templates de features (endpoints)
+### Paso 4: Copiar templates de features
 
-📄 COPIAR TEMPLATE: `templates/init-clean-architecture/webapi-implementations/fastendpoints/features/BaseEndpoint.cs` → `src/{ProjectName}.webapi/endpoints/BaseEndpoint.cs`
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/webapi-implementations/fastendpoints/features/BaseEndpoint.cs` → `src/{ProjectName}.webapi/features/BaseEndpoint.cs`
 
-📄 COPIAR TEMPLATE: `templates/init-clean-architecture/webapi-implementations/fastendpoints/features/hello/HelloEndpoint.cs` → `src/{ProjectName}.webapi/endpoints/hello/HelloEndpoint.cs`
+📄 COPIAR TEMPLATE: `templates/init-clean-architecture/webapi-implementations/fastendpoints/features/hello/HelloEndpoint.cs` → `src/{ProjectName}.webapi/features/hello/HelloEndpoint.cs`
 
 > El servidor MCP debe:
 > 1. Descargar cada archivo desde `templates/init-clean-architecture/webapi-implementations/fastendpoints/features/` en GitHub
-> 2. Copiar a `src/{ProjectName}.webapi/endpoints/` (cambiamos nombre de carpeta de features → endpoints)
+> 2. Copiar a `src/{ProjectName}.webapi/features/` (mantener estructura de carpetas)
 > 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto
 >
 > **Archivos incluidos (2):**
@@ -160,8 +160,7 @@ src/{ProjectName}.webapi/
 ├── appsettings.json                              # ✅ Actualizado
 ├── .env                                          # ✅ Actualizado
 ├── IPrincipalExtender.cs                         # 🆕 Nuevo
-├── endpoints/
-│   ├── README.md
+├── features/
 │   ├── BaseEndpoint.cs                           # 🆕 Nuevo
 │   └── hello/
 │       └── HelloEndpoint.cs                      # 🆕 Nuevo

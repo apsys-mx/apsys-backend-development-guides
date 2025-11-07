@@ -16,10 +16,6 @@ namespace {ProjectName}.webapi.infrastructure.authorization
         /// <summary>
         /// Authorization handler that checks if the user is an application user.
         /// </summary>
-        /// <remarks>
-        /// This is an example of custom authorization.
-        /// Customize this handler based on your domain requirements.
-        /// </remarks>
         public class Handler(IUnitOfWork unitOfWork) : AuthorizationHandler<Requirement>
         {
             private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -28,22 +24,18 @@ namespace {ProjectName}.webapi.infrastructure.authorization
                 AuthorizationHandlerContext context,
                 Requirement requirement)
             {
-                // TODO: Customize this logic based on your domain
-                // Example: Get user identifier from claims and verify against database
-
                 // Get user name from claims
+                // NOTE: Update the claim type based on your identity provider
+                // Common claim types: "username", "email", "sub", etc.
                 var userName = context.User.FindFirst("username")?.Value;
                 if (string.IsNullOrEmpty(userName))
                     return;
 
                 // TODO: Implement actual user verification logic
-                // Example:
+                // Example implementation:
                 // var user = await _unitOfWork.Users.GetByEmailAsync(userName);
                 // if (user is not null)
                 //     context.Succeed(requirement);
-
-                // Temporary: Always succeed for development
-                context.Succeed(requirement);
 
                 return;
             }
