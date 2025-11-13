@@ -1010,8 +1010,8 @@ namespace Application.Tests.UseCases.Users;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using NSubstitute;
+using NUnit.Framework;
+using Moq;
 using FluentAssertions;
 using Application.UseCases.Users;
 using Domain.Entities;
@@ -1019,31 +1019,33 @@ using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 
+[TestFixture]
 public class CreateUserHandlerTests
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly IEmailSender _emailSender;
-    private readonly ILogger<CreateUserHandler> _logger;
-    private readonly CreateUserHandler _sut;
+    private Mock<IUserRepository> _userRepositoryMock;
+    private Mock<IPasswordHasher> _passwordHasherMock;
+    private Mock<IEmailSender> _emailSenderMock;
+    private Mock<ILogger<CreateUserHandler>> _loggerMock;
+    private CreateUserHandler _sut;
 
-    public CreateUserHandlerTests()
+    [SetUp]
+    public void SetUp()
     {
         // ✅ CORRECTO: Crear mocks directamente
-        _userRepository = Substitute.For<IUserRepository>();
-        _passwordHasher = Substitute.For<IPasswordHasher>();
-        _emailSender = Substitute.For<IEmailSender>();
-        _logger = Substitute.For<ILogger<CreateUserHandler>>();
+        _userRepositoryMock = new Mock<IUserRepository>();
+        _passwordHasherMock = new Mock<IPasswordHasher>();
+        _emailSenderMock = new Mock<IEmailSender>();
+        _loggerMock = new Mock<ILogger<CreateUserHandler>>();
 
         // ✅ System Under Test (SUT) - inyección manual
         _sut = new CreateUserHandler(
-            _userRepository,
-            _passwordHasher,
-            _emailSender,
-            _logger);
+            _userRepositoryMock.Object,
+            _passwordHasherMock.Object,
+            _emailSenderMock.Object,
+            _loggerMock.Object);
     }
 
-    [Fact]
+    [Test]
     public async Task Handle_ValidCommand_CreatesUser()
     {
         // Arrange
@@ -1055,13 +1057,13 @@ public class CreateUserHandlerTests
             LastName = "Doe"
         };
 
-        _passwordHasher
-            .HashPassword(command.Password)
+        _passwordHasherMock
+            .Setup(x => x.HashPassword(command.Password))
             .Returns("hashed_password");
 
-        _userRepository
-            .GetByEmailAsync(command.Email, Arg.Any<CancellationToken>())
-            .Returns((User?)null);
+        _userRepositoryMock
+            .Setup(x => x.GetByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((User?)null);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -1070,16 +1072,20 @@ public class CreateUserHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Email.Should().Be(command.Email);
 
-        await _userRepository.Received(1).SaveOrUpdateAsync(
-            Arg.Is<User>(u => u.Email == command.Email),
-            Arg.Any<CancellationToken>());
+        _userRepositoryMock.Verify(
+            x => x.SaveOrUpdateAsync(
+                It.Is<User>(u => u.Email == command.Email),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
 
-        await _emailSender.Received(1).SendWelcomeEmailAsync(
-            command.Email,
-            Arg.Any<CancellationToken>());
+        _emailSenderMock.Verify(
+            x => x.SendWelcomeEmailAsync(
+                command.Email,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
-    [Fact]
+    [Test]
     public async Task Handle_DuplicateEmail_ReturnsFail()
     {
         // Arrange
@@ -1091,9 +1097,9 @@ public class CreateUserHandlerTests
 
         var existingUser = new User { Email = command.Email };
 
-        _userRepository
-            .GetByEmailAsync(command.Email, Arg.Any<CancellationToken>())
-            .Returns(existingUser);
+        _userRepositoryMock
+            .Setup(x => x.GetByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingUser);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -1102,9 +1108,11 @@ public class CreateUserHandlerTests
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().ContainSingle(e => e.Message.Contains("ya está registrado"));
 
-        await _userRepository.DidNotReceive().SaveOrUpdateAsync(
-            Arg.Any<User>(),
-            Arg.Any<CancellationToken>());
+        _userRepositoryMock.Verify(
+            x => x.SaveOrUpdateAsync(
+                It.IsAny<User>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }
 ```
@@ -1118,19 +1126,21 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+using NUnit.Framework;
 using FluentAssertions;
 using Application.UseCases.Users;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Persistence.InMemory;
 
-public class CreateUserHandlerIntegrationTests : IDisposable
+[TestFixture]
+public class CreateUserHandlerIntegrationTests
 {
-    private readonly ServiceProvider _serviceProvider;
-    private readonly CreateUserHandler _sut;
+    private ServiceProvider _serviceProvider;
+    private CreateUserHandler _sut;
 
-    public CreateUserHandlerIntegrationTests()
+    [SetUp]
+    public void SetUp()
     {
         // ✅ CORRECTO: Configurar container para integration tests
         var services = new ServiceCollection();
@@ -1151,7 +1161,7 @@ public class CreateUserHandlerIntegrationTests : IDisposable
         _sut = _serviceProvider.GetRequiredService<CreateUserHandler>();
     }
 
-    [Fact]
+    [Test]
     public async Task Handle_EndToEnd_CreatesUserSuccessfully()
     {
         // Arrange
@@ -1179,7 +1189,8 @@ public class CreateUserHandlerIntegrationTests : IDisposable
         savedUser!.Email.Should().Be(command.Email);
     }
 
-    public void Dispose()
+    [TearDown]
+    public void TearDown()
     {
         _serviceProvider?.Dispose();
     }
@@ -1197,33 +1208,38 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Xunit;
+using NUnit.Framework;
 using FluentAssertions;
 using Domain.Interfaces.Services;
 
-public class UserEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
+[TestFixture]
+public class UserEndpointsTests
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private WebApplicationFactory<Program> _factory;
+    private HttpClient _client;
 
-    public UserEndpointsTests(WebApplicationFactory<Program> factory)
+    [SetUp]
+    public void SetUp()
     {
         // ✅ CORRECTO: Sobrescribir servicios para testing
-        _factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureServices(services =>
+        _factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
             {
-                // Reemplazar EmailSender con implementación fake
-                services.RemoveAll<IEmailSender>();
-                services.AddTransient<IEmailSender, FakeEmailSender>();
+                builder.ConfigureServices(services =>
+                {
+                    // Reemplazar EmailSender con implementación fake
+                    services.RemoveAll<IEmailSender>();
+                    services.AddTransient<IEmailSender, FakeEmailSender>();
+                });
             });
-        });
+
+        _client = _factory.CreateClient();
     }
 
-    [Fact]
+    [Test]
     public async Task CreateUser_ValidRequest_ReturnsCreated()
     {
         // Arrange
-        var client = _factory.CreateClient();
         var request = new
         {
             Email = "test@example.com",
@@ -1233,7 +1249,7 @@ public class UserEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
         };
 
         // Act
-        var response = await client.PostAsJsonAsync("/api/users", request);
+        var response = await _client.PostAsJsonAsync("/api/users", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -1241,6 +1257,13 @@ public class UserEndpointsTests : IClassFixture<WebApplicationFactory<Program>>
         var user = await response.Content.ReadFromJsonAsync<UserResponse>();
         user.Should().NotBeNull();
         user!.Email.Should().Be(request.Email);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _client?.Dispose();
+        _factory?.Dispose();
     }
 }
 
