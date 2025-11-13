@@ -1,7 +1,7 @@
 # Feature Structure - .NET Clean Architecture
 
-**Version:** 0.1.0
-**Estado:** ⏳ En desarrollo
+**Version:** 1.0.0
+**Estado:** ✅ Completado
 **Última actualización:** 2025-01-13
 
 ## Descripción
@@ -17,7 +17,7 @@ La arquitectura por features promueve:
 
 ## Guías Disponibles
 
-### 1. [Folder Organization](./folder-organization.md)
+### 1. [Folder Organization](./folder-organization.md) ✅ v1.0.0
 
 Estructura estándar de carpetas y archivos para un feature a través de todas las capas.
 
@@ -32,7 +32,7 @@ Estructura estándar de carpetas y archivos para un feature a través de todas l
 
 ---
 
-### 2. [Entity to Endpoint Flow](./entity-to-endpoint-flow.md)
+### 2. [Entity to Endpoint Flow](./entity-to-endpoint-flow.md) ✅ v1.0.0
 
 Flujo completo de una operación desde la entidad de dominio hasta el endpoint.
 
@@ -50,7 +50,7 @@ Flujo completo de una operación desde la entidad de dominio hasta el endpoint.
 
 ---
 
-### 3. [Naming Conventions](./naming-conventions.md)
+### 3. [Naming Conventions](./naming-conventions.md) ✅ v1.0.0
 
 Convenciones de nombres para features a través de todas las capas.
 
