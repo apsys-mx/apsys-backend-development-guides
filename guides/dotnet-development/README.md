@@ -18,14 +18,6 @@ A diferencia de las guías de setup (`init-clean-architecture`, `configure-datab
 - Facilitar la incorporación de nuevos desarrolladores al equipo
 - Mantener consistencia arquitectónica entre proyectos
 
-## Proyecto de Referencia
-
-Estas guías están basadas en el análisis del proyecto:
-```
-D:\apsys-mx\inspeccion-distancia\hashira.stone.backend
-```
-
-Los patrones documentados son implementaciones probadas y validadas en producción.
 
 ## Prerequisitos
 
@@ -316,7 +308,7 @@ Estas guías asumen el siguiente stack:
 
 Al desarrollar estas guías, ten en cuenta:
 
-1. **Basarse en código real** - Todos los patrones deben venir del proyecto de referencia
+1. **Basarse en código real** - Todos los patrones deben ser probados en proyectos reales
 2. **Incluir ejemplos prácticos** - Código real, no pseudocódigo
 3. **Explicar el "por qué"** - No solo el "cómo", sino la razón detrás del patrón
 4. **Mantener consistencia** - Seguir el formato establecido en otras guías
@@ -325,8 +317,6 @@ Al desarrollar estas guías, ten en cuenta:
 ## Referencias
 
 - **Guías de Setup**: [../init-clean-architecture/](../init-clean-architecture/)
-- **Proyecto de Referencia**: `D:\apsys-mx\inspeccion-distancia\hashira.stone.backend`
-- **Guías de Frontend**: `D:\apsys-mx\apsys-frontend-development-guides\guides\reactjs-development`
 
 ---
 

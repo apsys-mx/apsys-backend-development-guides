@@ -117,7 +117,6 @@ Convenciones de nombres para features a través de todas las capas.
 ### Feature CRUD Completo (Ejemplo: Users)
 
 ```
-# Domain Layer (hashira.stone.backend.domain)
 domain/
 ├── entities/
 │   ├── User.cs                              # Entidad principal
@@ -130,7 +129,6 @@ domain/
         ├── IUserRepository.cs               # Interface específica del repositorio
         └── IUnitOfWork.cs                   # Agregado a UoW
 
-# Application Layer (hashira.stone.backend.application)
 application/
 └── usecases/
     └── users/
@@ -140,14 +138,12 @@ application/
         ├── UpdateUserUseCase.cs             # Command + Handler
         └── DeleteUserUseCase.cs             # Command + Handler (opcional)
 
-# Infrastructure Layer (hashira.stone.backend.infrastructure)
 infrastructure/
 └── nhibernate/
     ├── NHUserRepository.cs                  # Implementación del repositorio
     └── mappers/
         └── UserMapper.cs                    # NHibernate ClassMapping
 
-# WebApi Layer (hashira.stone.backend.webapi)
 webapi/
 ├── features/
 │   └── users/

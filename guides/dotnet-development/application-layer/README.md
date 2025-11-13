@@ -25,7 +25,6 @@ La capa de aplicación contiene los **Use Cases** (casos de uso) de la aplicaci�
 | [error-handling.md](./error-handling.md) | ⏳ Pendiente | FluentResults usage |
 | [common-utilities.md](./common-utilities.md) | ⏳ Pendiente | Utilidades compartidas |
 
-**Proyecto de referencia:** `hashira.stone.backend`
 
 ---
 

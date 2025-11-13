@@ -30,7 +30,6 @@ La capa de WebApi es la capa de **presentación** que expone los endpoints HTTP.
 | [authentication.md](./authentication.md) | ⏳ Pendiente | JWT, Auth0, policies |
 | [swagger-configuration.md](./swagger-configuration.md) | ⏳ Pendiente | Swagger/OpenAPI |
 
-**Proyecto de referencia:** `hashira.stone.backend`
 
 ---
 

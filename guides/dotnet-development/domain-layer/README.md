@@ -99,7 +99,7 @@ Excepciones custom del dominio.
 - Cuándo lanzar excepciones
 - Excepciones vs Results
 - Error messages
-- Ejemplos del proyecto
+- Ejemplos prácticos
 
 **Cuándo usar:** Al definir reglas de dominio que pueden fallar.
 

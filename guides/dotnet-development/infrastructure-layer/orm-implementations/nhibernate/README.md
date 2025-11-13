@@ -14,4 +14,3 @@
 | [session-management.md](./session-management.md) | ⏳ Pendiente |
 | [best-practices.md](./best-practices.md) | ⏳ Pendiente |
 
-**Proyecto de referencia:** `hashira.stone.backend`

@@ -10,4 +10,3 @@
 | [migration-patterns.md](./migration-patterns.md) | ⏳ Pendiente |
 | [best-practices.md](./best-practices.md) | ⏳ Pendiente |
 
-**Proyecto de referencia:** `hashira.stone.backend`

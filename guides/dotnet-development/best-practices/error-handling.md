@@ -12,8 +12,7 @@
 - Error messages y códigos
 - Logging de errores
 - Traducción a HTTP status codes
-- Ejemplos del proyecto de referencia
+
 
 ---
 
-_Esta guía será desarrollada basándose en el proyecto de referencia: `hashira.stone.backend`_

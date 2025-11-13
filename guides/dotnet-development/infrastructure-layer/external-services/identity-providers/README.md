@@ -10,4 +10,3 @@
 | [auth0.md](./auth0.md) | ⏳ Pendiente |
 | [custom-jwt.md](./custom-jwt.md) | ⏳ Pendiente |
 
-**Proyecto de referencia:** `hashira.stone.backend`

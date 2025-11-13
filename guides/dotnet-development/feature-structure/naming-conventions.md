@@ -13,8 +13,7 @@
 - Naming de archivos y carpetas
 - Plural vs Singular
 - Consistencia entre capas
-- Ejemplos del proyecto de referencia
+
 
 ---
 
-_Esta guía será desarrollada basándose en el proyecto de referencia: `hashira.stone.backend`_

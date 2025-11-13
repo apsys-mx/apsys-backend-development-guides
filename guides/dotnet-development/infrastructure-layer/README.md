@@ -50,7 +50,6 @@ Sistemas de migraciones de base de datos (FluentMigrator, EF Migrations, etc.)
 | [transactions.md](./transactions.md) | ⏳ Pendiente | Manejo de transacciones |
 | [dependency-injection.md](./dependency-injection.md) | ⏳ Pendiente | DI en infrastructure |
 
-**Proyecto de referencia:** `hashira.stone.backend`
 
 ---
 

@@ -12,8 +12,7 @@
 - Evitar service locator pattern
 - Testing con DI
 - Anti-patrones comunes
-- Ejemplos del proyecto de referencia
+
 
 ---
 
-_Esta guía será desarrollada basándose en el proyecto de referencia: `hashira.stone.backend`_

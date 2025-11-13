@@ -13,8 +13,7 @@
 - FluentAssertions
 - Test organization por capa
 - Integration tests vs Unit tests
-- Ejemplos del proyecto de referencia
+
 
 ---
 
-_Esta guía será desarrollada basándose en el proyecto de referencia: `hashira.stone.backend`_

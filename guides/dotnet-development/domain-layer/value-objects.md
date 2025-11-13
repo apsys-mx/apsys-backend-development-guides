@@ -11,8 +11,7 @@
 - Cuándo usar vs Entity
 - Ejemplos comunes (Email, Money, Address)
 - Integration con NHibernate (si aplicable)
-- Ejemplos del proyecto (si existen)
+- Ejemplos prácticos
 
 ---
 
-_Esta guía será desarrollada basándose en el proyecto de referencia: `hashira.stone.backend`_

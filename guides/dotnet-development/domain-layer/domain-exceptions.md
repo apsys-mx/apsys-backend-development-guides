@@ -11,8 +11,7 @@
 - Cuándo lanzar excepciones
 - Excepciones vs Results
 - Error messages
-- Ejemplos del proyecto
+- Ejemplos prácticos
 
 ---
 
-_Esta guía será desarrollada basándose en el proyecto de referencia: `hashira.stone.backend`_
