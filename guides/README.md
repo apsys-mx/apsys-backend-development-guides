@@ -395,7 +395,7 @@ Este proyecto es de uso interno de APSYS.
 ---
 
 **Última actualización:** 2025-01-30
-**Versión:** 2.0.1-milestone4
+**Versión:** 2.1.0-milestone4
 
 ## Historial de Versiones
 

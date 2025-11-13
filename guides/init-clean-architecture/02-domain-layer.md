@@ -1,17 +1,18 @@
 # 02 - Capa de Dominio (Domain Layer)
 
-> **Versión:** 1.1.2 | **Última actualización:** 2025-01-30 | **Estado:** Estable
+> **Versión:** 2.0.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
 
 ## Descripción
 
 Este documento describe cómo crear la **capa de dominio (Domain Layer)** de un proyecto backend con Clean Architecture para APSYS. Esta capa contiene:
 
 - **Entidades de dominio**: Objetos de negocio con sus reglas y validaciones
-- **Interfaces de repositorios**: Contratos para acceso a datos
 - **Excepciones de dominio**: Excepciones específicas del negocio
 - **Proyecto de tests**: Pruebas unitarias para la capa de dominio
 
 Esta capa es **completamente independiente de la infraestructura** y de cualquier base de datos específica. No tiene dependencias externas excepto FluentValidation para validaciones.
+
+> **Nota sobre Repositorios:** Las interfaces de repositorios (IRepository, IUnitOfWork, etc.) se agregan al configurar la base de datos con el comando `configure-database`. El dominio base no asume ningún tipo de persistencia.
 
 ## Dependencias
 
@@ -27,17 +28,9 @@ Este paso requiere que se haya completado:
 │       ├── {ProjectName}.domain.csproj
 │       ├── entities/
 │       │   └── AbstractDomainObject.cs
-│       ├── exceptions/
-│       │   ├── InvalidDomainException.cs
-│       │   └── InvalidFilterArgumentException.cs
-│       └── interfaces/
-│           └── repositories/
-│               ├── IRepository.cs
-│               ├── IReadOnlyRepository.cs
-│               ├── IUnitOfWork.cs
-│               ├── IGetManyAndCountResultWithSorting.cs
-│               ├── GetManyAndCountResult.cs
-│               └── SortingCriteria.cs
+│       └── exceptions/
+│           ├── InvalidDomainException.cs
+│           └── InvalidFilterArgumentException.cs
 └── tests/
     └── {ProjectName}.domain.tests/
         ├── {ProjectName}.domain.tests.csproj
@@ -142,8 +135,6 @@ dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj re
 ```bash
 mkdir src/{ProjectName}.domain/entities
 mkdir src/{ProjectName}.domain/exceptions
-mkdir src/{ProjectName}.domain/interfaces
-mkdir src/{ProjectName}.domain/interfaces/repositories
 mkdir tests/{ProjectName}.domain.tests/entities
 ```
 
@@ -166,12 +157,6 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 - `entities/AbstractDomainObject.cs`
 - `exceptions/InvalidDomainException.cs`
 - `exceptions/InvalidFilterArgumentException.cs`
-- `interfaces/repositories/IRepository.cs`
-- `interfaces/repositories/IReadOnlyRepository.cs`
-- `interfaces/repositories/IUnitOfWork.cs`
-- `interfaces/repositories/GetManyAndCountResult.cs`
-- `interfaces/repositories/SortingCriteria.cs`
-- `interfaces/repositories/IGetManyAndCountResultWithSorting.cs`
 
 ### Paso 11: Copiar archivos de tests desde templates
 
@@ -197,12 +182,6 @@ rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 | **entities/AbstractDomainObject.cs** | Clase base abstracta para todas las entidades de dominio. Proporciona propiedades comunes (Id, CreationDate) y métodos de validación integrados con FluentValidation. |
 | **exceptions/InvalidDomainException.cs** | Excepción lanzada cuando una entidad de dominio no cumple con sus reglas de validación. |
 | **exceptions/InvalidFilterArgumentException.cs** | Excepción lanzada cuando los argumentos de filtrado (queries) son inválidos. |
-| **interfaces/repositories/IRepository.cs** | Interfaz genérica para operaciones de escritura en repositorios (Add, Save, Delete) con documentación XML completa. |
-| **interfaces/repositories/IReadOnlyRepository.cs** | Interfaz genérica para operaciones de solo lectura con soporte para Expression queries, paginación, Count, GetManyAndCount y CancellationToken. |
-| **interfaces/repositories/IUnitOfWork.cs** | Patrón Unit of Work para gestionar transacciones (BeginTransaction, Commit, Rollback, ResetTransaction, IsActiveTransaction). |
-| **interfaces/repositories/GetManyAndCountResult.cs** | Clase para resultados paginados con Items, Count (long), PageNumber, PageSize, Sorting y constructores completos. |
-| **interfaces/repositories/SortingCriteria.cs** | Clase para criterios de ordenamiento con SortBy (string) y Criteria (enum Ascending/Descending) con múltiples constructores. |
-| **interfaces/repositories/IGetManyAndCountResultWithSorting.cs** | Interfaz simple que expone una property Sorting para objetos con capacidades de ordenamiento. |
 
 ### Archivos de Tests
 

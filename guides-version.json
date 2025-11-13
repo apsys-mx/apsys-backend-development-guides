@@ -1,18 +1,18 @@
 {
-  "version": "2.0.1",
+  "version": "2.1.0",
   "releaseDate": "2025-01-30",
   "compatibility": {
     "dotnetVersion": "9.0"
   },
   "guides": {
     "init-clean-architecture": {
-      "version": "2.0.0",
+      "version": "2.1.0",
       "milestone": 4,
       "status": "stable",
       "lastModified": "2025-01-30",
       "documents": {
         "01-estructura-base.md": "1.0.1",
-        "02-domain-layer.md": "1.1.2",
+        "02-domain-layer.md": "2.0.0",
         "03-application-layer.md": "1.2.1",
         "04-infrastructure-layer.md": "2.0.0",
         "05-webapi-layer.md": "2.0.0",
@@ -74,6 +74,33 @@
     }
   },
   "changelog": [
+    {
+      "version": "2.1.0",
+      "date": "2025-01-30",
+      "changes": [
+        "BREAKING CHANGE: Removed repository interfaces from init-clean-architecture",
+        "REFACTOR: 02-domain-layer.md v2.0.0 - Domain layer no longer includes IRepository, IUnit OfWork",
+        "MOVED: All repository interfaces moved to templates/configure-database/domain/interfaces/repositories/",
+        "MOVED: IRepository.cs, IReadOnlyRepository.cs, IUnitOfWork.cs to configure-database",
+        "MOVED: GetManyAndCountResult.cs, SortingCriteria.cs, IGetManyAndCountResultWithSorting.cs to configure-database",
+        "UPDATE: 03-application-layer.md - Added note explaining repository interfaces come from configure-database",
+        "DOCS: Domain layer now only contains entities, exceptions, and tests",
+        "DOCS: Repository interfaces will be added when running configure-database command"
+      ],
+      "breaking": true,
+      "improvements": [
+        "Domain layer is now truly persistence-agnostic",
+        "Cleaner separation: base structure vs database-specific interfaces",
+        "Consistent with modular architecture philosophy",
+        "Projects can exist without any database configuration",
+        "Repository interfaces added only when database is configured"
+      ],
+      "migration": [
+        "Existing projects are NOT affected - this only affects NEW projects",
+        "To add repository interfaces: run configure-database command",
+        "Domain layer will receive IRepository/IUnitOfWork from configure-database"
+      ]
+    },
     {
       "version": "2.0.1",
       "date": "2025-01-30",

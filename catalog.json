@@ -1,6 +1,6 @@
 {
   "$schema": "./docs/catalog-schema.json",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "repository": {
     "name": "apsys-backend-development-guides",
     "owner": "apsys-mx",
@@ -19,10 +19,10 @@
   "commands": {
     "init-clean-architecture": {
       "type": "one-time",
-      "version": "2.0.1",
+      "version": "2.1.0",
       "status": "active",
       "description": "Inicializa proyecto .NET con Clean Architecture modular (base agnóstica + implementaciones opcionales)",
-      "longDescription": "Crea la estructura completa de un proyecto backend con Clean Architecture modular. Incluye Domain Layer (entidades, validaciones, repositorios), Application Layer (use cases, DTOs, validadores), Infrastructure Layer (estructura base agnóstica), WebApi Layer (estructura base mínima) y opcionalmente FastEndpoints como implementación de API. La arquitectura permite elegir frameworks específicos posteriormente.",
+      "longDescription": "Crea la estructura completa de un proyecto backend con Clean Architecture modular y agnóstica de persistencia. Incluye Domain Layer (entidades, excepciones), Application Layer (use cases, DTOs, validadores), Infrastructure Layer (estructura base), WebApi Layer (estructura base mínima) y opcionalmente FastEndpoints como implementación de API. Las interfaces de repositorios se agregan al ejecutar configure-database posteriormente.",
       "commandFile": "commands/init-clean-architecture.md",
       "guides": [
         "guides/init-clean-architecture/README.md",

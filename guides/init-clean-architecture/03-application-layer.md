@@ -159,6 +159,8 @@ rm tests/{ProjectName}.application.tests/UnitTest1.cs
 
 ## Principios de la Capa de Aplicación
 
+> **Nota:** Los siguientes ejemplos de código incluyen el uso de interfaces de repositorios (IRepository, IUnitOfWork). Estas interfaces se agregan al dominio cuando ejecutas `configure-database`. Si aún no has configurado una base de datos, estos ejemplos son solo para ilustración de patrones de diseño.
+
 ### 1. Independencia de Infraestructura
 
 La capa de aplicación **NO debe conocer** detalles de implementación:
