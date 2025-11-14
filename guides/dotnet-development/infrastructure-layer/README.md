@@ -1,8 +1,8 @@
 # Infrastructure Layer - Clean Architecture
 
-**Versión:** 1.0.0
-**Estado:** ✅ Core Concepts Completado
-**Última actualización:** 2025-01-14
+**Versión:** 1.1.0
+**Estado:** ✅ Core Concepts, NHibernate y External Services Completados
+**Última actualización:** 2025-11-14
 
 ## Descripción
 
@@ -86,18 +86,22 @@ Implementaciones específicas por ORM.
 
 ---
 
-### External Services ⏳
+### External Services ✅
 
 Integraciones con servicios externos.
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](./external-services/README.md) | ⏳ Pendiente | Servicios externos overview |
-| [http-clients.md](./external-services/http-clients.md) | ⏳ Pendiente | HttpClient patterns |
-| [identity-providers/auth0.md](./external-services/identity-providers/auth0.md) | ⏳ Pendiente | Auth0 integration |
-| [caching/memory-cache.md](./external-services/caching/memory-cache.md) | ⏳ Pendiente | Memory cache implementation |
+| [README.md](./external-services/README.md) | ✅ v1.1.0 | Overview de External Services |
+| [http-clients.md](./external-services/http-clients.md) | ✅ v1.0.0 | IHttpClientFactory patterns y best practices |
+| [identity-providers/README.md](./external-services/identity-providers/README.md) | ✅ v1.0.0 | Overview de proveedores de identidad |
+| [identity-providers/auth0.md](./external-services/identity-providers/auth0.md) | ✅ v1.0.0 | Integración completa con Auth0 |
+| [identity-providers/custom-jwt.md](./external-services/identity-providers/custom-jwt.md) | ✅ v1.0.0 | Implementación de JWT personalizado |
+| [caching/README.md](./external-services/caching/README.md) | ✅ v1.0.0 | Overview de caching (Memory, Distributed, Response, Output) |
+| [caching/memory-cache.md](./external-services/caching/memory-cache.md) | ✅ v1.0.0 | IMemoryCache: patrones, expiration, callbacks |
+| [caching/redis.md](./external-services/caching/redis.md) | ✅ v1.0.0 | Redis: IDistributedCache, StackExchange.Redis, Pub/Sub |
 
-**Cuándo usar:** Al integrar servicios externos (Auth0, APIs, etc.).
+**Cuándo usar:** Al integrar servicios externos (Auth0, APIs, caching, etc.).
 
 ---
 
@@ -615,7 +619,7 @@ Application → IUnitOfWork → IRepository → NHRepository → ISession → Da
 
 ---
 
-**Última actualización:** 2025-01-14
+**Última actualización:** 2025-11-14
 **Mantenedor:** Equipo APSYS
 
 ## Resumen de Progreso
@@ -624,6 +628,6 @@ Application → IUnitOfWork → IRepository → NHRepository → ISession → Da
 |---------|-------|-------------|----------|
 | Core Concepts | 6 | 6 | ✅ **100% Completado** |
 | NHibernate | 7 | 7 | ✅ **100% Completado** |
-| External Services | 8 | 0 | Pendiente |
-| Data Migrations | 5 | 0 | Pendiente |
-| **TOTAL** | **26** | **13** | **~50%** |
+| External Services | 8 | 8 | ✅ **100% Completado** |
+| Data Migrations | 5 | 0 | ⏳ Pendiente |
+| **TOTAL** | **26** | **21** | **~81%** |

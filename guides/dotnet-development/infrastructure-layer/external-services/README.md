@@ -1,7 +1,7 @@
 # External Services - Infrastructure Layer
 
-**Versión**: 1.0.0
-**Última actualización**: 2025-01-14
+**Versión**: 1.1.0
+**Última actualización**: 2025-11-14
 
 ## 📋 Tabla de Contenidos
 1. [¿Qué son los External Services?](#qué-son-los-external-services)
@@ -256,8 +256,8 @@ Auth0ManagementSettings__ClientSecret=prod-secret-from-vault
 - ✅ **Auth0Service** - Identity provider (Create, Get, ChangePassword)
 - ✅ **Auth0ServiceMock** - Mock para dev/testing
 
-**No implementado en proyecto de referencia** (documentar best practices):
-- ⏳ **Caching** - IMemoryCache, IDistributedCache
+**No implementado en proyecto de referencia** (documentado con best practices):
+- ✅ **Caching** - IMemoryCache, IDistributedCache, Redis (guías completas disponibles)
 - ⏳ **Email** - SendGrid, SMTP
 - ⏳ **Storage** - S3, Azure Blob
 
@@ -267,14 +267,14 @@ Auth0ManagementSettings__ClientSecret=prod-secret-from-vault
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](./README.md) | ✅ v1.0.0 | Overview de External Services |
-| [http-clients.md](./http-clients.md) | ⏳ Pendiente | IHttpClientFactory patterns |
-| [identity-providers/README.md](./identity-providers/README.md) | ⏳ Pendiente | Auth providers overview |
-| [identity-providers/auth0.md](./identity-providers/auth0.md) | ⏳ Pendiente | Auth0 integration |
-| [identity-providers/custom-jwt.md](./identity-providers/custom-jwt.md) | ⏳ Pendiente | Custom JWT implementation |
-| [caching/README.md](./caching/README.md) | ⏳ Pendiente | Caching overview |
-| [caching/memory-cache.md](./caching/memory-cache.md) | ⏳ Pendiente | IMemoryCache implementation |
-| [caching/redis.md](./caching/redis.md) | ⏳ Pendiente | Redis distributed cache |
+| [README.md](./README.md) | ✅ v1.1.0 | Overview de External Services |
+| [http-clients.md](./http-clients.md) | ✅ v1.0.0 | IHttpClientFactory patterns y best practices |
+| [identity-providers/README.md](./identity-providers/README.md) | ✅ v1.0.0 | Overview de proveedores de identidad |
+| [identity-providers/auth0.md](./identity-providers/auth0.md) | ✅ v1.0.0 | Integración completa con Auth0 |
+| [identity-providers/custom-jwt.md](./identity-providers/custom-jwt.md) | ✅ v1.0.0 | Implementación de JWT personalizado |
+| [caching/README.md](./caching/README.md) | ✅ v1.0.0 | Overview de caching (Memory, Distributed, Response, Output) |
+| [caching/memory-cache.md](./caching/memory-cache.md) | ✅ v1.0.0 | IMemoryCache: patrones, expiration, callbacks |
+| [caching/redis.md](./caching/redis.md) | ✅ v1.0.0 | Redis: IDistributedCache, StackExchange.Redis, Pub/Sub |
 
 ---
 
@@ -667,6 +667,7 @@ services.AddHttpClient<Auth0HttpClient>();
 
 | Versión | Fecha      | Cambios                                  |
 |---------|------------|------------------------------------------|
+| 1.1.0   | 2025-11-14 | Actualización: todas las guías completadas (8/8) |
 | 1.0.0   | 2025-01-14 | Versión inicial de External Services README |
 
 ---

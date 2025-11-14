@@ -1,8 +1,8 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.5.0
+**Versión:** 0.7.0
 **Estado:** En desarrollo
-**Última actualización:** 2025-01-14
+**Última actualización:** 2025-11-14
 
 ## Descripción
 
@@ -82,17 +82,17 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | [error-handling.md](application-layer/error-handling.md) | ✅ v1.0.0 | FluentResults usage |
 | [common-utilities.md](application-layer/common-utilities.md) | ✅ v1.0.0 | Utilidades compartidas |
 
-### 5. Infrastructure Layer ⏳
+### 5. Infrastructure Layer ✅
 **Capa de infraestructura - Persistencia y servicios externos**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](infrastructure-layer/README.md) | ⏳ Pendiente | Overview de la capa de infraestructura |
-| [core-concepts.md](infrastructure-layer/core-concepts.md) | ⏳ Pendiente | Conceptos agnósticos de implementación |
-| [repository-pattern.md](infrastructure-layer/repository-pattern.md) | ⏳ Pendiente | Repository pattern (agnóstico) |
-| [unit-of-work-pattern.md](infrastructure-layer/unit-of-work-pattern.md) | ⏳ Pendiente | UoW pattern (agnóstico) |
-| [transactions.md](infrastructure-layer/transactions.md) | ⏳ Pendiente | Manejo de transacciones |
-| [dependency-injection.md](infrastructure-layer/dependency-injection.md) | ⏳ Pendiente | DI en infrastructure |
+| [README.md](infrastructure-layer/README.md) | ✅ v1.1.0 | Overview de la capa de infraestructura |
+| [core-concepts.md](infrastructure-layer/core-concepts.md) | ✅ v1.0.0 | Conceptos agnósticos de implementación |
+| [repository-pattern.md](infrastructure-layer/repository-pattern.md) | ✅ v1.0.0 | Repository pattern (agnóstico) |
+| [unit-of-work-pattern.md](infrastructure-layer/unit-of-work-pattern.md) | ✅ v1.0.0 | UoW pattern (agnóstico) |
+| [transactions.md](infrastructure-layer/transactions.md) | ✅ v1.0.0 | Manejo de transacciones |
+| [dependency-injection.md](infrastructure-layer/dependency-injection.md) | ✅ v1.0.0 | DI en infrastructure |
 
 #### 5.1. ORM Implementations
 | Guía | Estado | Descripción |
@@ -110,14 +110,14 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 #### 5.2. External Services
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [external-services/README.md](infrastructure-layer/external-services/README.md) | ⏳ Pendiente | Servicios externos overview |
-| [external-services/http-clients.md](infrastructure-layer/external-services/http-clients.md) | ⏳ Pendiente | HttpClient patterns |
-| [external-services/identity-providers/README.md](infrastructure-layer/external-services/identity-providers/README.md) | ⏳ Pendiente | Auth providers overview |
-| [external-services/identity-providers/auth0.md](infrastructure-layer/external-services/identity-providers/auth0.md) | ⏳ Pendiente | Auth0 integration |
-| [external-services/identity-providers/custom-jwt.md](infrastructure-layer/external-services/identity-providers/custom-jwt.md) | ⏳ Pendiente | Custom JWT |
-| [external-services/caching/README.md](infrastructure-layer/external-services/caching/README.md) | ⏳ Pendiente | Caching overview |
-| [external-services/caching/memory-cache.md](infrastructure-layer/external-services/caching/memory-cache.md) | ⏳ Pendiente | Memory cache |
-| [external-services/caching/redis.md](infrastructure-layer/external-services/caching/redis.md) | ⏳ Pendiente | Redis (futuro) |
+| [external-services/README.md](infrastructure-layer/external-services/README.md) | ✅ v1.1.0 | Overview de External Services |
+| [external-services/http-clients.md](infrastructure-layer/external-services/http-clients.md) | ✅ v1.0.0 | IHttpClientFactory patterns y best practices |
+| [external-services/identity-providers/README.md](infrastructure-layer/external-services/identity-providers/README.md) | ✅ v1.0.0 | Overview de proveedores de identidad |
+| [external-services/identity-providers/auth0.md](infrastructure-layer/external-services/identity-providers/auth0.md) | ✅ v1.0.0 | Integración completa con Auth0 |
+| [external-services/identity-providers/custom-jwt.md](infrastructure-layer/external-services/identity-providers/custom-jwt.md) | ✅ v1.0.0 | Implementación de JWT personalizado |
+| [external-services/caching/README.md](infrastructure-layer/external-services/caching/README.md) | ✅ v1.0.0 | Overview de caching (Memory, Distributed, Response, Output) |
+| [external-services/caching/memory-cache.md](infrastructure-layer/external-services/caching/memory-cache.md) | ✅ v1.0.0 | IMemoryCache: patrones, expiration, callbacks |
+| [external-services/caching/redis.md](infrastructure-layer/external-services/caching/redis.md) | ✅ v1.0.0 | Redis: IDistributedCache, StackExchange.Redis, Pub/Sub |
 
 #### 5.3. Data Migrations
 | Guía | Estado | Descripción |
@@ -257,7 +257,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.5.0 - Capas fundamentales + Application Layer completadas
+**Estado actual:** 0.7.0 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa)
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -265,13 +265,13 @@ webapi/
 | feature-structure | 4 | 4 | ✅ 100% |
 | domain-layer | 7 | 7 | ✅ 100% |
 | application-layer | 5 | 5 | ✅ 100% |
-| infrastructure-layer | 6 (core) | 0 | 0% |
+| infrastructure-layer | 6 (core) | 6 | ✅ 100% |
 | infrastructure-layer/orm-implementations | 9 | 7 | ✅ ~78% |
-| infrastructure-layer/external-services | 8 | 0 | 0% |
-| infrastructure-layer/data-migrations | 5 | 0 | 0% |
-| webapi-layer | 8 | 0 | 0% |
-| examples | 6 | 0 | 0% |
-| **TOTAL** | **65** | **30** | **~46%** |
+| infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
+| infrastructure-layer/data-migrations | 5 | 0 | ⏳ 0% |
+| webapi-layer | 8 | 0 | ⏳ 0% |
+| examples | 6 | 0 | ⏳ 0% |
+| **TOTAL** | **65** | **44** | **~68%** |
 
 ## Versionado
 
@@ -282,6 +282,14 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.7.0 (2025-11-14)
+- ✅ Infrastructure Layer - External Services completado (8/8 guías)
+- Progreso total: 68% (44/65 guías)
+
+#### v0.6.0 (2025-11-14)
+- ✅ Infrastructure Layer - Core Concepts completado (6/6 guías)
+- Progreso total: 55% (36/65 guías)
 
 #### v0.5.0 (2025-01-14)
 - ✅ Application Layer completado (5/5 guías)
@@ -330,5 +338,5 @@ Al desarrollar estas guías, ten en cuenta:
 
 ---
 
-**Última actualización:** 2025-01-14
+**Última actualización:** 2025-11-14
 **Mantenedor:** Equipo APSYS
