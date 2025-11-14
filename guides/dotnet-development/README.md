@@ -1,6 +1,6 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.4.0
+**Versión:** 0.5.0
 **Estado:** En desarrollo
 **Última actualización:** 2025-01-14
 
@@ -71,16 +71,16 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | [domain-exceptions.md](domain-layer/domain-exceptions.md) | ✅ v1.0.0 | Custom exceptions |
 | [value-objects.md](domain-layer/value-objects.md) | ✅ v1.0.0 | Value Objects pattern |
 
-### 4. Application Layer ⏳
+### 4. Application Layer ✅
 **Capa de aplicación - Use Cases y lógica de negocio**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](application-layer/README.md) | ⏳ Pendiente | Overview de la capa de aplicación |
-| [use-cases.md](application-layer/use-cases.md) | ⏳ Pendiente | Command/Handler pattern |
-| [command-handler-patterns.md](application-layer/command-handler-patterns.md) | ⏳ Pendiente | Create, Update, Delete, GetMany |
-| [error-handling.md](application-layer/error-handling.md) | ⏳ Pendiente | FluentResults usage |
-| [common-utilities.md](application-layer/common-utilities.md) | ⏳ Pendiente | Utilidades compartidas |
+| [README.md](application-layer/README.md) | ✅ v1.0.0 | Overview de la capa de aplicación |
+| [use-cases.md](application-layer/use-cases.md) | ✅ v1.0.0 | Command/Handler pattern |
+| [command-handler-patterns.md](application-layer/command-handler-patterns.md) | ✅ v1.0.0 | Create, Update, Delete, GetMany |
+| [error-handling.md](application-layer/error-handling.md) | ✅ v1.0.0 | FluentResults usage |
+| [common-utilities.md](application-layer/common-utilities.md) | ✅ v1.0.0 | Utilidades compartidas |
 
 ### 5. Infrastructure Layer ⏳
 **Capa de infraestructura - Persistencia y servicios externos**
@@ -257,21 +257,21 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.4.0 - Capas fundamentales completadas
+**Estado actual:** 0.5.0 - Capas fundamentales + Application Layer completadas
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
 | best-practices | 7 | 7 | ✅ 100% |
 | feature-structure | 4 | 4 | ✅ 100% |
 | domain-layer | 7 | 7 | ✅ 100% |
-| application-layer | 5 | 0 | 0% |
+| application-layer | 5 | 5 | ✅ 100% |
 | infrastructure-layer | 6 (core) | 0 | 0% |
 | infrastructure-layer/orm-implementations | 9 | 0 | 0% |
 | infrastructure-layer/external-services | 8 | 0 | 0% |
 | infrastructure-layer/data-migrations | 5 | 0 | 0% |
 | webapi-layer | 8 | 0 | 0% |
 | examples | 6 | 0 | 0% |
-| **TOTAL** | **65** | **18** | **~28%** |
+| **TOTAL** | **65** | **23** | **~35%** |
 
 ## Versionado
 
@@ -282,6 +282,10 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.5.0 (2025-01-14)
+- ✅ Application Layer completado (5/5 guías)
+- Progreso total: 35% (23/65 guías)
 
 #### v0.4.0 (2025-01-14)
 - ✅ Best Practices completado (7/7 guías)

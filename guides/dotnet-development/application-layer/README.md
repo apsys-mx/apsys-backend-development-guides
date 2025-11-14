@@ -98,16 +98,17 @@ Manejo de errores con FluentResults en Application Layer.
 
 ### 4. [Common Utilities](./common-utilities.md) ✅ v1.0.0
 
-Utilidades compartidas en la Application Layer.
+Utilidades compartidas, interfaces y patrones en la Application Layer.
 
 **Contenido:**
-- ValidationError class
-- Extension methods
-- Helper classes
-- Shared patterns
-- Reusable components
+- ValidationError model (deserialización de errores de FluentValidation)
+- FastEndpoints interfaces (ICommand, ICommandHandler)
+- Dependency Injection patterns (Primary Constructor C# 13)
+- Async patterns (CancellationToken, ExecuteAsync, ConfigureAwait)
+- Logging patterns (Structured logging, log levels)
+- Ejemplos reales de CreateUserUseCase, CreatePrototypeUseCase, GetUserUseCase
 
-**Cuándo usar:** Al necesitar utilidades compartidas entre use cases.
+**Cuándo usar:** Al implementar cualquier use case para seguir patrones consistentes.
 
 ---
 
@@ -696,5 +697,5 @@ WebApi Endpoint → Command → Handler → IUnitOfWork → Domain
 | [use-cases.md](./use-cases.md) | ✅ | v1.0.0 | Command/Handler pattern, estructura |
 | [command-handler-patterns.md](./command-handler-patterns.md) | ✅ | v1.0.0 | Create, Get, Update, Delete patterns |
 | [error-handling.md](./error-handling.md) | ✅ | v1.0.0 | FluentResults, exception handling |
-| [common-utilities.md](./common-utilities.md) | ✅ | v1.0.0 | ValidationError, helpers |
+| [common-utilities.md](./common-utilities.md) | ✅ | v1.0.0 | ValidationError, FastEndpoints, DI, Async, Logging |
 | **TOTAL** | **5 guías** | **v1.0.0** | **Application Layer completo** |
