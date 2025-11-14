@@ -364,12 +364,12 @@ public async Task<GetManyAndCountResult<User>> GetManyAndCountAsync(
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [README.md](./README.md) | ✅ v1.0.0 | Overview de NHibernate |
-| [repositories.md](./repositories.md) | ⏳ Pendiente | NH*Repository implementations |
-| [mappers.md](./mappers.md) | ⏳ Pendiente | ClassMapping patterns |
-| [queries.md](./queries.md) | ⏳ Pendiente | LINQ, Dynamic LINQ, QueryOver |
-| [unit-of-work.md](./unit-of-work.md) | ⏳ Pendiente | NHUnitOfWork implementation |
-| [session-management.md](./session-management.md) | ⏳ Pendiente | ISession lifecycle |
-| [best-practices.md](./best-practices.md) | ⏳ Pendiente | Mejores prácticas |
+| [repositories.md](./repositories.md) | ✅ v1.0.0 | NH*Repository implementations |
+| [mappers.md](./mappers.md) | ✅ v1.0.0 | ClassMapping patterns |
+| [queries.md](./queries.md) | ✅ v1.0.0 | LINQ, Dynamic LINQ, QueryOver |
+| [unit-of-work.md](./unit-of-work.md) | ✅ v1.0.0 | NHUnitOfWork implementation |
+| [session-management.md](./session-management.md) | ✅ v1.0.0 | ISession lifecycle |
+| [best-practices.md](./best-practices.md) | ✅ v1.0.0 | Mejores prácticas |
 
 ---
 
