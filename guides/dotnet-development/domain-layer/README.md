@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Estado:** ✅ Completado
-**Última actualización:** 2025-01-13
+**Última actualización:** 2025-01-14
 
 ## Descripción
 
@@ -107,17 +107,19 @@ Excepciones custom del dominio.
 
 ### 6. [Value Objects](./value-objects.md) ✅ v1.0.0
 
-Value Objects pattern para conceptos de dominio.
+Value Objects pattern para conceptos de dominio inmutables.
 
 **Contenido:**
-- Qué es un Value Object
-- Immutability
-- Equality by value
-- Cuándo usar vs Entity
-- Ejemplos comunes (Email, Money, Address)
-- Integration con NHibernate (si aplicable)
+- Value Object vs Entity comparison
+- Características (Immutability, Equality by value, Self-validation, No Identity)
+- Implementación con C# 13 records
+- Ejemplos completos: Email, Money, Address, DateRange, PhoneNumber
+- Integration con NHibernate (Component mapping, IUserType)
+- Validation patterns (constructor, TryParse)
+- Factory methods y conversions
+- DO/DON'T best practices
 
-**Cuándo usar:** Para representar conceptos sin identidad propia.
+**Cuándo usar:** Para representar conceptos sin identidad propia (emails, money, addresses, ranges).
 
 ---
 
@@ -138,6 +140,12 @@ domain/
 │       ├── RoleValidator.cs
 │       ├── PrototypeValidator.cs
 │       └── TechnicalStandardValidator.cs
+│
+├── valueobjects/                            # Value Objects (opcional)
+│   ├── Email.cs                            # Email value object
+│   ├── Money.cs                            # Money value object
+│   ├── Address.cs                          # Address value object
+│   └── DateRange.cs                        # DateRange value object
 │
 ├── daos/                                    # Data Access Objects
 │   ├── PrototypeDao.cs
@@ -257,6 +265,62 @@ domain/
    {
        IProductDaoRepository ProductsDao { get; }
        // ... otros repositorios
+   }
+   ```
+
+### Crear Value Object
+
+1. **Definir Value Object** → [Value Objects](./value-objects.md)
+   ```csharp
+   public sealed record Email
+   {
+       public string Value { get; init; }
+
+       public Email(string value)
+       {
+           if (string.IsNullOrWhiteSpace(value))
+               throw new ArgumentException("Email cannot be empty");
+
+           if (!IsValidEmail(value))
+               throw new ArgumentException($"Invalid email format: {value}");
+
+           Value = value.ToLowerInvariant();
+       }
+
+       private static bool IsValidEmail(string email) =>
+           Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+       public override string ToString() => Value;
+       public static implicit operator string(Email email) => email.Value;
+   }
+   ```
+
+2. **Usar en Entity**
+   ```csharp
+   public class User : AbstractDomainObject
+   {
+       public virtual Email Email { get; set; }
+       public virtual string Name { get; set; }
+
+       public User(Email email, string name)
+       {
+           Email = email; // Email ya está validado
+           Name = name;
+       }
+   }
+   ```
+
+3. **Mapear en NHibernate (Infrastructure)**
+   ```csharp
+   public class UserMap : ClassMap<User>
+   {
+       public UserMap()
+       {
+           Component(x => x.Email, email =>
+           {
+               email.Map(e => e.Value).Column("Email");
+           });
+       }
    }
    ```
 
@@ -466,6 +530,19 @@ public class DuplicatedDomainException : Exception
 - [ ] Constructor con mensaje y inner exception (opcional)
 - [ ] Usado en métodos de entidad o repositorio
 - [ ] Documentado con XML comments
+
+### Nuevo Value Object
+
+- [ ] Clase `{ValueObject}.cs` es `sealed record`
+- [ ] Ubicado en `valueobjects/`
+- [ ] Propiedades son `{ get; init; }`
+- [ ] NO tiene Id (no tiene identidad)
+- [ ] Constructor con validación (throw ArgumentException si inválido)
+- [ ] Normalización de valores (ToLower, ToUpper, etc.)
+- [ ] Override `ToString()` implementado
+- [ ] Conversion operators (implicit/explicit) si aplica
+- [ ] Usado como propiedad en Entity
+- [ ] Mapeado como Component en NHibernate
 
 ---
 
@@ -702,5 +779,17 @@ Application usa interfaces del Domain
 
 ---
 
-**Última actualización:** 2025-01-13
+**Última actualización:** 2025-01-14
 **Mantenedor:** Equipo APSYS
+
+## Resumen de Guías Completadas
+
+| Guía | Estado | Versión | Líneas | Contenido Principal |
+|------|--------|---------|--------|---------------------|
+| [Entities](./entities.md) | ✅ | v1.0.0 | 947 | AbstractDomainObject, Virtual properties, Constructors, IsValid/Validate |
+| [Validators](./validators.md) | ✅ | v1.0.0 | 970 | FluentValidation, RuleFor, WithMessage/WithErrorCode, Resources pattern |
+| [Repository Interfaces](./repository-interfaces.md) | ✅ | v1.0.0 | 1,402 | IRepository, IReadOnlyRepository, IUnitOfWork, GetManyAndCount |
+| [DAOs](./daos.md) | ✅ | v1.0.0 | 1,051 | DAO vs Entity, SearchAll pattern, Read-only optimization |
+| [Domain Exceptions](./domain-exceptions.md) | ✅ | v1.0.0 | 1,271 | InvalidDomainException, Excepciones vs Results, HTTP status mapping |
+| [Value Objects](./value-objects.md) | ✅ | v1.0.0 | 1,378 | Immutability, Equality by value, C# records, NHibernate Component |
+| **TOTAL** | **6 guías** | **v1.0.0** | **7,019** | **Domain Layer completo** |
