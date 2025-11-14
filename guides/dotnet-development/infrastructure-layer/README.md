@@ -50,11 +50,11 @@ Conceptos fundamentales aplicables a cualquier ORM o tecnología de persistencia
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [README.md](./README.md) | ✅ v1.0.0 | Overview de Infrastructure Layer |
-| [core-concepts.md](./core-concepts.md) | ⏳ Pendiente | Conceptos fundamentales agnósticos |
-| [repository-pattern.md](./repository-pattern.md) | ⏳ Pendiente | Repository pattern implementación |
-| [unit-of-work-pattern.md](./unit-of-work-pattern.md) | ⏳ Pendiente | Unit of Work pattern |
-| [transactions.md](./transactions.md) | ⏳ Pendiente | Manejo de transacciones |
-| [dependency-injection.md](./dependency-injection.md) | ⏳ Pendiente | Registro de servicios en DI |
+| [core-concepts.md](./core-concepts.md) | ✅ v1.0.0 | Conceptos fundamentales agnósticos |
+| [repository-pattern.md](./repository-pattern.md) | ✅ v1.0.0 | Repository pattern implementación |
+| [unit-of-work-pattern.md](./unit-of-work-pattern.md) | ✅ v1.0.0 | Unit of Work pattern |
+| [transactions.md](./transactions.md) | ✅ v1.0.0 | Manejo de transacciones |
+| [dependency-injection.md](./dependency-injection.md) | ✅ v1.0.0 | Registro de servicios en DI |
 
 **Cuándo usar:** Al implementar cualquier capa de persistencia.
 
@@ -622,8 +622,8 @@ Application → IUnitOfWork → IRepository → NHRepository → ISession → Da
 
 | Sección | Guías | Completadas | Progreso |
 |---------|-------|-------------|----------|
-| Core Concepts | 6 | 1 | README completado |
+| Core Concepts | 6 | 6 | ✅ **100% Completado** |
 | NHibernate | 8 | 0 | Pendiente |
 | External Services | 8 | 0 | Pendiente |
 | Data Migrations | 5 | 0 | Pendiente |
-| **TOTAL** | **27** | **1** | **~4%** |
+| **TOTAL** | **27** | **6** | **~22%** |
