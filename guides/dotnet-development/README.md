@@ -1,8 +1,8 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.1.0
+**Versión:** 0.4.0
 **Estado:** En desarrollo
-**Última actualización:** 2025-01-13
+**Última actualización:** 2025-01-14
 
 ## Descripción
 
@@ -35,41 +35,41 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 
 ## Secciones de Guías
 
-### 1. Best Practices ⏳
+### 1. Best Practices ✅
 **Prácticas generales de desarrollo en .NET**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](best-practices/README.md) | ⏳ Pendiente | Overview de mejores prácticas |
-| [clean-architecture-principles.md](best-practices/clean-architecture-principles.md) | ⏳ Pendiente | Principios de Clean Architecture |
-| [code-organization.md](best-practices/code-organization.md) | ⏳ Pendiente | Organización de namespaces, usings, naming |
-| [async-await-patterns.md](best-practices/async-await-patterns.md) | ⏳ Pendiente | Patrones de async/await |
-| [error-handling.md](best-practices/error-handling.md) | ⏳ Pendiente | FluentResults, excepciones |
-| [dependency-injection.md](best-practices/dependency-injection.md) | ⏳ Pendiente | DI patterns y best practices |
-| [testing-conventions.md](best-practices/testing-conventions.md) | ⏳ Pendiente | Convenciones de testing |
+| [README.md](best-practices/README.md) | ✅ v1.0.0 | Overview de mejores prácticas |
+| [clean-architecture-principles.md](best-practices/clean-architecture-principles.md) | ✅ v1.0.0 | Principios de Clean Architecture |
+| [code-organization.md](best-practices/code-organization.md) | ✅ v1.0.0 | Organización de namespaces, usings, naming |
+| [async-await-patterns.md](best-practices/async-await-patterns.md) | ✅ v1.0.0 | Patrones de async/await |
+| [error-handling.md](best-practices/error-handling.md) | ✅ v1.0.0 | FluentResults, excepciones |
+| [dependency-injection.md](best-practices/dependency-injection.md) | ✅ v1.0.0 | DI patterns y best practices |
+| [testing-conventions.md](best-practices/testing-conventions.md) | ✅ v1.0.0 | Convenciones de testing |
 
-### 2. Feature Structure ⏳
+### 2. Feature Structure ✅
 **Estructura y organización de features/módulos**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](feature-structure/README.md) | ⏳ Pendiente | Overview de arquitectura de features |
-| [folder-organization.md](feature-structure/folder-organization.md) | ⏳ Pendiente | Estructura de carpetas estándar |
-| [entity-to-endpoint-flow.md](feature-structure/entity-to-endpoint-flow.md) | ⏳ Pendiente | Flujo completo de una operación |
-| [naming-conventions.md](feature-structure/naming-conventions.md) | ⏳ Pendiente | Convenciones de nombres |
+| [README.md](feature-structure/README.md) | ✅ v1.0.0 | Overview de arquitectura de features |
+| [folder-organization.md](feature-structure/folder-organization.md) | ✅ v1.0.0 | Estructura de carpetas estándar |
+| [entity-to-endpoint-flow.md](feature-structure/entity-to-endpoint-flow.md) | ✅ v1.0.0 | Flujo completo de una operación |
+| [naming-conventions.md](feature-structure/naming-conventions.md) | ✅ v1.0.0 | Convenciones de nombres |
 
-### 3. Domain Layer ⏳
+### 3. Domain Layer ✅
 **Capa de dominio - Entidades y reglas de negocio**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](domain-layer/README.md) | ⏳ Pendiente | Overview de la capa de dominio |
-| [entities.md](domain-layer/entities.md) | ⏳ Pendiente | Entidades, AbstractDomainObject |
-| [validators.md](domain-layer/validators.md) | ⏳ Pendiente | FluentValidation patterns |
-| [repository-interfaces.md](domain-layer/repository-interfaces.md) | ⏳ Pendiente | IRepository, IUnitOfWork |
-| [daos.md](domain-layer/daos.md) | ⏳ Pendiente | DAO pattern para consultas |
-| [domain-exceptions.md](domain-layer/domain-exceptions.md) | ⏳ Pendiente | Custom exceptions |
-| [value-objects.md](domain-layer/value-objects.md) | ⏳ Pendiente | Value Objects pattern |
+| [README.md](domain-layer/README.md) | ✅ v1.0.0 | Overview de la capa de dominio |
+| [entities.md](domain-layer/entities.md) | ✅ v1.0.0 | Entidades, AbstractDomainObject |
+| [validators.md](domain-layer/validators.md) | ✅ v1.0.0 | FluentValidation patterns |
+| [repository-interfaces.md](domain-layer/repository-interfaces.md) | ✅ v1.0.0 | IRepository, IUnitOfWork |
+| [daos.md](domain-layer/daos.md) | ✅ v1.0.0 | DAO pattern para consultas |
+| [domain-exceptions.md](domain-layer/domain-exceptions.md) | ✅ v1.0.0 | Custom exceptions |
+| [value-objects.md](domain-layer/value-objects.md) | ✅ v1.0.0 | Value Objects pattern |
 
 ### 4. Application Layer ⏳
 **Capa de aplicación - Use Cases y lógica de negocio**
@@ -257,13 +257,13 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.1.0 - Estructura creada
+**Estado actual:** 0.4.0 - Capas fundamentales completadas
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
-| best-practices | 7 | 0 | 0% |
-| feature-structure | 4 | 0 | 0% |
-| domain-layer | 7 | 0 | 0% |
+| best-practices | 7 | 7 | ✅ 100% |
+| feature-structure | 4 | 4 | ✅ 100% |
+| domain-layer | 7 | 7 | ✅ 100% |
 | application-layer | 5 | 0 | 0% |
 | infrastructure-layer | 6 (core) | 0 | 0% |
 | infrastructure-layer/orm-implementations | 9 | 0 | 0% |
@@ -271,7 +271,7 @@ webapi/
 | infrastructure-layer/data-migrations | 5 | 0 | 0% |
 | webapi-layer | 8 | 0 | 0% |
 | examples | 6 | 0 | 0% |
-| **TOTAL** | **65** | **0** | **0%** |
+| **TOTAL** | **65** | **18** | **~28%** |
 
 ## Versionado
 
@@ -282,6 +282,12 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.4.0 (2025-01-14)
+- ✅ Best Practices completado (7/7 guías)
+- ✅ Feature Structure completado (4/4 guías)
+- ✅ Domain Layer completado (7/7 guías)
+- Progreso total: 18/65 guías (~28%)
 
 #### v0.1.0 (2025-01-13)
 - Estructura inicial creada
@@ -320,5 +326,5 @@ Al desarrollar estas guías, ten en cuenta:
 
 ---
 
-**Última actualización:** 2025-01-13
+**Última actualización:** 2025-01-14
 **Mantenedor:** Equipo APSYS
