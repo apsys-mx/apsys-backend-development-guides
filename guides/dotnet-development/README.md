@@ -98,13 +98,13 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [orm-implementations/README.md](infrastructure-layer/orm-implementations/README.md) | ⏳ Pendiente | Comparación entre ORMs |
-| [orm-implementations/nhibernate/README.md](infrastructure-layer/orm-implementations/nhibernate/README.md) | ⏳ Pendiente | NHibernate overview |
-| [orm-implementations/nhibernate/repositories.md](infrastructure-layer/orm-implementations/nhibernate/repositories.md) | ⏳ Pendiente | NH*Repository implementations |
-| [orm-implementations/nhibernate/mappers.md](infrastructure-layer/orm-implementations/nhibernate/mappers.md) | ⏳ Pendiente | ClassMapping patterns |
-| [orm-implementations/nhibernate/queries.md](infrastructure-layer/orm-implementations/nhibernate/queries.md) | ⏳ Pendiente | LINQ, Dynamic LINQ |
-| [orm-implementations/nhibernate/unit-of-work.md](infrastructure-layer/orm-implementations/nhibernate/unit-of-work.md) | ⏳ Pendiente | NHibernate UoW |
-| [orm-implementations/nhibernate/session-management.md](infrastructure-layer/orm-implementations/nhibernate/session-management.md) | ⏳ Pendiente | Session lifecycle |
-| [orm-implementations/nhibernate/best-practices.md](infrastructure-layer/orm-implementations/nhibernate/best-practices.md) | ⏳ Pendiente | NHibernate best practices |
+| [orm-implementations/nhibernate/README.md](infrastructure-layer/orm-implementations/nhibernate/README.md) | ✅ v1.0.0 | NHibernate overview |
+| [orm-implementations/nhibernate/repositories.md](infrastructure-layer/orm-implementations/nhibernate/repositories.md) | ✅ v1.0.0 | NH*Repository implementations |
+| [orm-implementations/nhibernate/mappers.md](infrastructure-layer/orm-implementations/nhibernate/mappers.md) | ✅ v1.0.0 | ClassMapping patterns |
+| [orm-implementations/nhibernate/queries.md](infrastructure-layer/orm-implementations/nhibernate/queries.md) | ✅ v1.0.0 | LINQ, Dynamic LINQ |
+| [orm-implementations/nhibernate/unit-of-work.md](infrastructure-layer/orm-implementations/nhibernate/unit-of-work.md) | ✅ v1.0.0 | NHibernate UoW |
+| [orm-implementations/nhibernate/session-management.md](infrastructure-layer/orm-implementations/nhibernate/session-management.md) | ✅ v1.0.0 | Session lifecycle |
+| [orm-implementations/nhibernate/best-practices.md](infrastructure-layer/orm-implementations/nhibernate/best-practices.md) | ✅ v1.0.0 | NHibernate best practices |
 | [orm-implementations/entity-framework/README.md](infrastructure-layer/orm-implementations/entity-framework/README.md) | ⏳ Pendiente | Entity Framework (futuro) |
 
 #### 5.2. External Services
@@ -266,12 +266,12 @@ webapi/
 | domain-layer | 7 | 7 | ✅ 100% |
 | application-layer | 5 | 5 | ✅ 100% |
 | infrastructure-layer | 6 (core) | 0 | 0% |
-| infrastructure-layer/orm-implementations | 9 | 0 | 0% |
+| infrastructure-layer/orm-implementations | 9 | 7 | ✅ ~78% |
 | infrastructure-layer/external-services | 8 | 0 | 0% |
 | infrastructure-layer/data-migrations | 5 | 0 | 0% |
 | webapi-layer | 8 | 0 | 0% |
 | examples | 6 | 0 | 0% |
-| **TOTAL** | **65** | **23** | **~35%** |
+| **TOTAL** | **65** | **30** | **~46%** |
 
 ## Versionado
 

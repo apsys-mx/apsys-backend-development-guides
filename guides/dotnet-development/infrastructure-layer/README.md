@@ -67,13 +67,13 @@ Implementaciones específicas por ORM.
 #### NHibernate
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](./orm-implementations/nhibernate/README.md) | ⏳ Pendiente | NHibernate overview |
-| [repositories.md](./orm-implementations/nhibernate/repositories.md) | ⏳ Pendiente | NH*Repository implementations |
-| [mappers.md](./orm-implementations/nhibernate/mappers.md) | ⏳ Pendiente | ClassMapping patterns |
-| [queries.md](./orm-implementations/nhibernate/queries.md) | ⏳ Pendiente | LINQ, Dynamic LINQ, QueryOver |
-| [unit-of-work.md](./orm-implementations/nhibernate/unit-of-work.md) | ⏳ Pendiente | NHUnitOfWork implementation |
-| [session-management.md](./orm-implementations/nhibernate/session-management.md) | ⏳ Pendiente | ISession lifecycle |
-| [best-practices.md](./orm-implementations/nhibernate/best-practices.md) | ⏳ Pendiente | NHibernate best practices |
+| [README.md](./orm-implementations/nhibernate/README.md) | ✅ v1.0.0 | NHibernate overview |
+| [repositories.md](./orm-implementations/nhibernate/repositories.md) | ✅ v1.0.0 | NH*Repository implementations |
+| [mappers.md](./orm-implementations/nhibernate/mappers.md) | ✅ v1.0.0 | ClassMapping patterns |
+| [queries.md](./orm-implementations/nhibernate/queries.md) | ✅ v1.0.0 | LINQ, Dynamic LINQ, QueryOver |
+| [unit-of-work.md](./orm-implementations/nhibernate/unit-of-work.md) | ✅ v1.0.0 | NHUnitOfWork implementation |
+| [session-management.md](./orm-implementations/nhibernate/session-management.md) | ✅ v1.0.0 | ISession lifecycle |
+| [best-practices.md](./orm-implementations/nhibernate/best-practices.md) | ✅ v1.0.0 | NHibernate best practices |
 
 **Cuándo usar:** Al usar NHibernate como ORM.
 
@@ -623,7 +623,7 @@ Application → IUnitOfWork → IRepository → NHRepository → ISession → Da
 | Sección | Guías | Completadas | Progreso |
 |---------|-------|-------------|----------|
 | Core Concepts | 6 | 6 | ✅ **100% Completado** |
-| NHibernate | 8 | 0 | Pendiente |
+| NHibernate | 7 | 7 | ✅ **100% Completado** |
 | External Services | 8 | 0 | Pendiente |
 | Data Migrations | 5 | 0 | Pendiente |
-| **TOTAL** | **27** | **6** | **~22%** |
+| **TOTAL** | **26** | **13** | **~50%** |
