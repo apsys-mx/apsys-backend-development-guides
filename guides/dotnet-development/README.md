@@ -1,8 +1,8 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.8.0
+**Versión:** 0.8.1
 **Estado:** En desarrollo
-**Última actualización:** 2025-11-14
+**Última actualización:** 2025-11-15
 
 ## Descripción
 
@@ -97,7 +97,7 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 #### 5.1. ORM Implementations
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [orm-implementations/README.md](infrastructure-layer/orm-implementations/README.md) | ⏳ Pendiente | Comparación entre ORMs |
+| [orm-implementations/README.md](infrastructure-layer/orm-implementations/README.md) | ✅ v1.0.0 | Comparación entre ORMs |
 | [orm-implementations/nhibernate/README.md](infrastructure-layer/orm-implementations/nhibernate/README.md) | ✅ v1.0.0 | NHibernate overview |
 | [orm-implementations/nhibernate/repositories.md](infrastructure-layer/orm-implementations/nhibernate/repositories.md) | ✅ v1.0.0 | NH*Repository implementations |
 | [orm-implementations/nhibernate/mappers.md](infrastructure-layer/orm-implementations/nhibernate/mappers.md) | ✅ v1.0.0 | ClassMapping patterns |
@@ -257,7 +257,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.8.0 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa)
+**Estado actual:** 0.8.1 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa)
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -266,12 +266,12 @@ webapi/
 | domain-layer | 7 | 7 | ✅ 100% |
 | application-layer | 5 | 5 | ✅ 100% |
 | infrastructure-layer | 6 (core) | 6 | ✅ 100% |
-| infrastructure-layer/orm-implementations | 9 | 7 | ✅ ~78% |
+| infrastructure-layer/orm-implementations | 9 | 8 | ✅ ~89% |
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
 | infrastructure-layer/data-migrations | 5 | 4 | ✅ 80% |
 | webapi-layer | 8 | 0 | ⏳ 0% |
 | examples | 6 | 0 | ⏳ 0% |
-| **TOTAL** | **65** | **48** | **~74%** |
+| **TOTAL** | **65** | **49** | **~75%** |
 
 ## Versionado
 
@@ -282,6 +282,14 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.8.1 (2025-11-15)
+- ✅ Infrastructure Layer - ORM Implementations README completado (8/9 guías, 89%)
+  - Comparación completa NHibernate vs Entity Framework Core
+  - Matriz de decisión para selección de ORM
+  - Justificación técnica de decisión APSYS
+  - Guía de migración entre ORMs
+- Progreso total: 75% (49/65 guías)
 
 #### v0.8.0 (2025-11-14)
 - ✅ Infrastructure Layer - Data Migrations completado (4/5 guías, 80%)
@@ -346,5 +354,5 @@ Al desarrollar estas guías, ten en cuenta:
 
 ---
 
-**Última actualización:** 2025-11-14
+**Última actualización:** 2025-11-15
 **Mantenedor:** Equipo APSYS
