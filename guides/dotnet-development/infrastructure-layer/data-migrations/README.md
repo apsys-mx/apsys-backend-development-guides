@@ -265,9 +265,9 @@ SELECT * FROM public.versioninfo ORDER BY version DESC;
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [README.md](./README.md) | ✅ v1.0.0 | Overview de Data Migrations |
-| [fluent-migrator/README.md](./fluent-migrator/README.md) | ⏳ Pendiente | FluentMigrator setup y configuración |
-| [fluent-migrator/migration-patterns.md](./fluent-migrator/migration-patterns.md) | ⏳ Pendiente | Patrones de migración (tablas, índices, vistas, FK) |
-| [fluent-migrator/best-practices.md](./fluent-migrator/best-practices.md) | ⏳ Pendiente | Best practices de FluentMigrator |
+| [fluent-migrator/README.md](./fluent-migrator/README.md) | ✅ v1.0.0 | FluentMigrator setup y configuración |
+| [fluent-migrator/migration-patterns.md](./fluent-migrator/migration-patterns.md) | ✅ v1.0.0 | Patrones de migración (tablas, índices, vistas, FK) |
+| [fluent-migrator/best-practices.md](./fluent-migrator/best-practices.md) | ✅ v1.0.0 | Best practices de FluentMigrator |
 | [ef-migrations/README.md](./ef-migrations/README.md) | ⏳ Futuro | Entity Framework Migrations (futuro) |
 
 ---

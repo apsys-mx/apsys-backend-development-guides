@@ -1,6 +1,6 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.7.0
+**Versión:** 0.8.0
 **Estado:** En desarrollo
 **Última actualización:** 2025-11-14
 
@@ -122,11 +122,11 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 #### 5.3. Data Migrations
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [data-migrations/README.md](infrastructure-layer/data-migrations/README.md) | ⏳ Pendiente | Migraciones overview |
-| [data-migrations/fluent-migrator/README.md](infrastructure-layer/data-migrations/fluent-migrator/README.md) | ⏳ Pendiente | FluentMigrator overview |
-| [data-migrations/fluent-migrator/migration-patterns.md](infrastructure-layer/data-migrations/fluent-migrator/migration-patterns.md) | ⏳ Pendiente | Patrones de migración |
-| [data-migrations/fluent-migrator/best-practices.md](infrastructure-layer/data-migrations/fluent-migrator/best-practices.md) | ⏳ Pendiente | FluentMigrator best practices |
-| [data-migrations/ef-migrations/README.md](infrastructure-layer/data-migrations/ef-migrations/README.md) | ⏳ Pendiente | EF Migrations (futuro) |
+| [data-migrations/README.md](infrastructure-layer/data-migrations/README.md) | ✅ v1.0.0 | Migraciones overview |
+| [data-migrations/fluent-migrator/README.md](infrastructure-layer/data-migrations/fluent-migrator/README.md) | ✅ v1.0.0 | FluentMigrator setup y configuración |
+| [data-migrations/fluent-migrator/migration-patterns.md](infrastructure-layer/data-migrations/fluent-migrator/migration-patterns.md) | ✅ v1.0.0 | Patrones de migración (tablas, índices, vistas, FK) |
+| [data-migrations/fluent-migrator/best-practices.md](infrastructure-layer/data-migrations/fluent-migrator/best-practices.md) | ✅ v1.0.0 | FluentMigrator best practices |
+| [data-migrations/ef-migrations/README.md](infrastructure-layer/data-migrations/ef-migrations/README.md) | ⏳ Futuro | EF Migrations (futuro) |
 
 ### 6. WebApi Layer ⏳
 **Capa de presentación - Endpoints y DTOs**
@@ -257,7 +257,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.7.0 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa)
+**Estado actual:** 0.8.0 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa)
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -268,10 +268,10 @@ webapi/
 | infrastructure-layer | 6 (core) | 6 | ✅ 100% |
 | infrastructure-layer/orm-implementations | 9 | 7 | ✅ ~78% |
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
-| infrastructure-layer/data-migrations | 5 | 0 | ⏳ 0% |
+| infrastructure-layer/data-migrations | 5 | 4 | ✅ 80% |
 | webapi-layer | 8 | 0 | ⏳ 0% |
 | examples | 6 | 0 | ⏳ 0% |
-| **TOTAL** | **65** | **44** | **~68%** |
+| **TOTAL** | **65** | **48** | **~74%** |
 
 ## Versionado
 
@@ -282,6 +282,14 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.8.0 (2025-11-14)
+- ✅ Infrastructure Layer - Data Migrations completado (4/5 guías, 80%)
+  - Data Migrations overview
+  - FluentMigrator setup y configuración
+  - FluentMigrator migration patterns (25 patrones)
+  - FluentMigrator best practices
+- Progreso total: 74% (48/65 guías)
 
 #### v0.7.0 (2025-11-14)
 - ✅ Infrastructure Layer - External Services completado (8/8 guías)

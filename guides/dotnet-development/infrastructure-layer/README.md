@@ -105,15 +105,16 @@ Integraciones con servicios externos.
 
 ---
 
-### Data Migrations ⏳
+### Data Migrations ✅
 
 Sistemas de migraciones de base de datos.
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](./data-migrations/README.md) | ⏳ Pendiente | Migraciones overview |
-| [fluent-migrator/README.md](./data-migrations/fluent-migrator/README.md) | ⏳ Pendiente | FluentMigrator overview |
-| [fluent-migrator/migration-patterns.md](./data-migrations/fluent-migrator/migration-patterns.md) | ⏳ Pendiente | Patrones de migración |
+| [README.md](./data-migrations/README.md) | ✅ v1.0.0 | Migraciones overview |
+| [fluent-migrator/README.md](./data-migrations/fluent-migrator/README.md) | ✅ v1.0.0 | FluentMigrator setup y configuración |
+| [fluent-migrator/migration-patterns.md](./data-migrations/fluent-migrator/migration-patterns.md) | ✅ v1.0.0 | Patrones de migración (tablas, índices, vistas, FK) |
+| [fluent-migrator/best-practices.md](./data-migrations/fluent-migrator/best-practices.md) | ✅ v1.0.0 | Best practices de FluentMigrator |
 
 **Cuándo usar:** Al gestionar cambios de esquema de base de datos.
 

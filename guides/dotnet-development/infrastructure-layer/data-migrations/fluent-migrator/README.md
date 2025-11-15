@@ -843,8 +843,8 @@ ALTER TABLE public.versioninfo RENAME TO versioninfo_backup;
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [README.md](./README.md) | ✅ v1.0.0 | FluentMigrator setup y configuración |
-| [migration-patterns.md](./migration-patterns.md) | ⏳ Pendiente | Patrones de migración (tablas, índices, vistas, FK) |
-| [best-practices.md](./best-practices.md) | ⏳ Pendiente | Best practices de FluentMigrator |
+| [migration-patterns.md](./migration-patterns.md) | ✅ v1.0.0 | Patrones de migración (tablas, índices, vistas, FK) |
+| [best-practices.md](./best-practices.md) | ✅ v1.0.0 | Best practices de FluentMigrator |
 
 ---
 
