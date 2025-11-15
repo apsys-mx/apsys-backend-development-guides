@@ -682,13 +682,13 @@ GET /users?pageNumber=1&pageSize=25&sortBy=Email&sortDirection=asc&IsActive=true
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [README.md](./README.md) | ✅ v1.0.0 | Overview de WebApi Layer |
-| [fastendpoints-basics.md](./fastendpoints-basics.md) | ⏳ Pendiente | Estructura de endpoints |
-| [request-response-models.md](./request-response-models.md) | ⏳ Pendiente | Patrones de Models |
-| [dtos.md](./dtos.md) | ⏳ Pendiente | DTOs vs Models |
-| [automapper-profiles.md](./automapper-profiles.md) | ⏳ Pendiente | Configuración de mapeos |
-| [error-responses.md](./error-responses.md) | ⏳ Pendiente | Status codes, ProblemDetails |
-| [authentication.md](./authentication.md) | ⏳ Pendiente | JWT, Auth0, políticas |
-| [swagger-configuration.md](./swagger-configuration.md) | ⏳ Pendiente | Swagger/OpenAPI |
+| [fastendpoints-basics.md](./fastendpoints-basics.md) | ✅ v1.0.0 | Estructura de endpoints, configuración, binding |
+| [request-response-models.md](./request-response-models.md) | ✅ v1.0.0 | Patrones de Models, nested classes |
+| [dtos.md](./dtos.md) | ✅ v1.0.0 | DTOs vs Models vs Entities |
+| [automapper-profiles.md](./automapper-profiles.md) | ✅ v1.0.0 | Configuración de mapeos, CreateMap, ProjectTo |
+| [error-responses.md](./error-responses.md) | ✅ v1.0.0 | Status codes, ProblemDetails, BaseEndpoint helpers |
+| [authentication.md](./authentication.md) | ✅ v1.0.0 | JWT Bearer, Auth0, custom authorization handlers |
+| [swagger-configuration.md](./swagger-configuration.md) | ✅ v1.0.0 | Swagger/OpenAPI, Description vs Summary |
 
 ---
 

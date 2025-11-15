@@ -1,6 +1,6 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.8.2
+**Versión:** 0.9.0
 **Estado:** En desarrollo
 **Última actualización:** 2025-11-15
 
@@ -128,19 +128,19 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | [data-migrations/fluent-migrator/best-practices.md](infrastructure-layer/data-migrations/fluent-migrator/best-practices.md) | ✅ v1.0.0 | FluentMigrator best practices |
 | [data-migrations/ef-migrations/README.md](infrastructure-layer/data-migrations/ef-migrations/README.md) | ⏳ Futuro | EF Migrations (futuro) |
 
-### 6. WebApi Layer ⏳
+### 6. WebApi Layer ✅
 **Capa de presentación - Endpoints y DTOs**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](webapi-layer/README.md) | ⏳ Pendiente | Overview de la capa WebApi |
+| [README.md](webapi-layer/README.md) | ✅ v1.0.0 | Overview de la capa WebApi |
 | [fastendpoints-basics.md](webapi-layer/fastendpoints-basics.md) | ✅ v1.0.0 | Endpoint structure |
 | [request-response-models.md](webapi-layer/request-response-models.md) | ✅ v1.0.0 | Models pattern |
 | [dtos.md](webapi-layer/dtos.md) | ✅ v1.0.0 | DTOs vs Models |
 | [automapper-profiles.md](webapi-layer/automapper-profiles.md) | ✅ v1.0.0 | Mapping configurations |
-| [error-responses.md](webapi-layer/error-responses.md) | ⏳ Pendiente | Status codes, ProblemDetails |
-| [authentication.md](webapi-layer/authentication.md) | ⏳ Pendiente | JWT, Auth0, policies |
-| [swagger-configuration.md](webapi-layer/swagger-configuration.md) | ⏳ Pendiente | Swagger/OpenAPI |
+| [error-responses.md](webapi-layer/error-responses.md) | ✅ v1.0.0 | Status codes, ProblemDetails |
+| [authentication.md](webapi-layer/authentication.md) | ✅ v1.0.0 | JWT, Auth0, policies |
+| [swagger-configuration.md](webapi-layer/swagger-configuration.md) | ✅ v1.0.0 | Swagger/OpenAPI |
 
 ### 7. Examples ⏳
 **Ejemplos completos de implementación de features**
@@ -257,7 +257,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.8.2 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa) + WebApi Layer (50%)
+**Estado actual:** 0.9.0 - Capas fundamentales completas + WebApi Layer completa ✅
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -269,9 +269,9 @@ webapi/
 | infrastructure-layer/orm-implementations | 9 | 8 | ✅ ~89% |
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
 | infrastructure-layer/data-migrations | 5 | 4 | ✅ 80% |
-| webapi-layer | 8 | 4 | ⏳ 50% |
+| webapi-layer | 8 | 8 | ✅ 100% |
 | examples | 6 | 0 | ⏳ 0% |
-| **TOTAL** | **65** | **52** | **~80%** |
+| **TOTAL** | **65** | **56** | **~86%** |
 
 ## Versionado
 
@@ -282,6 +282,21 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.9.0 (2025-11-15)
+- ✅ **WebApi Layer COMPLETADA** - 8/8 guías (100%)
+  - Todas las guías técnicas completadas: FastEndpoints, Request/Response Models, DTOs, AutoMapper, Error Responses, Authentication, Swagger
+  - README.md overview con flujo completo de datos, patrones principales, y mejores prácticas
+- **Milestone alcanzado**: Todas las capas fundamentales completadas (Best Practices, Feature Structure, Domain, Application, Infrastructure Core, WebApi)
+- Progreso total: 86% (56/65 guías)
+- **Siguiente objetivo**: Examples section (6 guías, 0% → 100%)
+
+#### v0.8.3 (2025-11-15)
+- ✅ WebApi Layer - Siguientes 3 guías completadas (7/8 guías, 88%)
+  - Error Responses: HTTP status codes, ProblemDetails, BaseEndpoint helpers, FluentResults integration
+  - Authentication: JWT Bearer con Auth0, custom authorization handlers, claims, policies
+  - Swagger Configuration: Description vs Summary, tags, OpenAPI metadata, SwaggerUI customization
+- Progreso total: 85% (55/65 guías)
 
 #### v0.8.2 (2025-11-15)
 - ✅ WebApi Layer - Primeras 4 guías completadas (4/8 guías, 50%)
