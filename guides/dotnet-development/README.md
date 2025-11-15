@@ -1,7 +1,7 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.9.1
-**Estado:** En desarrollo
+**Versión:** 1.0.0-rc1
+**Estado:** Release Candidate - 97% completado
 **Última actualización:** 2025-11-15
 
 ## Descripción
@@ -142,17 +142,17 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | [authentication.md](webapi-layer/authentication.md) | ✅ v1.0.0 | JWT, Auth0, policies |
 | [swagger-configuration.md](webapi-layer/swagger-configuration.md) | ✅ v1.0.0 | Swagger/OpenAPI |
 
-### 7. Examples ⏳
+### 7. Examples ✅
 **Ejemplos completos de implementación de features**
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [crud-feature/README.md](examples/crud-feature/README.md) | ✅ v1.0.0 | Overview de feature CRUD |
+| [crud-feature/README.md](examples/crud-feature/README.md) | ✅ v1.0.0 | Overview de feature CRUD completo |
 | [crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md) | ✅ v1.0.0 | Implementación paso a paso de CRUD |
-| [read-only-feature/README.md](examples/read-only-feature/README.md) | ⏳ Pendiente | Overview de feature read-only |
-| [read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md) | ⏳ Pendiente | Implementación paso a paso read-only |
-| [complex-feature/README.md](examples/complex-feature/README.md) | ⏳ Pendiente | Overview de feature complejo |
-| [complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md) | ⏳ Pendiente | Feature con relaciones |
+| [read-only-feature/README.md](examples/read-only-feature/README.md) | ✅ v1.0.0 | Overview de feature read-only con DAOs |
+| [read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md) | ✅ v1.0.0 | Implementación paso a paso read-only |
+| [complex-feature/README.md](examples/complex-feature/README.md) | ✅ v1.0.0 | Overview de feature con entity relationships |
+| [complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md) | ✅ v1.0.0 | Feature con relaciones many-to-many |
 
 ## Orden de Lectura Recomendado
 
@@ -192,12 +192,15 @@ Si eres nuevo en el equipo o en Clean Architecture, sigue este orden:
 7. **Práctica**
    - [examples/crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md)
    - [examples/read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md)
+   - [examples/complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md)
 
 ### Para Consulta Rápida
 
 Si necesitas implementar algo específico:
 
 - **Crear un nuevo feature CRUD** → [examples/crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md)
+- **Crear feature read-only (consultas)** → [examples/read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md)
+- **Feature con relaciones entre entidades** → [examples/complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md)
 - **Agregar entidad de dominio** → [domain-layer/entities.md](domain-layer/entities.md)
 - **Crear use case** → [application-layer/use-cases.md](application-layer/use-cases.md)
 - **Implementar repository** → [infrastructure-layer/orm-implementations/nhibernate/repositories.md](infrastructure-layer/orm-implementations/nhibernate/repositories.md)
@@ -257,7 +260,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.9.1 - Capas fundamentales completas + WebApi Layer completa + Examples iniciado ✅
+**Estado actual:** 1.0.0-rc1 - Todas las guías principales completadas ✅
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -266,12 +269,12 @@ webapi/
 | domain-layer | 7 | 7 | ✅ 100% |
 | application-layer | 5 | 5 | ✅ 100% |
 | infrastructure-layer | 6 (core) | 6 | ✅ 100% |
-| infrastructure-layer/orm-implementations | 9 | 8 | ✅ ~89% |
+| infrastructure-layer/orm-implementations | 9 | 8 | ⏳ ~89% (EF futuro) |
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
-| infrastructure-layer/data-migrations | 5 | 4 | ✅ 80% |
+| infrastructure-layer/data-migrations | 5 | 4 | ⏳ 80% (EF Migrations futuro) |
 | webapi-layer | 8 | 8 | ✅ 100% |
-| examples | 6 | 2 | ⏳ 33% |
-| **TOTAL** | **65** | **58** | **~89%** |
+| examples | 6 | 6 | ✅ 100% |
+| **TOTAL** | **65** | **63** | **~97%** |
 
 ## Versionado
 
@@ -283,26 +286,55 @@ Este conjunto de guías sigue Semantic Versioning:
 
 ### Changelog
 
+#### v1.0.0-rc1 (2025-11-15) 🎉
+- ✅ **Examples Section COMPLETADA** - 6/6 guías (100%)
+  - **read-only-feature/README.md**: Overview completo del patrón read-only (1,299 líneas)
+    - Análisis del feature TechnicalStandards del proyecto de referencia
+    - Patrón DAO vs Entity: cuándo usar cada uno
+    - Anatomía completa: 13 archivos organizados por capa
+    - IReadOnlyRepository<T> interface sin métodos de escritura
+    - NHibernate mapper con Mutable(false)
+    - Database views con campos pre-computados
+    - 2 diagramas de flujo de datos (Get Single, Get Many)
+    - 10 mejores prácticas específicas para read-only
+    - Checklist de implementación con 25+ items
+  - **read-only-feature/step-by-step.md**: Guía paso a paso (1,521 líneas)
+    - 6 fases de implementación
+    - 13 archivos con código completo
+    - Énfasis en diferencias vs CRUD (NO validators, NO write endpoints)
+    - Database view creation con SearchAll computed field
+    - 8 common pitfalls con soluciones
+  - **complex-feature/README.md**: Overview de features con entity relationships (1,849 líneas)
+    - Análisis del feature User-Role del proyecto de referencia
+    - 3 tipos de relaciones: One-to-Many, Many-to-Many, One-to-One
+    - Patrón Many-to-Many con join table y composite primary key
+    - NHibernate Bag() configuration para IList<T>
+    - Cascade operations (All, SaveUpdate, AllDeleteOrphan)
+    - Lazy vs Eager Loading estrategias
+    - Navigation properties y virtual keyword
+    - Flattened DTOs (IEnumerable<string> en lugar de IEnumerable<Role>)
+    - AutoMapper custom mapping para collections
+    - 10 mejores prácticas para relaciones
+    - Checklist de implementación con 50+ items
+  - **complex-feature/step-by-step.md**: Guía paso a paso (2,094 líneas)
+    - 6 fases de implementación
+    - 25 archivos con código completo
+    - User entity con IList<Role> Roles navigation property
+    - UserMapper con Bag() y ManyToMany() configuration
+    - M024CreateUsersTable migration con join table user_in_roles
+    - AddUsersToRoleUseCase y RemoveUserFromRoleUseCase
+    - UserDto con flattened Roles property
+    - 8 common pitfalls con soluciones
+    - Verificación de cascade operations
+- **Milestone alcanzado**: Todas las guías de NHibernate completadas
+- Progreso total: 97% (63/65 guías)
+- **Pendiente**: Solo guías de Entity Framework (futuro)
+
 #### v0.9.1 (2025-11-15)
-- ✅ **Examples - CRUD Feature Iniciado** - 2/6 guías (33%)
+- ✅ **Examples - CRUD Feature Completado** - 2/6 guías
   - crud-feature/README.md: Overview completo del patrón CRUD (1,393 líneas)
-    - Análisis de 21 archivos del feature Prototypes del proyecto de referencia
-    - Anatomía completa: 17 archivos organizados por capa
-    - Componentes detallados por capa con código completo
-    - 3 diagramas de flujo de datos (Create, Get, Update)
-    - 4 ejemplos HTTP completos (request/response)
-    - 10 mejores prácticas con código
-    - Checklist de implementación con 40+ items
   - crud-feature/step-by-step.md: Guía paso a paso completa (1,420+ líneas)
-    - 6 fases de implementación (Domain, Infrastructure, Application, WebApi, Testing, Database)
-    - 21 archivos con código completo y explicaciones
-    - Checkpoints después de cada paso
-    - Verificación de errores comunes (10 pitfalls)
-    - Checklist de verificación exhaustivo
-    - Ejemplos de testing manual con Swagger
-    - Setup de base de datos (tablas, vistas, índices)
-- Progreso total: 89% (58/65 guías)
-- **Siguiente objetivo**: Completar Examples section (4 guías restantes)
+- Progreso: 89% (58/65 guías)
 
 #### v0.9.0 (2025-11-15)
 - ✅ **WebApi Layer COMPLETADA** - 8/8 guías (100%)
