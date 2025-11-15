@@ -630,5 +630,5 @@ Application → IUnitOfWork → IRepository → NHRepository → ISession → Da
 | Core Concepts | 6 | 6 | ✅ **100% Completado** |
 | NHibernate | 7 | 7 | ✅ **100% Completado** |
 | External Services | 8 | 8 | ✅ **100% Completado** |
-| Data Migrations | 5 | 0 | ⏳ Pendiente |
-| **TOTAL** | **26** | **21** | **~81%** |
+| Data Migrations | 5 | 4 | ✅ **80% Completado** |
+| **TOTAL** | **26** | **25** | **~96%** |
