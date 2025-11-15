@@ -283,6 +283,14 @@ Este conjunto de guías sigue Semantic Versioning:
 
 ### Changelog
 
+#### v0.8.2 (2025-11-15)
+- ✅ WebApi Layer - Primeras 4 guías completadas (4/8 guías, 50%)
+  - FastEndpoints basics: Estructura de endpoints, configuración, binding
+  - Request/Response Models: Patrón de nested classes, integración con FastEndpoints
+  - DTOs: Data Transfer Objects vs Entities vs Models
+  - AutoMapper Profiles: Configuración, CreateMap, ForMember, ProjectTo
+- Progreso total: 80% (52/65 guías)
+
 #### v0.8.1 (2025-11-15)
 - ✅ Infrastructure Layer - ORM Implementations README completado (8/9 guías, 89%)
   - Comparación completa NHibernate vs Entity Framework Core
