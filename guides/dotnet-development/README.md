@@ -1,6 +1,6 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.9.0
+**Versión:** 0.9.1
 **Estado:** En desarrollo
 **Última actualización:** 2025-11-15
 
@@ -147,8 +147,8 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [crud-feature/README.md](examples/crud-feature/README.md) | ⏳ Pendiente | Overview de feature CRUD |
-| [crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md) | ⏳ Pendiente | Implementación paso a paso de CRUD |
+| [crud-feature/README.md](examples/crud-feature/README.md) | ✅ v1.0.0 | Overview de feature CRUD |
+| [crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md) | ✅ v1.0.0 | Implementación paso a paso de CRUD |
 | [read-only-feature/README.md](examples/read-only-feature/README.md) | ⏳ Pendiente | Overview de feature read-only |
 | [read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md) | ⏳ Pendiente | Implementación paso a paso read-only |
 | [complex-feature/README.md](examples/complex-feature/README.md) | ⏳ Pendiente | Overview de feature complejo |
@@ -257,7 +257,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.9.0 - Capas fundamentales completas + WebApi Layer completa ✅
+**Estado actual:** 0.9.1 - Capas fundamentales completas + WebApi Layer completa + Examples iniciado ✅
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -270,8 +270,8 @@ webapi/
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
 | infrastructure-layer/data-migrations | 5 | 4 | ✅ 80% |
 | webapi-layer | 8 | 8 | ✅ 100% |
-| examples | 6 | 0 | ⏳ 0% |
-| **TOTAL** | **65** | **56** | **~86%** |
+| examples | 6 | 2 | ⏳ 33% |
+| **TOTAL** | **65** | **58** | **~89%** |
 
 ## Versionado
 
@@ -282,6 +282,27 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v0.9.1 (2025-11-15)
+- ✅ **Examples - CRUD Feature Iniciado** - 2/6 guías (33%)
+  - crud-feature/README.md: Overview completo del patrón CRUD (1,393 líneas)
+    - Análisis de 21 archivos del feature Prototypes del proyecto de referencia
+    - Anatomía completa: 17 archivos organizados por capa
+    - Componentes detallados por capa con código completo
+    - 3 diagramas de flujo de datos (Create, Get, Update)
+    - 4 ejemplos HTTP completos (request/response)
+    - 10 mejores prácticas con código
+    - Checklist de implementación con 40+ items
+  - crud-feature/step-by-step.md: Guía paso a paso completa (1,420+ líneas)
+    - 6 fases de implementación (Domain, Infrastructure, Application, WebApi, Testing, Database)
+    - 21 archivos con código completo y explicaciones
+    - Checkpoints después de cada paso
+    - Verificación de errores comunes (10 pitfalls)
+    - Checklist de verificación exhaustivo
+    - Ejemplos de testing manual con Swagger
+    - Setup de base de datos (tablas, vistas, índices)
+- Progreso total: 89% (58/65 guías)
+- **Siguiente objetivo**: Completar Examples section (4 guías restantes)
 
 #### v0.9.0 (2025-11-15)
 - ✅ **WebApi Layer COMPLETADA** - 8/8 guías (100%)
