@@ -1,6 +1,6 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 0.8.1
+**Versión:** 0.8.2
 **Estado:** En desarrollo
 **Última actualización:** 2025-11-15
 
@@ -134,10 +134,10 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | Guía | Estado | Descripción |
 |------|--------|-------------|
 | [README.md](webapi-layer/README.md) | ⏳ Pendiente | Overview de la capa WebApi |
-| [fastendpoints-basics.md](webapi-layer/fastendpoints-basics.md) | ⏳ Pendiente | Endpoint structure |
-| [request-response-models.md](webapi-layer/request-response-models.md) | ⏳ Pendiente | Models pattern |
-| [dtos.md](webapi-layer/dtos.md) | ⏳ Pendiente | DTOs vs Models |
-| [automapper-profiles.md](webapi-layer/automapper-profiles.md) | ⏳ Pendiente | Mapping configurations |
+| [fastendpoints-basics.md](webapi-layer/fastendpoints-basics.md) | ✅ v1.0.0 | Endpoint structure |
+| [request-response-models.md](webapi-layer/request-response-models.md) | ✅ v1.0.0 | Models pattern |
+| [dtos.md](webapi-layer/dtos.md) | ✅ v1.0.0 | DTOs vs Models |
+| [automapper-profiles.md](webapi-layer/automapper-profiles.md) | ✅ v1.0.0 | Mapping configurations |
 | [error-responses.md](webapi-layer/error-responses.md) | ⏳ Pendiente | Status codes, ProblemDetails |
 | [authentication.md](webapi-layer/authentication.md) | ⏳ Pendiente | JWT, Auth0, policies |
 | [swagger-configuration.md](webapi-layer/swagger-configuration.md) | ⏳ Pendiente | Swagger/OpenAPI |
@@ -257,7 +257,7 @@ webapi/
 
 ## Progreso de Desarrollo
 
-**Estado actual:** 0.8.1 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa)
+**Estado actual:** 0.8.2 - Capas fundamentales + Application Layer + Infrastructure Layer (casi completa) + WebApi Layer (50%)
 
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
@@ -269,9 +269,9 @@ webapi/
 | infrastructure-layer/orm-implementations | 9 | 8 | ✅ ~89% |
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
 | infrastructure-layer/data-migrations | 5 | 4 | ✅ 80% |
-| webapi-layer | 8 | 0 | ⏳ 0% |
+| webapi-layer | 8 | 4 | ⏳ 50% |
 | examples | 6 | 0 | ⏳ 0% |
-| **TOTAL** | **65** | **49** | **~75%** |
+| **TOTAL** | **65** | **52** | **~80%** |
 
 ## Versionado
 
