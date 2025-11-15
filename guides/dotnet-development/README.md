@@ -1,8 +1,8 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 1.0.0-rc1
+**Versión:** 1.0.0-rc2
 **Estado:** Release Candidate - 97% completado
-**Última actualización:** 2025-11-15
+**Última actualización:** 2025-01-15
 
 ## Descripción
 
@@ -153,6 +153,8 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 | [read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md) | ✅ v1.0.0 | Implementación paso a paso read-only |
 | [complex-feature/README.md](examples/complex-feature/README.md) | ✅ v1.0.0 | Overview de feature con entity relationships |
 | [complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md) | ✅ v1.0.0 | Feature con relaciones many-to-many |
+| [integration-testing/README.md](examples/integration-testing/README.md) | ✅ v1.0.0 | Sistema de Scenarios para integration testing |
+| [integration-testing/step-by-step.md](examples/integration-testing/step-by-step.md) | ✅ v1.0.0 | Implementación paso a paso del Scenarios System |
 
 ## Orden de Lectura Recomendado
 
@@ -201,6 +203,7 @@ Si necesitas implementar algo específico:
 - **Crear un nuevo feature CRUD** → [examples/crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md)
 - **Crear feature read-only (consultas)** → [examples/read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md)
 - **Feature con relaciones entre entidades** → [examples/complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md)
+- **Setup de integration testing con Scenarios** → [examples/integration-testing/step-by-step.md](examples/integration-testing/step-by-step.md)
 - **Agregar entidad de dominio** → [domain-layer/entities.md](domain-layer/entities.md)
 - **Crear use case** → [application-layer/use-cases.md](application-layer/use-cases.md)
 - **Implementar repository** → [infrastructure-layer/orm-implementations/nhibernate/repositories.md](infrastructure-layer/orm-implementations/nhibernate/repositories.md)
@@ -273,8 +276,8 @@ webapi/
 | infrastructure-layer/external-services | 8 | 8 | ✅ 100% |
 | infrastructure-layer/data-migrations | 5 | 4 | ⏳ 80% (EF Migrations futuro) |
 | webapi-layer | 8 | 8 | ✅ 100% |
-| examples | 6 | 6 | ✅ 100% |
-| **TOTAL** | **65** | **63** | **~97%** |
+| examples | 8 | 8 | ✅ 100% |
+| **TOTAL** | **67** | **65** | **~97%** |
 
 ## Versionado
 
@@ -286,8 +289,34 @@ Este conjunto de guías sigue Semantic Versioning:
 
 ### Changelog
 
+#### v1.0.0-rc2 (2025-01-15) 🎉
+- ✅ **Integration Testing Guides Completadas** - 8/8 guías de examples (100%)
+  - **integration-testing/README.md**: Sistema de Scenarios completo (2,094 líneas)
+    - Intención y objetivo: Evitar preparar BD con clases en desarrollo
+    - Anatomía del sistema: IScenario, AppSchema, NDbUnit, ScenarioBuilder
+    - Componentes clave: INDbUnit interface, PostgreSQLNDbUnit implementation
+    - Diseño de scenarios: Principios fundamentales (Single Responsibility, Predictable Data, Minimal Dependencies)
+    - Prácticas del desarrollador: Naming, transactions, data design, defensive coding
+    - Integración con desarrollo: Scenarios como parte del feature development workflow
+    - 6 patrones de diseño: Base, Foundation, Bulk Creation, Modification, Relationship, Domain Data
+    - 7 anti-patrones documentados con correcciones
+    - Ejemplos completos: User Management, Technical Standards
+    - Checklist de implementación completa
+  - **integration-testing/step-by-step.md**: Implementación paso a paso (1,521 líneas)
+    - 7 fases de implementación: Setup, NDbUnit, ScenarioBuilder, Base Classes, Scenarios, Generation, Tests
+    - Implementación completa de INDbUnit, NDbUnit, PostgreSQLNDbUnit
+    - AppSchema.xsd con Typed DataSet generation
+    - AppSchemaExtender con helper methods
+    - ScenarioBuilder con dependency injection
+    - NHRepositoryTestBase y EndpointTestBase
+    - 4 scenarios de ejemplo: Sc010CreateSandBox, Sc020CreateRoles, Sc030CreateUsers, Sc031CreateAdminUser
+    - Generación de XML snapshots
+    - Repository y Endpoint tests usando scenarios
+    - Troubleshooting: 7 errores comunes con soluciones
+- Progreso total: 97% (65/67 guías)
+
 #### v1.0.0-rc1 (2025-11-15) 🎉
-- ✅ **Examples Section COMPLETADA** - 6/6 guías (100%)
+- ✅ **Examples Section (4 guías iniciales)** - 6/6 guías (100%)
   - **read-only-feature/README.md**: Overview completo del patrón read-only (1,299 líneas)
     - Análisis del feature TechnicalStandards del proyecto de referencia
     - Patrón DAO vs Entity: cuándo usar cada uno
@@ -430,5 +459,5 @@ Al desarrollar estas guías, ten en cuenta:
 
 ---
 
-**Última actualización:** 2025-11-15
+**Última actualización:** 2025-01-15
 **Mantenedor:** Equipo APSYS
