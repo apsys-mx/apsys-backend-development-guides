@@ -1,8 +1,8 @@
 # Feature Structure - .NET Clean Architecture
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Estado:** ✅ Completado
-**Última actualización:** 2025-01-13
+**Última actualización:** 2025-01-18
 
 ## Descripción
 
@@ -17,7 +17,25 @@ La arquitectura por features promueve:
 
 ## Guías Disponibles
 
-### 1. [Folder Organization](./folder-organization.md) ✅ v1.0.0
+### 1. [User Story Decomposition](./user-story-decomposition.md) ✅ v1.0.0
+
+Proceso completo para analizar y descomponer user stories en subtasks técnicas ejecutables.
+
+**Contenido:**
+- Metodología de análisis funcional
+- Quick reference checklist de componentes
+- Matriz de decisión Entity vs DAO
+- Templates de subtasks por capa (Domain, Infrastructure, Application, WebApi)
+- Estimación y factores de complejidad
+- Definition of Done por capa
+- 3 ejemplos completos (Read-Only, CRUD Simple, CRUD Compleja)
+- Antipatrones y errores comunes
+
+**Cuándo usar:** Al iniciar el análisis de cualquier user story antes de comenzar a codificar.
+
+---
+
+### 2. [Folder Organization](./folder-organization.md) ✅ v1.0.0
 
 Estructura estándar de carpetas y archivos para un feature a través de todas las capas.
 
@@ -32,7 +50,7 @@ Estructura estándar de carpetas y archivos para un feature a través de todas l
 
 ---
 
-### 2. [Entity to Endpoint Flow](./entity-to-endpoint-flow.md) ✅ v1.0.0
+### 3. [Entity to Endpoint Flow](./entity-to-endpoint-flow.md) ✅ v1.0.0
 
 Flujo completo de una operación desde la entidad de dominio hasta el endpoint.
 
@@ -50,7 +68,7 @@ Flujo completo de una operación desde la entidad de dominio hasta el endpoint.
 
 ---
 
-### 3. [Naming Conventions](./naming-conventions.md) ✅ v1.0.0
+### 4. [Naming Conventions](./naming-conventions.md) ✅ v1.0.0
 
 Convenciones de nombres para features a través de todas las capas.
 
@@ -72,24 +90,31 @@ Convenciones de nombres para features a través de todas las capas.
 
 ### Crear un Nuevo Feature CRUD
 
-1. **Planificar estructura** → [Folder Organization](./folder-organization.md)
+1. **Analizar y descomponer user story** → [User Story Decomposition](./user-story-decomposition.md)
+   - Responder preguntas clave de análisis
+   - Usar checklist para identificar componentes
+   - Crear subtasks en Jira por capa
+   - Estimar esfuerzo
+
+2. **Planificar estructura** → [Folder Organization](./folder-organization.md)
    - Identificar entidad principal
    - Planear operaciones necesarias (CRUD completo, solo lectura, etc.)
 
-2. **Definir nombres** → [Naming Conventions](./naming-conventions.md)
+3. **Definir nombres** → [Naming Conventions](./naming-conventions.md)
    - Establecer nombres consistentes en todas las capas
    - Verificar convenciones
 
-3. **Implementar capa por capa** → [Entity to Endpoint Flow](./entity-to-endpoint-flow.md)
+4. **Implementar capa por capa** → [Entity to Endpoint Flow](./entity-to-endpoint-flow.md)
    - Domain: Entity + Validator + IRepository
    - Application: Use Cases (Command + Handler)
    - Infrastructure: Repository implementation + Mapper
    - WebApi: Endpoints + Models + DTOs
 
-4. **Verificar flujo completo**
+5. **Verificar flujo completo**
    - Probar cada operación end-to-end
    - Verificar manejo de errores
    - Agregar tests
+   - Completar Definition of Done
 
 ### Migrar Feature Existente
 
@@ -336,5 +361,19 @@ Para documentar nuevos patrones de estructura:
 
 ---
 
-**Última actualización:** 2025-01-13
+**Última actualización:** 2025-01-18
 **Mantenedor:** Equipo APSYS
+
+## Historial de Versiones
+
+### v1.1.0 (2025-01-18)
+- ✅ Nueva guía: User Story Decomposition
+  - Metodología completa de análisis y descomposición
+  - Quick reference checklist
+  - Templates de subtasks por capa
+  - Factores de complejidad para estimación
+  - 3 ejemplos completos
+- Actualizado flujo de trabajo para incluir análisis como primer paso
+
+### v1.0.0 (2025-01-13)
+- Versión inicial con 3 guías: Folder Organization, Entity to Endpoint Flow, Naming Conventions

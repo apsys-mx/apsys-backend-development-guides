@@ -1,8 +1,8 @@
 # Guías de Desarrollo .NET - Clean Architecture
 
-**Versión:** 1.0.0-rc2
+**Versión:** 1.0.0-rc3
 **Estado:** Release Candidate - 97% completado
-**Última actualización:** 2025-01-15
+**Última actualización:** 2025-01-18
 
 ## Descripción
 
@@ -53,7 +53,8 @@ Si tu proyecto no tiene estos elementos, consulta primero:
 
 | Guía | Estado | Descripción |
 |------|--------|-------------|
-| [README.md](feature-structure/README.md) | ✅ v1.0.0 | Overview de arquitectura de features |
+| [README.md](feature-structure/README.md) | ✅ v1.1.0 | Overview de arquitectura de features |
+| [user-story-decomposition.md](feature-structure/user-story-decomposition.md) | ✅ v1.0.0 | Análisis y descomposición de user stories en subtasks |
 | [folder-organization.md](feature-structure/folder-organization.md) | ✅ v1.0.0 | Estructura de carpetas estándar |
 | [entity-to-endpoint-flow.md](feature-structure/entity-to-endpoint-flow.md) | ✅ v1.0.0 | Flujo completo de una operación |
 | [naming-conventions.md](feature-structure/naming-conventions.md) | ✅ v1.0.0 | Convenciones de nombres |
@@ -200,6 +201,7 @@ Si eres nuevo en el equipo o en Clean Architecture, sigue este orden:
 
 Si necesitas implementar algo específico:
 
+- **Descomponer user story en subtasks** → [feature-structure/user-story-decomposition.md](feature-structure/user-story-decomposition.md)
 - **Crear un nuevo feature CRUD** → [examples/crud-feature/step-by-step.md](examples/crud-feature/step-by-step.md)
 - **Crear feature read-only (consultas)** → [examples/read-only-feature/step-by-step.md](examples/read-only-feature/step-by-step.md)
 - **Feature con relaciones entre entidades** → [examples/complex-feature/step-by-step.md](examples/complex-feature/step-by-step.md)
@@ -268,7 +270,7 @@ webapi/
 | Sección | Archivos | Completados | Progreso |
 |---------|----------|-------------|----------|
 | best-practices | 7 | 7 | ✅ 100% |
-| feature-structure | 4 | 4 | ✅ 100% |
+| feature-structure | 5 | 5 | ✅ 100% |
 | domain-layer | 7 | 7 | ✅ 100% |
 | application-layer | 5 | 5 | ✅ 100% |
 | infrastructure-layer | 6 (core) | 6 | ✅ 100% |
@@ -277,7 +279,7 @@ webapi/
 | infrastructure-layer/data-migrations | 5 | 4 | ⏳ 80% (EF Migrations futuro) |
 | webapi-layer | 8 | 8 | ✅ 100% |
 | examples | 8 | 8 | ✅ 100% |
-| **TOTAL** | **67** | **65** | **~97%** |
+| **TOTAL** | **68** | **66** | **~97%** |
 
 ## Versionado
 
@@ -288,6 +290,18 @@ Este conjunto de guías sigue Semantic Versioning:
 - **1.0.0** - Primera versión estable (todas las guías completadas)
 
 ### Changelog
+
+#### v1.0.0-rc3 (2025-01-18)
+- ✅ **Nueva guía: User Story Decomposition** - feature-structure/user-story-decomposition.md
+  - Metodología completa de análisis y descomposición de user stories
+  - Quick reference checklist para identificar componentes
+  - Matriz de decisión Entity vs DAO
+  - Templates de subtasks por capa (Domain, Infrastructure, Application, WebApi, Integration)
+  - Factores de complejidad para ajustar estimaciones
+  - Definition of Done por capa
+  - 3 ejemplos completos: Read-Only, CRUD Simple, CRUD Compleja
+  - 8 antipatrones documentados con correcciones
+- Progreso total: 97% (66/68 guías)
 
 #### v1.0.0-rc2 (2025-01-15) 🎉
 - ✅ **Integration Testing Guides Completadas** - 8/8 guías de examples (100%)
@@ -459,5 +473,5 @@ Al desarrollar estas guías, ten en cuenta:
 
 ---
 
-**Última actualización:** 2025-01-15
+**Última actualización:** 2025-01-18
 **Mantenedor:** Equipo APSYS
