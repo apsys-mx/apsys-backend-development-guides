@@ -74,6 +74,7 @@ Implementaciones específicas por ORM.
 | [unit-of-work.md](./orm-implementations/nhibernate/unit-of-work.md) | ✅ v1.0.0 | NHUnitOfWork implementation |
 | [session-management.md](./orm-implementations/nhibernate/session-management.md) | ✅ v1.0.0 | ISession lifecycle |
 | [best-practices.md](./orm-implementations/nhibernate/best-practices.md) | ✅ v1.0.0 | NHibernate best practices |
+| [integration-tests.md](./orm-implementations/nhibernate/integration-tests.md) | ✅ v1.0.0 | Pruebas de integración para repositorios |
 
 **Cuándo usar:** Al usar NHibernate como ORM.
 

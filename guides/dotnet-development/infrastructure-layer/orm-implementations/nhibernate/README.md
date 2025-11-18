@@ -370,6 +370,7 @@ public async Task<GetManyAndCountResult<User>> GetManyAndCountAsync(
 | [unit-of-work.md](./unit-of-work.md) | ✅ v1.0.0 | NHUnitOfWork implementation |
 | [session-management.md](./session-management.md) | ✅ v1.0.0 | ISession lifecycle |
 | [best-practices.md](./best-practices.md) | ✅ v1.0.0 | Mejores prácticas |
+| [integration-tests.md](./integration-tests.md) | ✅ v1.0.0 | Pruebas de integración para repositorios |
 
 ---
 
