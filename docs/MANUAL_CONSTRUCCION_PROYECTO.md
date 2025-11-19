@@ -96,52 +96,11 @@ dotnet new sln -n MiProyecto -o "C:\projects\miproyecto"
 
 #### 1.3 Crear archivo Directory.Packages.props
 
-Crear el archivo `Directory.Packages.props` en la raíz de la solución con el siguiente contenido:
+Crear el archivo `Directory.Packages.props` en la raíz de la solución:
 
-```xml
-<Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
-    <PackageVersion Include="AutoMapper" Version="15.0.1" />
-    <PackageVersion Include="Castle.Core" Version="5.1.1" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
-    <PackageVersion Include="DotNetEnv" Version="3.1.1" />
-    <PackageVersion Include="FastEndpoints" Version="7.0.1" />
-    <PackageVersion Include="FastEndpoints.Security" Version="7.0.1" />
-    <PackageVersion Include="FastEndpoints.Swagger" Version="7.0.1" />
-    <PackageVersion Include="FastEndpoints.Testing" Version="7.0.1" />
-    <PackageVersion Include="FluentAssertions" Version="8.5.0" />
-    <PackageVersion Include="FluentMigrator" Version="7.1.0" />
-    <PackageVersion Include="FluentMigrator.Runner" Version="7.1.0" />
-    <PackageVersion Include="FluentValidation" Version="12.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Data.SqlClient" Version="5.2.2" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="NHibernate" Version="5.5.2" />
-    <PackageVersion Include="Npgsql" Version="9.0.3" />
-    <PackageVersion Include="NUnit" Version="4.2.2" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageVersion Include="Scrutor" Version="6.1.0" />
-    <PackageVersion Include="Spectre.Console" Version="0.50.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.3" />
-    <PackageVersion Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
-    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.7" />
-  </ItemGroup>
-</Project>
-```
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `Directory.Packages.props` | [Ver template](../templates/manual/paso-01-solucion/Directory.Packages.props) | Gestión centralizada de paquetes NuGet |
 
 **Propósito**: Este archivo habilita la gestión centralizada de paquetes NuGet. Todas las versiones de paquetes se definen aquí una sola vez, y los proyectos solo referencian el nombre del paquete sin especificar versión.
 
@@ -171,143 +130,17 @@ dotnet add "C:\projects\miproyecto\src\MiProyecto.migrations\MiProyecto.migratio
 dotnet add "C:\projects\miproyecto\src\MiProyecto.migrations\MiProyecto.migrations.csproj" package Spectre.Console
 ```
 
-#### 2.4 Crear archivo Program.cs
+#### 2.4 Crear archivos del proyecto
 
-Reemplazar el contenido de `src/MiProyecto.migrations/Program.cs`:
+Crear los siguientes archivos en `src/MiProyecto.migrations/`:
 
-```csharp
-using FluentMigrator.Runner;
-using Microsoft.Extensions.DependencyInjection;
-using Spectre.Console;
-using MiProyecto.migrations;
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `Program.cs` | [Ver template](../templates/manual/paso-02-migrations/Program.cs) | Punto de entrada para ejecutar migraciones |
+| `CommandLineArgs.cs` | [Ver template](../templates/manual/paso-02-migrations/CommandLineArgs.cs) | Parser de argumentos y códigos de salida |
+| `M001Sandbox.cs` | [Ver template](../templates/manual/paso-02-migrations/M001Sandbox.cs) | Migración inicial de ejemplo |
 
-const string _run = "run";
-const string _rollback = "rollback";
-
-try
-{
-    AnsiConsole.MarkupLine("Reading command line parameters...");
-    CommandLineArgs parameter = [];
-    if (!parameter.TryGetValue("cnn", out string? value))
-        throw new ArgumentException("No [cnn] parameter received. You need pass the connection string in order to execute the migrations");
-
-    AnsiConsole.MarkupLine("[bold yellow]Connecting to database...[/]");
-    string connectionStringValue = value;
-    var serviceProvider = CreateServices(connectionStringValue);
-    using var scope = serviceProvider.CreateScope();
-    var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
-
-    if (!parameter.TryGetValue("action", out string? action) && string.IsNullOrEmpty(action))
-        action = _run;
-
-    if (action == _run)
-    {
-        AnsiConsole.Status()
-            .Start("Start running migrations...", ctx =>
-            {
-                ctx.Spinner(Spinner.Known.Star);
-                ctx.SpinnerStyle(Style.Parse("green"));
-                ctx.Status("Running migrations...");
-                UpdateDatabase(scope.ServiceProvider);
-                runner.MigrateUp();
-            });
-        AnsiConsole.MarkupLine("All migrations are updated");
-    }
-    else if (action == _rollback)
-    {
-        AnsiConsole.Status()
-            .Start("Start rolling back the last migration...", ctx =>
-            {
-                ctx.Spinner(Spinner.Known.Star);
-                ctx.SpinnerStyle(Style.Parse("blue"));
-                ctx.Status("Rolling back migration...");
-                var lastMigration = runner.MigrationLoader.LoadMigrations().LastOrDefault();
-                var rollBackToVersion = lastMigration.Value.Version - 1;
-                runner.MigrateDown(rollBackToVersion);
-            });
-        AnsiConsole.MarkupLine("Last transaction rolled back");
-    }
-    else
-    {
-        throw new ArgumentException("Invalid action. Please use 'run' or 'rollback'");
-    }
-    return 0;
-}
-catch (Exception ex)
-{
-    AnsiConsole.WriteException(ex);
-    return (int)ExitCode.UnknownError;
-}
-
-static IServiceProvider CreateServices(string? connectionString)
-{
-    return new ServiceCollection()
-            .AddFluentMigratorCore()
-            .ConfigureRunner(rb => rb
-                .AddPostgres()
-                .WithGlobalConnectionString(connectionString)
-                .ScanIn(typeof(M001Sandbox).Assembly).For.Migrations())
-            .AddLogging(lb => lb.AddFluentMigratorConsole())
-            .BuildServiceProvider(false);
-}
-
-static void UpdateDatabase(IServiceProvider serviceProvider)
-{
-    var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
-    runner.MigrateUp();
-}
-```
-
-#### 2.5 Crear archivos adicionales
-
-**CommandLineArgs.cs**:
-
-```csharp
-namespace MiProyecto.migrations;
-
-public class CommandLineArgs : Dictionary<string, string>
-{
-    public CommandLineArgs()
-    {
-        foreach (var arg in Environment.GetCommandLineArgs())
-        {
-            if (arg.Contains('='))
-            {
-                var parts = arg.Split('=');
-                Add(parts[0].TrimStart('-'), parts[1]);
-            }
-        }
-    }
-}
-
-public enum ExitCode : int
-{
-    Success = 0,
-    UnknownError = 1
-}
-```
-
-**M001Sandbox.cs** (migración ejemplo):
-
-```csharp
-using FluentMigrator;
-
-namespace MiProyecto.migrations;
-
-[Migration(1)]
-public class M001Sandbox : Migration
-{
-    public override void Up()
-    {
-        // Implementar migraciones aquí
-    }
-
-    public override void Down()
-    {
-        // Implementar rollback aquí
-    }
-}
-```
+> **NOTA**: El template usa `AddPostgres11_0()` para PostgreSQL. Para SQL Server, cambiar a `AddSqlServer()` en el método `CreateServices`.
 
 ---
 
@@ -378,354 +211,36 @@ interfaces/
   └── repositories/
 ```
 
-**Archivo: `entities/AbstractDomainObject.cs`**
+**Archivos de entidades:**
+
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `entities/AbstractDomainObject.cs` | [Ver template](../templates/manual/paso-03-domain/entities/AbstractDomainObject.cs) | Clase base con validación FluentValidation |
+
+**Archivos de excepciones:**
+
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `exceptions/InvalidDomainException.cs` | [Ver template](../templates/manual/paso-03-domain/exceptions/InvalidDomainException.cs) | Excepción para errores de validación de dominio |
+| `exceptions/InvalidFilterArgumentException.cs` | [Ver template](../templates/manual/paso-03-domain/exceptions/InvalidFilterArgumentException.cs) | Excepción para argumentos de filtro inválidos |
+
+**Archivos de interfaces de repositorios:**
+
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `interfaces/repositories/IRepository.cs` | [Ver template](../templates/manual/paso-03-domain/interfaces/repositories/IRepository.cs) | Interface genérica para repositorios CRUD |
+| `interfaces/repositories/IReadOnlyRepository.cs` | [Ver template](../templates/manual/paso-03-domain/interfaces/repositories/IReadOnlyRepository.cs) | Interface para repositorios de solo lectura |
+| `interfaces/repositories/IUnitOfWork.cs` | [Ver template](../templates/manual/paso-03-domain/interfaces/repositories/IUnitOfWork.cs) | Interface Unit of Work con manejo de transacciones |
+| `interfaces/repositories/GetManyAndCountResult.cs` | [Ver template](../templates/manual/paso-03-domain/interfaces/repositories/GetManyAndCountResult.cs) | Clase para resultados paginados |
+| `interfaces/repositories/SortingCriteria.cs` | [Ver template](../templates/manual/paso-03-domain/interfaces/repositories/SortingCriteria.cs) | Criterios de ordenamiento |
+| `interfaces/repositories/IGetManyAndCountResultWithSorting.cs` | [Ver template](../templates/manual/paso-03-domain/interfaces/repositories/IGetManyAndCountResultWithSorting.cs) | Interface para resultados con sorting |
+
+> **NOTA**: El template de `IUnitOfWork` incluye ejemplos de repositorios (Roles, Users). Debes agregar los repositorios específicos de tu proyecto.
+
+**Archivo de test:**
 
 ```csharp
-using FluentValidation;
-using FluentValidation.Results;
-
-namespace MiProyecto.domain.entities;
-
-public abstract class AbstractDomainObject
-{
-    protected AbstractDomainObject()
-    { }
-
-    protected AbstractDomainObject(Guid id, DateTime creationDate)
-    {
-        Id = id;
-        CreationDate = creationDate;
-    }
-
-    public virtual Guid Id { get; set; } = Guid.NewGuid();
-    public virtual DateTime CreationDate { get; set; } = DateTime.Now;
-
-    public virtual bool IsValid()
-    {
-        IValidator? validator = GetValidator();
-        if (validator == null)
-            return true;
-
-        var context = new ValidationContext<object>(this);
-        ValidationResult result = validator.Validate(context);
-        return result.IsValid;
-    }
-
-    public virtual IEnumerable<ValidationFailure> Validate()
-    {
-        IValidator? validator = GetValidator();
-        if (validator == null)
-            return new List<ValidationFailure>();
-        else
-        {
-            var context = new ValidationContext<object>(this);
-            ValidationResult result = validator.Validate(context);
-            return result.Errors;
-        }
-    }
-
-    public virtual IValidator? GetValidator()
-         => null;
-}
-```
-
-**Archivo: `exceptions/InvalidDomainException.cs`**
-
-```csharp
-using FluentValidation.Results;
-
-namespace MiProyecto.domain.exceptions;
-
-public class InvalidDomainException : Exception
-{
-    public IEnumerable<ValidationFailure> Errors { get; set; }
-
-    public InvalidDomainException(IEnumerable<ValidationFailure> errors)
-        : base("Domain validation failed")
-    {
-        Errors = errors;
-    }
-}
-```
-
-**Archivo: `exceptions/InvalidFilterArgumentException.cs`**
-
-```csharp
-namespace MiProyecto.domain.exceptions;
-
-public class InvalidFilterArgumentException : Exception
-{
-    public InvalidFilterArgumentException(string message) : base(message)
-    {
-    }
-
-    public InvalidFilterArgumentException(string message, string argName) : base(message)
-    {
-    }
-}
-```
-
-**Archivo: `interfaces/repositories/IRepository.cs`**
-
-```csharp
-namespace MiProyecto.domain.interfaces.repositories;
-
-/// <summary>
-/// Defines a repository for managing entities with full CRUD operations.
-/// Extends IReadOnlyRepository to include write operations.
-/// </summary>
-/// <typeparam name="T">The entity type</typeparam>
-/// <typeparam name="TKey">The primary key type</typeparam>
-public interface IRepository<T, TKey> : IReadOnlyRepository<T, TKey> where T : class, new()
-{
-    /// <summary>
-    /// Adds a new entity to the repository.
-    /// </summary>
-    T Add(T item);
-
-    /// <summary>
-    /// Asynchronously adds a new entity to the repository.
-    /// </summary>
-    Task AddAsync(T item);
-
-    /// <summary>
-    /// Updates an existing entity in the repository.
-    /// </summary>
-    T Save(T item);
-
-    /// <summary>
-    /// Asynchronously updates an existing entity in the repository.
-    /// </summary>
-    Task SaveAsync(T item);
-
-    /// <summary>
-    /// Deletes an entity from the repository.
-    /// </summary>
-    void Delete(T item);
-
-    /// <summary>
-    /// Asynchronously deletes an entity from the repository.
-    /// </summary>
-    Task DeleteAsync(T item);
-}
-```
-
-**Archivo: `interfaces/repositories/IReadOnlyRepository.cs`**
-
-```csharp
-using System.Linq.Expressions;
-
-namespace MiProyecto.domain.interfaces.repositories;
-
-/// <summary>
-/// Defines a read-only repository for retrieving entities from a data store.
-/// This interface provides both synchronous and asynchronous methods for querying data.
-/// </summary>
-public interface IReadOnlyRepository<T, TKey> where T : class, new()
-{
-    #region Synchronous Methods
-
-    T Get(TKey id);
-    IEnumerable<T> Get();
-    IEnumerable<T> Get(Expression<Func<T, bool>> query);
-    IEnumerable<T> Get(Expression<Func<T, bool>> query, int page, int pageSize, SortingCriteria sortingCriteria);
-    int Count();
-    int Count(Expression<Func<T, bool>> query);
-    GetManyAndCountResult<T> GetManyAndCount(string? query, string defaultSorting);
-
-    #endregion
-
-    #region Asynchronous Methods
-
-    Task<T> GetAsync(TKey id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<T>> GetAsync(CancellationToken cancellationToken = default);
-    Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> query, CancellationToken cancellationToken = default);
-    Task<int> CountAsync(CancellationToken cancellationToken = default);
-    Task<int> CountAsync(Expression<Func<T, bool>> query, CancellationToken cancellationToken = default);
-    Task<GetManyAndCountResult<T>> GetManyAndCountAsync(string? query, string defaultSorting, CancellationToken cancellationToken = default);
-
-    #endregion
-}
-```
-
-**Archivo: `interfaces/repositories/IUnitOfWork.cs`**
-
-```csharp
-namespace MiProyecto.domain.interfaces.repositories;
-
-public interface IUnitOfWork : IDisposable
-{
-    void BeginTransaction();
-    void Commit();
-    void Rollback();
-}
-```
-
-**Archivo: `interfaces/repositories/GetManyAndCountResult.cs`**
-
-```csharp
-namespace MiProyecto.domain.interfaces.repositories;
-
-/// <summary>
-/// Class to return the result for a paginated query with sorting capabilities.
-/// Provides a container for collections of items along with pagination and sorting information.
-/// </summary>
-/// <typeparam name="T">The type of items in the collection.</typeparam>
-public class GetManyAndCountResult<T> : IGetManyAndCountResultWithSorting
-{
-    /// <summary>
-    /// Default page size when no specific size is requested.
-    /// </summary>
-    public const int DEFAULT_PAGE_SIZE = 25;
-
-    /// <summary>
-    /// Gets or sets the collection of items for the current page.
-    /// </summary>
-    public IEnumerable<T> Items { get; set; }
-
-    /// <summary>
-    /// Gets or sets the total count of records that match the query criteria.
-    /// </summary>
-    public long Count { get; set; }
-
-    /// <summary>
-    /// Gets or sets the current page number (1-based indexing).
-    /// </summary>
-    public int PageNumber { get; set; }
-
-    /// <summary>
-    /// Gets or sets the number of items per page.
-    /// </summary>
-    public int PageSize { get; set; }
-
-    /// <summary>
-    /// Gets or sets the sorting criteria applied to the result set.
-    /// Implements the IGetManyAndCountResultWithSorting interface.
-    /// </summary>
-    public SortingCriteria Sorting { get; set; }
-
-    /// <summary>
-    /// Constructor that initializes a new instance with the specified items, count, pagination, and sorting information.
-    /// </summary>
-    /// <param name="items">The collection of items for the current page.</param>
-    /// <param name="count">The total number of records that match the query criteria.</param>
-    /// <param name="pageNumber">The current page number (1-based indexing).</param>
-    /// <param name="pageSize">The number of items per page.</param>
-    /// <param name="sorting">The sorting criteria applied to the result set.</param>
-    public GetManyAndCountResult(IEnumerable<T> items, long count, int pageNumber, int pageSize, SortingCriteria sorting)
-    {
-        Items = items;
-        Count = count;
-        PageNumber = pageNumber;
-        PageSize = pageSize;
-        Sorting = sorting;
-    }
-
-    /// <summary>
-    /// Default constructor that initializes a new instance with empty items and default values.
-    /// The default values are:
-    /// - Empty collection of items
-    /// - Count set to 0
-    /// - Page number set to 1
-    /// - Page size set to DEFAULT_PAGE_SIZE (25)
-    /// - Sorting criteria initialized with default values
-    /// </summary>
-    public GetManyAndCountResult()
-    {
-        Items = [];
-        Count = 0;
-        PageNumber = 1;
-        PageSize = DEFAULT_PAGE_SIZE;
-        Sorting = new SortingCriteria();
-    }
-}
-```
-
-**Archivo: `interfaces/repositories/SortingCriteria.cs`**
-
-```csharp
-namespace MiProyecto.domain.interfaces.repositories;
-
-/// <summary>
-/// Class representing a sorting criteria
-/// </summary>
-public class SortingCriteria
-{
-
-    /// <summary>
-    /// Gets or sets the name of the field to sort by.
-    /// This property is used to specify the field name that will be used for sorting the results
-    /// </summary>
-    public string SortBy { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the sorting criteria type.
-    /// This property indicates whether the sorting should be done in ascending or descending order.
-    /// </summary>
-    public SortingCriteriaType Criteria { get; set; } = SortingCriteriaType.Ascending;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public SortingCriteria()
-    { }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public SortingCriteria(string sortBy)
-    {
-        this.SortBy = sortBy;
-    }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public SortingCriteria(string sortBy, SortingCriteriaType criteria)
-    {
-        this.SortBy = sortBy;
-        this.Criteria = criteria;
-    }
-}
-
-/// <summary>
-/// The sorting criteria type enumeration
-/// </summary>
-public enum SortingCriteriaType
-{
-    /// <summary>
-    /// Sort ascending
-    /// </summary>
-    Ascending = 1,
-
-    /// <summary>
-    /// Sort descending
-    /// </summary>
-    Descending = 2
-}
-```
-
-**Archivo: `interfaces/repositories/IGetManyAndCountResultWithSorting.cs`**
-
-```csharp
-namespace MiProyecto.domain.interfaces.repositories;
-
-/// <summary>
-/// Interface for objects that provide sorting capabilities in paginated results.
-/// This allows implementing classes to expose sorting criteria information.
-/// </summary>
-public interface IGetManyAndCountResultWithSorting
-{
-    /// <summary>
-    /// Gets the sorting criteria applied to the result set.
-    /// </summary>
-    SortingCriteria Sorting { get; }
-}
-```
-
-**Archivo de test: `tests/MiProyecto.domain.tests/entities/DomainTestBase.cs`**
-
-```csharp
+// tests/MiProyecto.domain.tests/entities/DomainTestBase.cs
 namespace MiProyecto.domain.tests.entities;
 
 public class DomainTestBase
