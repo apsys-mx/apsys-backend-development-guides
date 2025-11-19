@@ -1348,6 +1348,80 @@ public class CreateUserHandlerTests
 }
 ```
 
+### Cuándo usar AutoFixture vs Datos Manuales
+
+Es importante saber cuándo usar cada enfoque para escribir tests efectivos:
+
+| Usar AutoFixture cuando: | Usar datos manuales cuando: |
+|--------------------------|----------------------------|
+| Los valores específicos **no importan** para el test | El test verifica comportamiento con **valores específicos** |
+| Quieres reducir boilerplate en setup | Necesitas documentar un **caso de negocio concreto** |
+| Tests de "happy path" donde cualquier dato válido sirve | Valores límite: `null`, `""`, `Guid.Empty`, fechas límite |
+| Tests de propiedades/DTOs sin lógica | Control preciso sobre los datos de entrada |
+| Generar múltiples instancias para tests de colecciones | El valor es parte de la **especificación del test** |
+
+#### Ejemplo: Mismo test, diferentes enfoques
+
+```csharp
+// ✅ AutoFixture: El email específico NO importa, solo que sea válido
+[Test, AutoData]
+public void Validate_WithValidUser_Succeeds(User user)
+{
+    var result = new UserValidator().Validate(user);
+    result.IsValid.Should().BeTrue();
+}
+
+// ✅ Datos manuales: El email VACÍO es el punto del test
+[Test]
+public void Validate_WithEmptyEmail_ReturnsError()
+{
+    var user = new User { Email = "", Name = "Test" };  // Valor específico
+    var result = new UserValidator().Validate(user);
+    result.IsValid.Should().BeFalse();
+    result.Errors.Should().Contain(e => e.PropertyName == "Email");
+}
+```
+
+#### Patrón recomendado: Combinar ambos
+
+```csharp
+[TestFixture]
+public class OrderTests
+{
+    private Fixture _fixture;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _fixture = new Fixture();
+    }
+
+    // ✅ AutoFixture para datos irrelevantes
+    [Test]
+    public void AddItem_WithValidProduct_IncreasesTotal()
+    {
+        var order = _fixture.Create<Order>();
+        var product = _fixture.Create<Product>();
+
+        order.AddItem(product, quantity: 2);
+
+        order.Items.Should().NotBeEmpty();
+    }
+
+    // ✅ Datos manuales para caso específico
+    [Test]
+    public void Submit_WithEmptyItems_ThrowsException()
+    {
+        var order = new Order(customerId: 1);  // Intencionalmente vacío
+
+        Action act = () => order.Submit();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*empty*");
+    }
+}
+```
+
 ---
 
 ## Test Organization por Capa

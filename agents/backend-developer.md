@@ -191,11 +191,15 @@ Implementar capa por capa, en este orden:
 
 #### 3.5 Unit Tests
 
+Usar el stack estándar de testing: **NUnit + Moq + FluentAssertions + AutoFixture**
+
 **Domain Tests:**
 ```csharp
 // Seguir patrón de guía: best-practices/testing-conventions.md#domain-layer-tests
 // Tests para entidades, validators, value objects
 // Ubicación: tests/Domain.Tests/Entities/{EntityName}Tests.cs
+// Usar AutoFixture para datos cuando los valores específicos no importan
+// Usar datos manuales para edge cases (null, empty, valores límite)
 ```
 
 **Application Tests:**
@@ -203,6 +207,8 @@ Implementar capa por capa, en este orden:
 // Seguir patrón de guía: best-practices/testing-conventions.md#application-layer-tests
 // Tests para use cases/handlers con mocks
 // Ubicación: tests/Application.Tests/UseCases/{Feature}/{HandlerName}Tests.cs
+// Usar AutoFixture + AutoMoq para reducir boilerplate
+// Usar Moq para verificar interacciones con repositorios
 ```
 
 #### 3.6 Integration Tests (cuando aplica)
@@ -299,8 +305,8 @@ Al finalizar, mostrar:
 
 | Test | Tipo | Capa | Cobertura |
 |------|------|------|-----------|
-| `{EntityName}Tests.cs` | Unit | Domain | Constructores, validaciones, reglas de dominio |
-| `{HandlerName}Tests.cs` | Unit | Application | Happy path, error cases, edge cases |
+| `{EntityName}Tests.cs` | Unit | Domain | Constructores, validaciones, reglas de dominio (AutoFixture + datos manuales) |
+| `{HandlerName}Tests.cs` | Unit | Application | Happy path, error cases, edge cases (AutoFixture + AutoMoq) |
 | `{RepositoryName}Tests.cs` | Integration | Infrastructure | Queries, persistencia (si aplica) |
 | `{Feature}EndpointTests.cs` | Integration | WebApi | Request/Response, auth (si aplica) |
 
@@ -343,6 +349,8 @@ curl -X {METHOD} https://localhost:5001/api/{ruta} \
 - **SIEMPRE** incluir XML comments en clases y métodos públicos
 - **SIEMPRE** validar que el código compile antes de finalizar
 - **SIEMPRE** crear tests unitarios para entidades y handlers
+- **SIEMPRE** usar el stack de testing: NUnit + Moq + FluentAssertions + AutoFixture
+- **SIEMPRE** usar AutoFixture para reducir boilerplate cuando los valores específicos no importan
 - **SIEMPRE** crear integration tests cuando hay nuevo repository o endpoint crítico
 - **SIEMPRE** verificar que los tests pasen (`dotnet test`) antes de finalizar
 
