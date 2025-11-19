@@ -32,6 +32,7 @@ Lee las guías desde `{guides_path}`:
 - **Application Layer**: `{guides_path}/dotnet-development/application-layer/`
 - **Infrastructure Layer**: `{guides_path}/dotnet-development/infrastructure-layer/`
 - **WebApi Layer**: `{guides_path}/dotnet-development/webapi-layer/`
+- **Testing**: `{guides_path}/dotnet-development/best-practices/testing-conventions.md`
 - **Best Practices**: `{guides_path}/dotnet-development/best-practices/`
 
 ### Ejemplos de Referencia
@@ -188,6 +189,47 @@ Implementar capa por capa, en este orden:
 // Data Transfer Objects para respuestas
 ```
 
+#### 3.5 Unit Tests
+
+**Domain Tests:**
+```csharp
+// Seguir patrón de guía: best-practices/testing-conventions.md#domain-layer-tests
+// Tests para entidades, validators, value objects
+// Ubicación: tests/Domain.Tests/Entities/{EntityName}Tests.cs
+```
+
+**Application Tests:**
+```csharp
+// Seguir patrón de guía: best-practices/testing-conventions.md#application-layer-tests
+// Tests para use cases/handlers con mocks
+// Ubicación: tests/Application.Tests/UseCases/{Feature}/{HandlerName}Tests.cs
+```
+
+#### 3.6 Integration Tests (cuando aplica)
+
+Crear integration tests en los siguientes casos:
+
+| Condición | Integration Test Requerido |
+|-----------|---------------------------|
+| Nuevo repository con queries complejas | Repository integration test |
+| Nueva migración/tabla | Repository integration test |
+| Endpoint crítico (auth, pagos, etc.) | Endpoint integration test |
+| Lógica de negocio compleja en BD | Repository integration test |
+
+**Repository Tests (si aplica):**
+```csharp
+// Seguir patrón de guía: best-practices/testing-conventions.md#integration-tests
+// Tests contra base de datos real o in-memory
+// Ubicación: tests/Infrastructure.Tests/Repositories/{RepositoryName}Tests.cs
+```
+
+**Endpoint Tests (si aplica):**
+```csharp
+// Seguir patrón de guía: best-practices/testing-conventions.md#integration-tests
+// Tests con WebApplicationFactory
+// Ubicación: tests/WebApi.IntegrationTests/Endpoints/{Feature}EndpointTests.cs
+```
+
 ### Fase 4: Verificación
 
 #### 4.1 Compilación
@@ -206,6 +248,11 @@ dotnet build
 - [ ] Naming conventions seguidas
 - [ ] Sin código hardcodeado
 - [ ] Manejo de errores con FluentResults
+- [ ] Tests unitarios para Domain Layer (entidades, validators)
+- [ ] Tests unitarios para Application Layer (handlers)
+- [ ] Integration tests de repository (si hay nuevo repository o queries complejas)
+- [ ] Integration tests de endpoint (si es endpoint crítico)
+- [ ] Tests pasan: `dotnet test`
 
 ## Output
 
@@ -248,12 +295,19 @@ Al finalizar, mostrar:
 - `{guía 1}` - para {componente}
 - `{guía 2}` - para {componente}
 
+### Tests Creados
+
+| Test | Tipo | Capa | Cobertura |
+|------|------|------|-----------|
+| `{EntityName}Tests.cs` | Unit | Domain | Constructores, validaciones, reglas de dominio |
+| `{HandlerName}Tests.cs` | Unit | Application | Happy path, error cases, edge cases |
+| `{RepositoryName}Tests.cs` | Integration | Infrastructure | Queries, persistencia (si aplica) |
+| `{Feature}EndpointTests.cs` | Integration | WebApi | Request/Response, auth (si aplica) |
+
 ### Próximos Pasos
 
-1. Ejecutar `dotnet build` para verificar compilación
-2. Crear tests unitarios para {componentes}
-3. Crear tests de integración si aplica
-4. Probar endpoint con {método HTTP} {ruta}
+1. Probar endpoint con {método HTTP} {ruta}
+2. Code review
 
 ### Ejemplo de Uso
 
@@ -288,6 +342,9 @@ curl -X {METHOD} https://localhost:5001/api/{ruta} \
 - **SIEMPRE** usar FluentResults para retornos
 - **SIEMPRE** incluir XML comments en clases y métodos públicos
 - **SIEMPRE** validar que el código compile antes de finalizar
+- **SIEMPRE** crear tests unitarios para entidades y handlers
+- **SIEMPRE** crear integration tests cuando hay nuevo repository o endpoint crítico
+- **SIEMPRE** verificar que los tests pasen (`dotnet test`) antes de finalizar
 
 ### NUNCA
 - **NUNCA** inventar patrones nuevos - usar los existentes
@@ -314,6 +371,12 @@ Application:
 
 WebApi:
   └── Endpoint + Model + DTO
+
+Tests:
+  └── Application.Tests (Handler tests con mocks)
+
+Integration Tests (si queries complejas):
+  └── Infrastructure.Tests (Repository tests)
 ```
 
 ### CRUD Simple
@@ -330,6 +393,12 @@ Application:
 
 WebApi:
   └── Endpoints + Models + DTOs
+
+Tests:
+  └── Domain.Tests (Entity, Validator) + Application.Tests (Handlers)
+
+Integration Tests (si nueva tabla):
+  └── Infrastructure.Tests (Repository) + WebApi.IntegrationTests (Endpoints críticos)
 ```
 
 ### CRUD con Relaciones
@@ -346,6 +415,12 @@ Application:
 
 WebApi:
   └── Endpoints + Models + DTOs (con nested objects)
+
+Tests:
+  └── Domain.Tests (Entities, Validators) + Application.Tests (Handlers)
+
+Integration Tests (recomendado por complejidad):
+  └── Infrastructure.Tests (Repositories) + WebApi.IntegrationTests (Endpoints)
 ```
 
 ## Interaction
@@ -437,8 +512,10 @@ Usando las guías en: D:/apsys-mx/apsys-backend-development-guides/guides
 3. **Consultar guías** → Leer guías relevantes
 4. **Planificar** → Listar componentes a crear
 5. **Implementar** → Crear código capa por capa
-6. **Verificar** → Compilar y validar
-7. **Resumir** → Mostrar lo implementado
+6. **Crear unit tests** → Tests para domain y application
+7. **Crear integration tests** → Tests de repository y endpoints (si aplica)
+8. **Verificar** → Compilar, ejecutar tests y validar
+9. **Resumir** → Mostrar lo implementado
 
 ---
 

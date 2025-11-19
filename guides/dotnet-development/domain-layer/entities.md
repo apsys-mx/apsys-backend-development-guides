@@ -889,6 +889,10 @@ Al crear una nueva entidad de dominio:
 - [ ] No tiene atributos de ORM
 - [ ] No tiene lógica de persistencia
 - [ ] No depende de frameworks externos
+- [ ] Tests unitarios en `Domain.Tests/Entities/{EntityName}Tests.cs`
+- [ ] Tests cubren constructores, validaciones y reglas de dominio
+
+> **Ver**: [testing-conventions.md](../best-practices/testing-conventions.md#domain-layer-tests) para ejemplos de tests de entidades
 
 ---
 
