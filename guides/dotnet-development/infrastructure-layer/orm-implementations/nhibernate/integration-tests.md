@@ -1014,6 +1014,62 @@ public async Task GetByCode_WithDifferentCase_ReturnsResult(string code)
 }
 ```
 
+### 6. Usar el Repositorio Bajo Prueba para Arrange y Assert
+
+Este es uno de los antipatrones más críticos. El repositorio bajo prueba **solo debe usarse en el Act**, nunca para preparar datos ni para verificar resultados.
+
+```csharp
+// INCORRECTO - Usa el repositorio para Arrange y Assert
+[Test]
+public async Task UpdateAsync_ShouldUpdateUser()
+{
+    // Arrange - USA EL REPOSITORIO (mal)
+    var user = await this.RepositoryUnderTest.CreateAsync("test@example.com", "Test User");
+
+    // Act
+    var updated = await this.RepositoryUnderTest.UpdateAsync(user.Id, "new@example.com", "New Name");
+
+    // Assert - USA EL REPOSITORIO (mal)
+    var result = await this.RepositoryUnderTest.GetByIdAsync(user.Id);
+    result.Email.Should().Be("new@example.com");
+}
+
+// CORRECTO - Usa LoadScenario para Arrange y NDbUnit para Assert
+[Test]
+public async Task UpdateAsync_ShouldUpdateUser()
+{
+    // Arrange - ESCENARIO PREDEFINIDO
+    this.LoadScenario("CreateUsers");
+    var dataSet = this.nDbUnitTest.GetDataSetFromDb();
+    var userRow = dataSet.GetFirstUserRow();
+    var userId = userRow.Field<Guid>("id");
+
+    // Act - SOLO AQUÍ USA EL REPOSITORIO
+    var updated = await this.RepositoryUnderTest.UpdateAsync(userId, "new@example.com", "New Name");
+
+    // Assert - VERIFICA CON NDBUNIT
+    var updatedDataSet = this.nDbUnitTest.GetDataSetFromDb();
+    var updatedRow = updatedDataSet.GetUsersRows($"id = '{userId}'").First();
+    updatedRow.Field<string>("email").Should().Be("new@example.com");
+    updatedRow.Field<string>("name").Should().Be("New Name");
+}
+```
+
+**Por qué es crítico evitar esto:**
+
+| Problema | Consecuencia |
+|----------|--------------|
+| **Bug en CreateAsync** | Tests de UpdateAsync fallan por la razón incorrecta |
+| **Bug en GetByIdAsync** | Assert pasa aunque UpdateAsync no persistió nada |
+| **Falso positivo** | El test pasa pero el código tiene bugs |
+| **Falso negativo** | El test falla pero el método bajo prueba funciona |
+| **Difícil debugging** | No sabes si el error está en Arrange, Act o Assert |
+
+**Regla de oro:**
+- **Arrange**: `LoadScenario()` + `GetDataSetFromDb()` para obtener IDs
+- **Act**: `RepositoryUnderTest.MetodoBajoPrueba()`
+- **Assert**: `nDbUnitTest.GetDataSetFromDb()` para verificar persistencia
+
 ---
 
 ## Checklist
