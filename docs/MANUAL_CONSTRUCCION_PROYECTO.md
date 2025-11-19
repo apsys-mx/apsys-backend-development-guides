@@ -765,349 +765,22 @@ dotnet add "C:\projects\miproyecto\tests\MiProyecto.ndbunit\MiProyecto.ndbunit.c
 
 #### 4.3 Crear archivos
 
-**Archivo: `INDbUnit.cs`**
+Crear los siguientes archivos en `tests/MiProyecto.ndbunit/`:
 
-```csharp
-using System.Data.Common;
-using System.Data;
-
-namespace MiProyecto.ndbunit;
-
-public interface INDbUnit
-{
-    /// <summary>
-    /// Gets the dataSet containing the tables where the operations are execute
-    /// </summary>
-    DataSet DataSet { get; }
-
-    /// <summary>
-    /// Gets the connection string to the database where the operations are execute
-    /// </summary>
-    string ConnectionString { get; }
-
-    /// <summary>
-    /// Get a dataset with the tables and data from the database
-    /// </summary>
-    /// <returns></returns>
-    DataSet GetDataSetFromDb();
-
-    /// <summary>
-    /// Create a data adapter to the database
-    /// </summary>
-    /// <returns></returns>
-    DbDataAdapter CreateDataAdapter();
-
-    /// <summary>
-    /// Clear all the database data
-    /// </summary>
-    void ClearDatabase();
-
-    /// <summary>
-    /// Seed the database with the information contained in the dataset
-    /// </summary>
-    /// <param name="dataSet"></param>
-    void SeedDatabase(DataSet dataSet);
-}
-```
-
-**Archivo: `NDbUnit.cs`**
-
-```csharp
-using System.Data.Common;
-using System.Data;
-
-namespace MiProyecto.ndbunit;
-
-public abstract class NDbUnit : INDbUnit
-{
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dataSet"></param>
-    /// <param name="connectionString"></param>
-    protected NDbUnit(DataSet dataSet, string connectionString)
-    {
-        this.ConnectionString = connectionString;
-        this.DataSet = dataSet;
-    }
-
-    /// <summary>
-    /// Gets the dataSet containing the tables where the operations are execute
-    /// </summary>
-    public DataSet DataSet { get; private set; }
-
-    /// <summary>
-    /// Gets the connection string to the database where the operations are execute
-    /// </summary>
-    public string ConnectionString { get; private set; }
-
-    /// <summary>
-    /// Get a dataset with the tables and data from the database
-    /// </summary>
-    /// <returns></returns>
-    public DataSet GetDataSetFromDb()
-    {
-        using DbConnection cnn = this.CreateConnection();
-        DataSet dsetResult = this.DataSet.Clone();
-        dsetResult.EnforceConstraints = false;
-        DbProviderFactory? dbFactory = DbProviderFactories.GetFactory(cnn) ?? throw new ArgumentException("Cannot create [DbProviderFactory] from configuration");
-        foreach (DataTable table in this.DataSet.Tables)
-        {
-            DbCommand selectCommand = cnn.CreateCommand();
-            selectCommand.CommandText = $"SELECT * FROM {table.TableName}";
-
-            DbDataAdapter? adapter = dbFactory.CreateDataAdapter() ?? throw new ArgumentException("Cannot create [DbDataAdapter] from configuration");
-            adapter.SelectCommand = selectCommand;
-            adapter.Fill(dsetResult, table.TableName);
-        }
-        dsetResult.EnforceConstraints = true;
-        return dsetResult;
-
-    }
-
-    /// <summary>
-    /// Clear all the database data
-    /// </summary>
-    public void ClearDatabase()
-    {
-        using IDbConnection cnn = this.CreateConnection();
-        cnn.Open();
-
-        using IDbTransaction transaction = cnn.BeginTransaction();
-        try
-        {
-            foreach (DataTable dataTable in this.DataSet.Tables)
-                this.DisableTableConstraints(transaction, dataTable);
-
-            foreach (DataTable dataTable in this.DataSet.Tables)
-            {
-                var cmd = cnn.CreateCommand();
-                cmd.Transaction = transaction;
-                cmd.CommandText = $"DELETE FROM {dataTable.TableName}";
-                cmd.Connection = cnn;
-                cmd.ExecuteNonQuery();
-            }
-
-            foreach (DataTable dataTable in this.DataSet.Tables)
-                this.EnabledTableConstraints(transaction, dataTable);
-            transaction.Commit();
-        }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
-        cnn.Close();
-    }
-
-    /// <summary>
-    /// Seed the database with the information contained in the dataset
-    /// </summary>
-    /// <param name="dataSet"></param>
-    public void SeedDatabase(DataSet dataSet)
-    {
-        using IDbConnection cnn = this.CreateConnection();
-        cnn.Open();
-
-        this.DataSet = dataSet;
-
-        using (IDbTransaction transaction = cnn.BeginTransaction())
-        {
-            try
-            {
-                foreach (DataTable dataTable in this.DataSet.Tables)
-                    this.DisableTableConstraints(transaction, dataTable);
-
-                foreach (DataTable dataTable in this.DataSet.Tables)
-                {
-                    // Create select comand
-                    var selectCommand = cnn.CreateCommand();
-                    selectCommand.CommandText = $"SELECT * FROM {dataTable.TableName}";
-                    selectCommand.Transaction = transaction;
-                    // Crear un adaptador de datos
-                    var adapter = this.CreateDataAdapter();
-                    adapter.SelectCommand = selectCommand as DbCommand;
-                    var commandBuilder = this.CreateCommandBuilder(adapter);
-                    adapter.InsertCommand = commandBuilder.GetInsertCommand();
-                    adapter.InsertCommand.Transaction = transaction as DbTransaction;
-                    // Actualiza la tabla
-                    adapter.Update(dataTable);
-                }
-
-                foreach (DataTable dataTable in this.DataSet.Tables)
-                    this.EnabledTableConstraints(transaction, dataTable);
-
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
-        }
-        cnn.Close();
-    }
-
-    /// <summary>
-    /// Creates a DbConnection
-    /// </summary>
-    /// <returns></returns>
-    public abstract DbConnection CreateConnection();
-
-    /// <summary>
-    /// Create a DbDataAdapter
-    /// </summary>
-    /// <returns></returns>
-    public abstract DbDataAdapter CreateDataAdapter();
-
-    /// <summary>
-    /// Create a command builder
-    /// </summary>
-    /// <param name="dataAdapter"></param>
-    /// <returns></returns>
-    public abstract DbCommandBuilder CreateCommandBuilder(DbDataAdapter dataAdapter);
-
-    /// <summary>
-    /// Enable datatable's constraints
-    /// </summary>
-    /// <param name="dbTransaction"></param>
-    /// <param name="dataTable"></param>
-    protected abstract void EnabledTableConstraints(IDbTransaction dbTransaction, DataTable dataTable);
-
-    /// <summary>
-    /// Disable datatable's constraints
-    /// </summary>
-    /// <param name="dbTransaction"></param>
-    /// <param name="dataTable"></param>
-    protected abstract void DisableTableConstraints(IDbTransaction dbTransaction, DataTable dataTable);
-}
-```
-
-**Archivo para PostgreSQL: `PostgreSQLNDbUnit.cs`**
-
-```csharp
-using System.Data.Common;
-using System.Data;
-using Npgsql;
-
-namespace MiProyecto.ndbunit;
-
-public class PostgreSQLNDbUnit : NDbUnit
-{
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dataSet"></param>
-    /// <param name="connectionString"></param>
-    public PostgreSQLNDbUnit(DataSet dataSet, string connectionString)
-        : base(dataSet, connectionString)
-    {
-    }
-
-    public override DbCommandBuilder CreateCommandBuilder(DbDataAdapter dataAdapter)
-    {
-        return new NpgsqlCommandBuilder((NpgsqlDataAdapter)dataAdapter);
-    }
-
-    public override DbConnection CreateConnection()
-    {
-        return new NpgsqlConnection(ConnectionString);
-    }
-
-    public override DbDataAdapter CreateDataAdapter()
-    {
-        return new NpgsqlDataAdapter();
-    }
-
-    protected override void DisableTableConstraints(IDbTransaction dbTransaction, DataTable dataTable)
-    {
-        //Implements a disable constraint for PostgreSQL
-        if (dbTransaction?.Connection == null)
-            throw new ArgumentNullException(nameof(dbTransaction));
-
-        using NpgsqlCommand command = (NpgsqlCommand)dbTransaction.Connection.CreateCommand();
-        command.Transaction = (NpgsqlTransaction)dbTransaction;
-        command.CommandText = $"ALTER TABLE {dataTable.TableName} DISABLE TRIGGER ALL";
-        command.ExecuteNonQuery();
-    }
-
-    protected override void EnabledTableConstraints(IDbTransaction dbTransaction, DataTable dataTable)
-    {
-        //Implements a enable constraint for PostgreSQL
-        if (dbTransaction?.Connection == null)
-            throw new ArgumentNullException(nameof(dbTransaction));
-
-        using NpgsqlCommand command = (NpgsqlCommand)dbTransaction.Connection.CreateCommand();
-        command.Transaction = (NpgsqlTransaction)dbTransaction;
-        command.CommandText = $"ALTER TABLE {dataTable.TableName} ENABLE TRIGGER ALL";
-        command.ExecuteNonQuery();
-    }
-}
-```
-
-**Archivo para SQL Server: `SqlServerNDbUnit.cs`**
-
-```csharp
-using System.Data.Common;
-using System.Data;
-using Microsoft.Data.SqlClient;
-
-namespace MiProyecto.ndbunit;
-
-public class SqlServerNDbUnit : NDbUnit
-{
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dataSet"></param>
-    /// <param name="connectionString"></param>
-    public SqlServerNDbUnit(DataSet dataSet, string connectionString)
-        : base(dataSet, connectionString)
-    {
-    }
-
-    public override DbCommandBuilder CreateCommandBuilder(DbDataAdapter dataAdapter)
-    {
-        return new SqlCommandBuilder((SqlDataAdapter)dataAdapter);
-    }
-
-    public override DbConnection CreateConnection()
-    {
-        return new SqlConnection(ConnectionString);
-    }
-
-    public override DbDataAdapter CreateDataAdapter()
-    {
-        return new SqlDataAdapter();
-    }
-
-    protected override void DisableTableConstraints(IDbTransaction dbTransaction, DataTable dataTable)
-    {
-        //Implements a disable constraint for SQL Server
-        if (dbTransaction?.Connection == null)
-            throw new ArgumentNullException(nameof(dbTransaction));
-
-        using SqlCommand command = (SqlCommand)dbTransaction.Connection.CreateCommand();
-        command.Transaction = (SqlTransaction)dbTransaction;
-        command.CommandText = $"ALTER TABLE {dataTable.TableName} NOCHECK CONSTRAINT ALL";
-        command.ExecuteNonQuery();
-    }
-
-    protected override void EnabledTableConstraints(IDbTransaction dbTransaction, DataTable dataTable)
-    {
-        //Implements a enable constraint for SQL Server
-        if (dbTransaction?.Connection == null)
-            throw new ArgumentNullException(nameof(dbTransaction));
-
-        using SqlCommand command = (SqlCommand)dbTransaction.Connection.CreateCommand();
-        command.Transaction = (SqlTransaction)dbTransaction;
-        command.CommandText = $"ALTER TABLE {dataTable.TableName} WITH CHECK CHECK CONSTRAINT ALL";
-        command.ExecuteNonQuery();
-    }
-}
-```
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `INDbUnit.cs` | [Ver template](../templates/manual/paso-04-ndbunit/INDbUnit.cs) | Interface que define las operaciones de NDbUnit |
+| `NDbUnit.cs` | [Ver template](../templates/manual/paso-04-ndbunit/NDbUnit.cs) | Clase abstracta base con la implementación común |
+| `PostgreSQLNDbUnit.cs` | [Ver template](../templates/manual/paso-04-ndbunit/PostgreSQLNDbUnit.cs) | Implementación para PostgreSQL |
+| `SqlServerNDbUnit.cs` | [Ver template](../templates/manual/paso-04-ndbunit/SqlServerNDbUnit.cs) | Implementación para SQL Server |
 
 **NOTA**: Solo debes crear el archivo correspondiente a la base de datos seleccionada (PostgreSQL o SQL Server), no ambos.
+
+**Características principales de NDbUnit:**
+- Usa `DataSet` y `connectionString` en el constructor
+- Operaciones transaccionales con rollback automático
+- Manejo de constraints (disable/enable triggers)
+- Métodos: `ClearDatabase()`, `GetDataSetFromDb()`, `SeedDatabase(DataSet)`
 
 ---
 
@@ -1142,57 +815,14 @@ Estos archivos permiten trabajar con datasets tipados en .NET para las pruebas.
 
 Este archivo proporciona métodos de extensión para facilitar el acceso a tablas y filas del DataSet en las pruebas de integración.
 
-**Archivo: `AppSchemaExtender.cs`**
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `AppSchemaExtender.cs` | [Ver template](../templates/manual/paso-05-common-tests/AppSchemaExtender.cs) | Métodos de extensión para acceso a DataSet |
 
-```csharp
-using System.Data;
-using MiProyecto.domain.resources;
-
-namespace MiProyecto.common.tests;
-
-public static class AppSchemaExtender
-{
-
-    #region Get full qualified table names
-    public static readonly string FullRolesTableName = $"{AppSchemaResource.SchemaName}.{AppSchemaResource.RolesTable}";
-    public static readonly string FullUsersTableName = $"{AppSchemaResource.SchemaName}.{AppSchemaResource.UsersTable}";
-    // Agregar más tablas según sea necesario
-    #endregion
-
-
-    #region Get tables methods
-    public static DataTable? GetRolesTable(this DataSet appSchema)
-        => appSchema.Tables[FullRolesTableName];
-    public static DataTable? GetUsersTable(this DataSet appSchema)
-        => appSchema.Tables[FullUsersTableName];
-    // Agregar más métodos según sea necesario
-    #endregion
-
-
-    #region Get rows methods
-
-    public static IEnumerable<DataRow> GetRolesRows(this DataSet appSchema, string filterExpression)
-        => GetRolesTable(appSchema)?.Select(filterExpression).AsEnumerable() ?? Enumerable.Empty<DataRow>();
-
-    public static IEnumerable<DataRow> GetUsersRows(this DataSet appSchema, string filterExpression)
-        => GetUsersTable(appSchema)?.Select(filterExpression).AsEnumerable() ?? Enumerable.Empty<DataRow>();
-
-    // Agregar más métodos según sea necesario
-    #endregion
-
-
-    #region Get single row methods
-
-    public static DataRow? GetFirstUserRow(this DataSet appSchema)
-        => GetUsersTable(appSchema)?.AsEnumerable().FirstOrDefault();
-
-    public static DataRow? GetFirstRoleRow(this DataSet appSchema)
-        => GetRolesTable(appSchema)?.AsEnumerable().FirstOrDefault();
-
-    // Agregar más métodos según sea necesario
-    #endregion
-}
-```
+**Métodos que incluye:**
+- `GetXxxTable()` - Obtiene una tabla específica del DataSet
+- `GetXxxRows(filterExpression)` - Obtiene filas filtradas
+- `GetFirstXxxRow()` - Obtiene la primera fila de una tabla
 
 **NOTA**: Este archivo debe ser extendido con métodos para cada tabla que se agregue al AppSchema. Es fundamental para las pruebas de integración ya que permite acceder fácilmente a los datos del DataSet para verificar resultados en el Assert.
 
@@ -1300,13 +930,43 @@ src/MiProyecto.infrastructure/
 
 #### 7.5 Crear archivos de NHibernate
 
-**Archivo: `nhibernate/NHRepository.cs`**
+Crear los siguientes archivos en `src/MiProyecto.infrastructure/nhibernate/`:
+
+**Archivos principales:**
+
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `NHRepository.cs` | [Ver template](../templates/manual/paso-07-infrastructure/nhibernate/NHRepository.cs) | Repositorio base con CRUD y validación |
+| `NHReadOnlyRepository.cs` | Ver código abajo | Repositorio base de solo lectura con paginación |
+| `NHUnitOfWork.cs` | [Ver template](../templates/manual/paso-07-infrastructure/nhibernate/NHUnitOfWork.cs) | Unit of Work con manejo de transacciones |
+| `NHSessionFactory.cs` | [Ver template](../templates/manual/paso-07-infrastructure/nhibernate/NHSessionFactory.cs) | Factory para crear sesiones NHibernate |
+| `ConnectionStringBuilder.cs` | Ver código abajo | Constructor de connection strings |
+| `SortingCriteriaExtender.cs` | Ver código abajo | Extensiones para criterios de ordenamiento |
+
+**Archivos de filtering** (crear en `nhibernate/filtering/`):
+- `InvalidQueryStringArgumentException.cs`
+- `StringExtender.cs`
+- `RelationalOperator.cs`
+- `FilterOperator.cs`
+- `QuickSearch.cs`
+- `Sorting.cs`
+- `QueryOperations.cs`
+- `QueryStringParser.cs`
+- `FilterExpressionParser.cs`
+
+> **NOTA**: Los archivos de filtering y algunos auxiliares mantienen su código inline en esta guía. Para proyectos nuevos, se recomienda copiarlos del proyecto de referencia.
+
+---
+
+**Archivo: `nhibernate/NHReadOnlyRepository.cs`**
 
 ```csharp
-using MiProyecto.domain.exceptions;
+using System.Linq.Expressions;
 using MiProyecto.domain.interfaces.repositories;
-using FluentValidation;
+using MiProyecto.infrastructure.nhibernate.filtering;
+using System.Linq.Dynamic.Core;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace MiProyecto.infrastructure.nhibernate;
 
@@ -2472,21 +2132,53 @@ dotnet add "C:\projects\miproyecto\tests\MiProyecto.infrastructure.tests\MiProye
 dotnet add "C:\projects\miproyecto\tests\MiProyecto.infrastructure.tests\MiProyecto.infrastructure.tests.csproj" reference "C:\projects\miproyecto\src\MiProyecto.infrastructure\MiProyecto.infrastructure.csproj"
 ```
 
-#### 7.10 Crear archivo de test base
+#### 7.10 Crear archivos de test base para repositorios
 
-**Archivo: `tests/MiProyecto.infrastructure.tests/nhibernate/NHRepositoryTestBase.cs`**
+Se requieren dos clases base para las pruebas de integración de repositorios:
+
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `NHRepositoryTestInfrastructureBase.cs` | [Ver template](../templates/manual/paso-07-infrastructure/tests/NHRepositoryTestInfrastructureBase.cs) | Infraestructura compartida (SessionFactory, NDbUnit, validators) |
+| `NHRepositoryTestBase.cs` | [Ver template](../templates/manual/paso-07-infrastructure/tests/NHRepositoryTestBase.cs) | Clase genérica con repositorio bajo prueba |
+
+**Características de NHRepositoryTestInfrastructureBase:**
+- Setup de NHibernate SessionFactory
+- Configuración de AutoFixture con AutoMoq
+- Inicialización de NDbUnit con AppSchema
+- Método `LoadScenario(string scenarioName)` para cargar datos de prueba
+- Registro de validators en ServiceProvider
+
+**Ejemplo de uso:**
 
 ```csharp
-namespace MiProyecto.infrastructure.tests.nhibernate;
-
-public class NHRepositoryTestBase
+[TestFixture]
+public class NHUserRepositoryTests : NHRepositoryTestBase<NHUserRepository, User, Guid>
 {
-    [SetUp]
-    public void Setup()
+    protected internal override NHUserRepository BuildRepository()
+        => new NHUserRepository(_sessionFactory.OpenSession(), _serviceProvider);
+
+    [Test]
+    public void GetById_WhenUserExists_ReturnsUser()
     {
+        // Arrange
+        this.LoadScenario("CreateUsers");
+        var dataSet = this.nDbUnitTest.GetDataSetFromDb();
+        var userId = dataSet.GetFirstUserRow().Field<Guid>("id");
+
+        // Act
+        var result = this.RepositoryUnderTest.Get(userId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(userId);
     }
 }
 ```
+
+**IMPORTANTE**:
+- Crear archivo `.env` con `SCENARIOS_FOLDER_PATH` y variables de conexión a BD
+- Crear `appsettings.json` con la configuración necesaria
+- Registrar validators en `LoadValidators()` del template
 
 ---
 
@@ -2953,359 +2645,31 @@ dotnet add "C:\projects\miproyecto\tests\MiProyecto.scenarios\MiProyecto.scenari
 dotnet add "C:\projects\miproyecto\tests\MiProyecto.scenarios\MiProyecto.scenarios.csproj" reference "C:\projects\miproyecto\tests\MiProyecto.ndbunit\MiProyecto.ndbunit.csproj"
 ```
 
-#### 9.4 Crear Program.cs
+#### 9.4 Crear archivos del proyecto
 
-```csharp
-using Spectre.Console;
-using System.Data;
-using System.Text;
-using MiProyecto.scenarios;
+Crear los siguientes archivos en `tests/MiProyecto.scenarios/`:
 
-Console.OutputEncoding = Encoding.UTF8;
-ScenarioBuilder builder;
+**Archivos principales:**
 
-try
-{
-    // Read the command line parameters
-    AnsiConsole.MarkupLine("Reading command line parameters...");
-    CommandLineArgs parameter = [];
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `Program.cs` | [Ver template](../templates/manual/paso-09-scenarios/Program.cs) | Punto de entrada que ejecuta los escenarios |
+| `IScenario.cs` | [Ver template](../templates/manual/paso-09-scenarios/IScenario.cs) | Interface que define la estructura de un escenario |
+| `CommandLineArgs.cs` | [Ver template](../templates/manual/paso-09-scenarios/CommandLineArgs.cs) | Parser de argumentos de línea de comandos |
+| `ExitCode.cs` | [Ver template](../templates/manual/paso-09-scenarios/ExitCode.cs) | Códigos de salida del programa |
+| `ScenarioBuilder.cs` | [Ver template](../templates/manual/paso-09-scenarios/ScenarioBuilder.cs) | Constructor principal que configura DI y carga escenarios |
 
-    if (!parameter.TryGetValue("cnn", out string? connectionStringValue))
-        throw new ArgumentException("No [cnn] parameter received. You need pass the connection string in order to execute the scenarios");
+#### 9.5 Crear escenarios de ejemplo
 
-    if (!parameter.TryGetValue("output", out string? outputValue))
-        throw new ArgumentException("No [output] parameter received. You need pass the output folder path in order to save the scenarios");
+**Escenarios de ejemplo:**
 
-    if (!Directory.Exists(outputValue))
-    {
-        try
-        {
-            Directory.CreateDirectory(outputValue);
-        }
-        catch (Exception ex)
-        {
-            throw new ArgumentException($"The output folder path [{outputValue}] is not valid. Error: {ex.Message}");
-        }
-    }
+| Archivo | Template | Descripción |
+|---------|----------|-------------|
+| `Sc010CreateSandBox.cs` | [Ver template](../templates/manual/paso-09-scenarios/Sc010CreateSandBox.cs) | Escenario base vacío (sandbox) |
+| `Sc020CreateRoles.cs` | [Ver template](../templates/manual/paso-09-scenarios/Sc020CreateRoles.cs) | Escenario con inyección de dependencias |
+| `Sc030CreateUsers.cs` | [Ver template](../templates/manual/paso-09-scenarios/Sc030CreateUsers.cs) | Escenario que depende de roles |
 
-    // Synchronous
-    AnsiConsole.Status()
-    .AutoRefresh(true)
-        .Spinner(Spinner.Known.Default)
-        .Start("[yellow]Reading assemblies from assemblies...[/]", ctx =>
-        {
-            AnsiConsole.MarkupLine("[grey]LOG:[/] Loading scenarios[grey]...[/]");
-            builder = new ScenarioBuilder(connectionStringValue);
-
-            // Simulate some work
-            foreach (var scenario in builder.Scenarios)
-            {
-                var scenarioName = scenario.ScenarioFileName;
-                AnsiConsole.MarkupLine($"[grey]LOG:[/] Creating scenario {scenarioName}...");
-
-                //Clear the database
-                ctx.Status = "[yellow]Cleaning database...[/]";
-                builder.NDbUnitTest.ClearDatabase();
-
-                //Check if the scenario has a preload scenario and load it
-                if (scenario.PreloadScenario != null)
-                {
-                    ctx.Status = "[yellow]Preloading scenario required...[/]";
-                    builder.LoadXmlFile(scenario.PreloadScenario, outputValue);
-                }
-
-                //Seed the scenario and save it in a xml file
-                ctx.Status = "[yellow]Creating scenario...[/]";
-                scenario.SeedData().Wait();
-                ctx.Status = "[yellow]Saving scenario in file system...[/]";
-                string filePath = Path.Combine(outputValue, $"{scenarioName}.xml");
-                DataSet dataSet = builder.NDbUnitTest.GetDataSetFromDb();
-                dataSet.WriteXml(filePath);
-            }
-        });
-
-    AnsiConsole.MarkupLine("[green3_1]Scenario loading completed[/]");
-    return (int)ExitCode.Success;
-}
-catch (Exception ex)
-{
-    AnsiConsole.WriteException(ex);
-    return (int)ExitCode.UnknownError;
-}
-```
-
-#### 9.5 Crear archivos de soporte
-
-**IScenario.cs** - Interface que define la estructura de un escenario:
-
-```csharp
-namespace MiProyecto.scenarios;
-
-/// <summary>
-/// Defines the operations to seed the database with the data of the scenario
-/// </summary>
-public interface IScenario
-{
-    /// <summary>
-    /// Execute the operations to seed the database
-    /// </summary>
-    Task SeedData();
-
-    /// <summary>
-    /// Get the scenario file name used to store in the file system
-    /// </summary>
-    string ScenarioFileName { get; }
-
-    /// <summary>
-    /// If defined, the scenario will be pre-loaded before the current scenario
-    /// </summary>
-    Type? PreloadScenario { get; }
-}
-```
-
-**CommandLineArgs.cs** - Parser de argumentos de línea de comandos:
-
-```csharp
-using System.Text.RegularExpressions;
-
-namespace MiProyecto.scenarios;
-
-/// <summary>
-/// Dictionary with input parameters of console application
-/// </summary>
-internal class CommandLineArgs : Dictionary<string, string>
-{
-    private const string Pattern = @"\/(?<argname>\w+):(?<argvalue>.+)";
-    private readonly Regex _regex = new(Pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled, TimeSpan.FromSeconds(2));
-
-    /// <summary>
-    /// Determine if the user pass at least one valid parameter
-    /// </summary>
-    public bool ContainsValidArguments()
-    {
-        return (this.ContainsKey("cnn"));
-    }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public CommandLineArgs()
-    {
-        var args = Environment.GetCommandLineArgs();
-
-        if (args == null || args.Length == 0)
-            return;
-
-        foreach (var groups in args.Select(arg => _regex.Match(arg)).Where(match => match.Success).Select(match => match.Groups))
-        {
-            this.Add(groups["argname"].Value, groups["argvalue"].Value);
-        }
-    }
-}
-```
-
-**ExitCode.cs** - Códigos de salida del programa:
-
-```csharp
-namespace MiProyecto.scenarios;
-
-/// <summary>
-/// Enumerate the exit codes
-/// </summary>
-public enum ExitCode
-{
-    Success = 0,
-    UnknownError = 1
-}
-```
-
-**ScenarioBuilder.cs** - Constructor principal que configura DI y carga escenarios:
-
-```csharp
-using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
-using NHibernate;
-using System.Reflection;
-using MiProyecto.domain.interfaces.repositories;
-using MiProyecto.common.tests;
-using MiProyecto.infrastructure.nhibernate;
-using MiProyecto.ndbunit;
-using MiProyecto.domain.entities;
-using MiProyecto.domain.entities.validators;
-
-namespace MiProyecto.scenarios;
-
-public class ScenarioBuilder
-{
-    public IList<IScenario> Scenarios { get; private set; }
-    protected internal ServiceProvider _serviceProvider;
-    protected internal NHSessionFactory sessionFactory;
-    protected internal INDbUnit NDbUnitTest;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public ScenarioBuilder(string connectionString)
-    {
-        var assemblies = new List<Assembly> { typeof(IScenario).Assembly }.ToArray();
-
-        // Create the NDbUnit instance
-        var schema = new AppSchema();
-        this.NDbUnitTest = new PostgreSQLNDbUnit(schema, connectionString);
-
-        // Create the NHibernate session
-        this.sessionFactory = new NHSessionFactory(connectionString);
-        var nhSessionFactory = this.sessionFactory.BuildNHibernateSessionFactory();
-        nhSessionFactory.OpenSession();
-
-        _serviceProvider = new ServiceCollection()
-            .Scan(scan => scan
-                .FromAssemblyOf<Sc010CreateSandBox>()
-                .AddClasses(classes => classes.AssignableTo<IScenario>())
-                .AsSelf()
-                .WithScopedLifetime()
-        )
-        .AddLogging()
-        .AddScoped<IUnitOfWork, NHUnitOfWork>()
-        .AddScoped<ISession>(session => nhSessionFactory.OpenSession())
-        .AddSingleton<INDbUnit>(NDbUnitTest)
-        // Registrar validators para cada entidad
-        .AddTransient<AbstractValidator<Role>, RoleValidator>()
-        .AddTransient<AbstractValidator<User>, UserValidator>()
-        // Agregar más validators según las entidades del proyecto
-        .BuildServiceProvider();
-
-        this.Scenarios = ReadAllScenariosFromAssemblies(assemblies.ToList());
-    }
-
-    /// <summary>
-    /// Load a preload scenario from XML file
-    /// </summary>
-    public void LoadXmlFile(Type preloadScenario, string outputFile)
-    {
-        IScenario? preloadScenarioInstance = this.Scenarios.FirstOrDefault(s => s.GetType() == preloadScenario);
-        if (preloadScenarioInstance == null)
-            throw new TypeLoadException($"Preload scenario {preloadScenario.Name} not found");
-
-        var fileName = preloadScenarioInstance.ScenarioFileName;
-        var fileNameWithExtension = fileName.ToLower().EndsWith(".xml") ? fileName : $"{fileName}.xml";
-        var fullFilePath = Path.Combine(outputFile, fileNameWithExtension);
-        if (!File.Exists(fullFilePath))
-            throw new FileNotFoundException($"File {fullFilePath} not found");
-
-        var dataSet = new AppSchema();
-        dataSet.ReadXml(fullFilePath);
-        this.NDbUnitTest.SeedDatabase(dataSet);
-    }
-
-    private IList<IScenario> ReadAllScenariosFromAssemblies(List<Assembly> assemblies)
-    {
-        var allScenarios = new List<IScenario>();
-        foreach (Assembly assembly in assemblies)
-        {
-            try
-            {
-                var scenarioType = typeof(IScenario);
-                var scenariosTypes = assembly
-                    .GetTypes()
-                    .Where(p => scenarioType.IsAssignableFrom(p));
-                foreach (var scenario in scenariosTypes)
-                    if (this._serviceProvider.GetService(scenario) is IScenario scenarioFound)
-                        allScenarios.Add(scenarioFound);
-            }
-            catch (Exception ex)
-            {
-                throw new TypeLoadException($"Error loading scenario from assembly {assembly.FullName}", ex);
-            }
-        }
-        return allScenarios;
-    }
-}
-```
-
-#### 9.6 Crear escenarios de ejemplo
-
-**Sc010CreateSandBox.cs** - Escenario base vacío (sandbox):
-
-```csharp
-namespace MiProyecto.scenarios;
-
-public class Sc010CreateSandBox : IScenario
-{
-    /// <summary>
-    /// Get the scenario file name used to store in the file system
-    /// </summary>
-    public string ScenarioFileName => "CreateSandBox";
-
-    /// <summary>
-    /// No pre-load scenario for this scenario
-    /// </summary>
-    public Type? PreloadScenario => null;
-
-    /// <summary>
-    /// Seed data - Empty scenario for sandbox
-    /// </summary>
-    public Task SeedData()
-        => Task.CompletedTask;
-}
-```
-
-**Sc020CreateRoles.cs** - Escenario con inyección de dependencias:
-
-```csharp
-using MiProyecto.domain.interfaces.repositories;
-
-namespace MiProyecto.scenarios;
-
-public class Sc020CreateRoles(IUnitOfWork uoW) : IScenario
-{
-    private readonly IUnitOfWork _uoW = uoW;
-
-    /// <summary>
-    /// Get the scenario file name used to store in the file system
-    /// </summary>
-    public string ScenarioFileName => "CreateRoles";
-
-    /// <summary>
-    /// Pre-load the sandbox scenario
-    /// </summary>
-    public Type? PreloadScenario => typeof(Sc010CreateSandBox);
-
-    /// <summary>
-    /// Seed data using the repository
-    /// </summary>
-    public Task SeedData()
-    {
-        return _uoW.Roles.CreateDefaultRoles();
-    }
-}
-```
-
-**Sc030CreateUsers.cs** - Escenario que depende de roles:
-
-```csharp
-using MiProyecto.domain.interfaces.repositories;
-
-namespace MiProyecto.scenarios;
-
-public class Sc030CreateUsers(IUnitOfWork uoW) : IScenario
-{
-    private readonly IUnitOfWork _uoW = uoW;
-
-    public string ScenarioFileName => "CreateUsers";
-
-    /// <summary>
-    /// Pre-load the roles scenario (which includes sandbox)
-    /// </summary>
-    public Type? PreloadScenario => typeof(Sc020CreateRoles);
-
-    public async Task SeedData()
-    {
-        await _uoW.Users.CreateAsync("usuario1@example.com", "Usuario Uno");
-        await _uoW.Users.CreateAsync("usuario2@example.com", "Usuario Dos");
-    }
-}
-```
+> **NOTA**: Los escenarios utilizan primary constructors de C# 12 para inyección de dependencias. La convención de nombres `Sc###NombreEscenario` determina el orden de ejecución.
 
 #### 9.7 Ejecutar el generador de escenarios
 
