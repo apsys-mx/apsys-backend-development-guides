@@ -1382,7 +1382,85 @@ public void Validate_WithEmptyEmail_ReturnsError()
 }
 ```
 
-#### Patrón recomendado: Combinar ambos
+#### Patrón recomendado: Build() para control parcial
+
+Usa `Build<T>().With().Create()` cuando necesitas controlar **algunos** valores pero no todos:
+
+```csharp
+[TestFixture]
+public class ActivedModuleTests
+{
+    private Fixture _fixture;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _fixture = new Fixture();
+    }
+
+    // ❌ ANTES: Verbose - debes especificar TODOS los parámetros
+    [Test]
+    public void Validate_WithEmptyOrganizationId_ReturnsError_Verbose()
+    {
+        var activationDate = DateTime.UtcNow;
+        var module = new ActivedModule(
+            Guid.Empty,                        // ← el punto del test
+            Guid.NewGuid(),                    // ← irrelevante
+            activationDate,                    // ← irrelevante
+            activationDate.AddDays(30),        // ← irrelevante
+            ActivationStatus.Active);          // ← irrelevante
+
+        var result = module.Validate();
+
+        result.Should().Contain(e => e.PropertyName == "OrganizationId");
+    }
+
+    // ✅ DESPUÉS: Limpio - solo especificas lo que importa
+    [Test]
+    public void Validate_WithEmptyOrganizationId_ReturnsError_Clean()
+    {
+        var module = _fixture.Build<ActivedModule>()
+            .With(m => m.OrganizationId, Guid.Empty)  // ← el punto del test
+            .Create();
+        // AutoFixture genera: ActivatedByUserId, ActivationDate, ActiveUntilDate, Status
+
+        var result = module.Validate();
+
+        result.Should().Contain(e => e.PropertyName == "OrganizationId");
+    }
+
+    // ✅ Múltiples valores controlados
+    [Test]
+    public void Validate_WithInvalidDateRange_ReturnsError()
+    {
+        var activationDate = DateTime.UtcNow;
+        var module = _fixture.Build<ActivedModule>()
+            .With(m => m.ActivationDate, activationDate)
+            .With(m => m.ActiveUntilDate, activationDate.AddDays(-1))  // ← fecha inválida
+            .Create();
+
+        var result = module.Validate();
+
+        result.Should().Contain(e => e.PropertyName == "ActiveUntilDate");
+    }
+}
+```
+
+**Beneficios de Build():**
+- **Menos código** - AutoFixture genera los valores irrelevantes
+- **Más claro** - Solo ves las propiedades relevantes para el test
+- **Mantenible** - Si agregas propiedades a la entidad, los tests no se rompen
+- **Flexible** - Combina control preciso con generación automática
+
+#### Cuándo usar cada enfoque
+
+| Enfoque | Usar cuando |
+|---------|-------------|
+| `_fixture.Create<T>()` | Todos los valores son irrelevantes |
+| `_fixture.Build<T>().With().Create()` | Algunos valores específicos importan |
+| `new T(...)` constructor manual | El test documenta un caso de negocio completo |
+
+#### Patrón adicional: Combinar ambos
 
 ```csharp
 [TestFixture]
@@ -1396,7 +1474,7 @@ public class OrderTests
         _fixture = new Fixture();
     }
 
-    // ✅ AutoFixture para datos irrelevantes
+    // ✅ AutoFixture completo para datos irrelevantes
     [Test]
     public void AddItem_WithValidProduct_IncreasesTotal()
     {
@@ -1408,7 +1486,7 @@ public class OrderTests
         order.Items.Should().NotBeEmpty();
     }
 
-    // ✅ Datos manuales para caso específico
+    // ✅ Datos manuales para caso específico donde TODO importa
     [Test]
     public void Submit_WithEmptyItems_ThrowsException()
     {
