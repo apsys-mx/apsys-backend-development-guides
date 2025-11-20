@@ -86,788 +86,305 @@ public override IValidator GetValidator() => new UserValidator();
 
 ## AbstractDomainObject
 
-### Definición Completa
+Todas las entidades en APSYS heredan de `AbstractDomainObject`, que provee funcionalidad común como identidad única, fecha de creación, y métodos de validación.
 
-Basada en el proyecto real [hashira.stone.backend](D:\apsys-mx\inspeccion-distancia\hashira.stone.backend):
+### Propiedades y Métodos Heredados
 
-```csharp
-// domain/entities/AbstractDomainObject.cs
-namespace hashira.stone.backend.domain.entities;
-
-using FluentValidation;
-using FluentValidation.Results;
-
-/// <summary>
-/// Clase base abstracta para objetos de dominio.
-/// </summary>
-public abstract class AbstractDomainObject
-{
-    /// <summary>
-    /// Gets or sets the unique identifier for the domain object.
-    /// This identifier is automatically generated if not provided.
-    /// </summary>
-    public virtual Guid Id { get; set; } = Guid.NewGuid();
-
-    /// <summary>
-    /// Gets or sets the creation date of the domain object.
-    /// This property is automatically set to the current date and time when the object is created.
-    /// </summary>
-    public virtual DateTime CreationDate { get; set; }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    protected AbstractDomainObject()
-    {
-        this.CreationDate = DateTime.UtcNow;
-    }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="creationDate"></param>
-    protected AbstractDomainObject(Guid id, DateTime creationDate)
-    {
-        Id = id;
-        CreationDate = creationDate;
-    }
-
-    /// <summary>
-    /// Validates the current instance of the domain object.
-    /// This method uses FluentValidation to check if the object meets its validation rules.
-    /// </summary>
-    /// <returns></returns>
-    public virtual bool IsValid()
-    {
-        IValidator? validator = GetValidator();
-        if (validator == null)
-            return true;
-
-        var context = new ValidationContext<object>(this);
-        ValidationResult result = validator.Validate(context);
-        return result.IsValid;
-    }
-
-    /// <summary>
-    /// Validates the current instance of the domain object and returns any validation failures.
-    /// This method uses FluentValidation to check if the object meets its validation rules and returns a collection of validation failures if any exist.
-    /// If no validator is defined, it returns an empty list of validation failures.
-    /// </summary>
-    /// <returns></returns>
-    public virtual IEnumerable<ValidationFailure> Validate()
-    {
-        IValidator? validator = GetValidator();
-        if (validator == null)
-            return new List<ValidationFailure>();
-        else
-        {
-            var context = new ValidationContext<object>(this);
-            ValidationResult result = validator.Validate(context);
-            return result.Errors;
-        }
-    }
-
-    /// <summary>
-    /// Gets the validator for the domain object.
-    /// This method should be overridden in derived classes to provide a specific validator for the entity.
-    /// </summary>
-    /// <returns></returns>
-    public virtual IValidator? GetValidator()
-         => null;
-}
-```
-
-### Propiedades Heredadas
-
-Todas las entidades heredan automáticamente:
-
-| Propiedad | Tipo | Descripción |
-|-----------|------|-------------|
+| Elemento | Tipo | Descripción |
+|----------|------|-------------|
 | `Id` | `Guid` | Identificador único, generado automáticamente |
 | `CreationDate` | `DateTime` | Fecha de creación, asignada en UTC |
-
-### Métodos Heredados
-
-| Método | Retorno | Descripción |
-|--------|---------|-------------|
 | `IsValid()` | `bool` | Verifica si la entidad cumple validaciones |
 | `Validate()` | `IEnumerable<ValidationFailure>` | Retorna lista de errores de validación |
 | `GetValidator()` | `IValidator?` | Debe ser sobrescrito para retornar validator |
+
+### Ejemplo de Uso
+
+```csharp
+public class User : AbstractDomainObject
+{
+    // Automáticamente tiene: Id, CreationDate, IsValid(), Validate(), GetValidator()
+    public virtual string Email { get; set; } = string.Empty;
+
+    public override IValidator GetValidator() => new UserValidator();
+}
+```
+
+📖 **Ver documentación completa:** [AbstractDomainObject](examples/entities/patterns/01-base-class.md)
 
 ---
 
 ## Propiedades Virtual
 
-### ¿Por qué virtual?
+### Regla Fundamental
 
-NHibernate requiere que todas las propiedades sean `virtual` para poder crear **proxies dinámicos** para lazy loading y change tracking.
-
-### Patrón Obligatorio
+Todas las propiedades deben ser `virtual` para compatibilidad con NHibernate (lazy loading y change tracking).
 
 ```csharp
 ✅ Correcto:
 public virtual string Name { get; set; } = string.Empty;
-public virtual DateTime IssueDate { get; set; }
 public virtual IList<Role> Roles { get; set; } = new List<Role>();
 
 ❌ Incorrecto:
 public string Name { get; set; }  // Falta virtual
 ```
 
-### Tipos de Propiedades
+### Tipos de Propiedades Comunes
 
-#### Propiedades Simples
+- **Strings:** `public virtual string Name { get; set; } = string.Empty;`
+- **Números:** `public virtual int Age { get; set; }`
+- **Booleanos:** `public virtual bool Locked { get; set; }`
+- **Fechas:** `public virtual DateTime IssueDate { get; set; }`
+- **Colecciones:** `public virtual IList<Role> Roles { get; set; } = new List<Role>();`
+- **Referencias:** `public virtual Category Category { get; set; } = null!;`
 
-```csharp
-// Strings
-public virtual string Email { get; set; } = string.Empty;
-public virtual string Name { get; set; } = string.Empty;
-
-// Números
-public virtual int Age { get; set; }
-public virtual decimal Price { get; set; }
-
-// Booleanos
-public virtual bool Locked { get; set; }
-public virtual bool IsActive { get; set; }
-
-// Fechas
-public virtual DateTime IssueDate { get; set; }
-public virtual DateTime ExpirationDate { get; set; }
-
-// Nullable
-public virtual string? OptionalField { get; set; }
-public virtual int? OptionalNumber { get; set; }
-```
-
-#### Colecciones (Relaciones)
-
-```csharp
-// One-to-Many
-public virtual IList<Role> Roles { get; set; } = new List<Role>();
-public virtual IList<Order> Orders { get; set; } = new List<Order>();
-
-// Many-to-One
-public virtual Category Category { get; set; } = null!;
-public virtual User Owner { get; set; } = null!;
-```
-
-**Importante:**
-- Usar `IList<T>` en lugar de `List<T>`
-- Inicializar colecciones para evitar null
-- Marcar referencias con `= null!` si son required
+📖 **Ver guía completa de tipos de propiedades:** [Property Types](examples/entities/patterns/02-properties.md)
 
 ---
 
 ## Constructores
 
-### Patrón: Dos Constructores
+### Patrón: Dos Constructores Obligatorios
 
-Todas las entidades deben tener **dos constructores**:
+Todas las entidades deben tener **exactamente dos constructores**:
 
-#### 1. Constructor Vacío (para NHibernate)
+#### 1. Constructor Vacío (NHibernate)
 
 ```csharp
 /// <summary>
-/// Initializes a new instance of the <see cref="User"/> class.
 /// This constructor is used by NHibernate for mapping purposes.
 /// </summary>
-public User()
-{
-}
+public User() { }
 ```
 
-**Propósito:** NHibernate lo usa para crear instancias al cargar desde BD.
-
-#### 2. Constructor con Parámetros (para Creación)
+#### 2. Constructor con Parámetros (Creación)
 
 ```csharp
 /// <summary>
-/// Initializes a new instance of the <see cref="User"/> class with the specified email and name.
+/// Initializes a new instance with the specified values.
 /// </summary>
-/// <param name="email">The user's email address</param>
-/// <param name="name">The user's full name</param>
 public User(string email, string name)
 {
     Email = email;
     Name = name;
-    Locked = false;  // Valores por defecto
 }
 ```
 
-**Propósito:** Usado en código de aplicación para crear nuevas entidades.
+### Reglas
 
-### Ejemplo Completo
+- ✅ Incluir solo propiedades **esenciales** como parámetros
+- ❌ NO incluir `Id`, `CreationDate` (se asignan automáticamente)
+- ❌ NO incluir colecciones (se inicializan en propiedades)
 
-```csharp
-public class TechnicalStandard : AbstractDomainObject
-{
-    // Constructor vacío para NHibernate
-    public TechnicalStandard()
-    {
-    }
-
-    // Constructor con parámetros para creación
-    public TechnicalStandard(string code, string name, string edition, string status, string type)
-    {
-        this.CreationDate = DateTime.UtcNow;  // Opcional: re-asignar si necesario
-        Code = code;
-        Name = name;
-        Edition = edition;
-        Status = status;
-        Type = type;
-    }
-
-    // Propiedades...
-    public virtual string Code { get; set; } = string.Empty;
-    public virtual string Name { get; set; } = string.Empty;
-    // ...
-}
-```
+📖 **Ver guía completa de constructores:** [Constructor Patterns](examples/entities/patterns/03-constructors.md)
 
 ---
 
-## Métodos de Dominio
+## Validación
 
-### IsValid() - Verificar Validación
+### Tres Métodos de Validación
 
-```csharp
-var user = new User("test@example.com", "Test User");
+Todas las entidades heredan tres métodos para validación:
 
-// Verificar si es válido
-if (!user.IsValid())
-{
-    // No es válido
-    Console.WriteLine("User is invalid");
-}
-```
+| Método | Retorno | Uso |
+|--------|---------|-----|
+| `IsValid()` | `bool` | Verificar si la entidad es válida |
+| `Validate()` | `IEnumerable<ValidationFailure>` | Obtener lista de errores |
+| `GetValidator()` | `IValidator` | Override obligatorio - retornar validator |
 
-**Retorna:** `bool` - `true` si pasa todas las validaciones.
-
-### Validate() - Obtener Errores
-
-```csharp
-var user = new User("", "");  // Email y Name vacíos
-
-// Obtener errores
-var errors = user.Validate();
-
-foreach (var error in errors)
-{
-    Console.WriteLine($"{error.PropertyName}: {error.ErrorMessage}");
-}
-```
-
-**Retorna:** `IEnumerable<ValidationFailure>` - Lista de errores.
-
-### GetValidator() - Retornar Validator
-
-```csharp
-public class User : AbstractDomainObject
-{
-    // ... propiedades y constructores
-
-    /// <summary>
-    /// Get the validator for the User entity.
-    /// </summary>
-    public override IValidator GetValidator()
-        => new UserValidator();
-}
-```
-
-**Debe ser sobrescrito** en cada entidad para retornar su validator específico.
-
----
-
-## GetValidator Integration
-
-### Patrón de Integración
+### Ejemplo de Uso
 
 ```csharp
 // 1️⃣ Entidad sobrescribe GetValidator()
-public class Prototype : AbstractDomainObject
+public class User : AbstractDomainObject
 {
-    public virtual string Number { get; set; } = string.Empty;
-    public virtual DateTime IssueDate { get; set; }
-    // ...
+    public virtual string Email { get; set; } = string.Empty;
 
-    public override IValidator GetValidator()
-    {
-        return new PrototypeValidator();
-    }
+    public override IValidator GetValidator() => new UserValidator();
 }
 
-// 2️⃣ Validator define reglas
-public class PrototypeValidator : AbstractValidator<Prototype>
+// 2️⃣ Uso en código
+var user = new User("test@example.com", "Test");
+
+if (!user.IsValid())
 {
-    public PrototypeValidator()
-    {
-        RuleFor(x => x.Number)
-            .NotNull()
-            .NotEmpty();
-
-        RuleFor(x => x.IssueDate)
-            .LessThan(x => x.ExpirationDate)
-            .WithMessage("Issue date must be before expiration date");
-    }
-}
-
-// 3️⃣ Uso en código
-var prototype = new Prototype("P-001", DateTime.Now, DateTime.Now.AddDays(30), "Active");
-
-if (!prototype.IsValid())
-{
-    throw new InvalidDomainException(prototype.Validate());
+    var errors = user.Validate();
+    throw new InvalidDomainException(errors);
 }
 ```
 
-### Flujo de Validación
-
-```
-┌──────────────┐
-│  Entidad     │
-│  user.IsValid() │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────────┐
-│ GetValidator()   │  ← Retorna UserValidator
-└──────┬───────────┘
-       │
-       ▼
-┌──────────────────┐
-│ FluentValidation │  ← Ejecuta reglas
-│ Validate()       │
-└──────┬───────────┘
-       │
-       ▼
-┌──────────────────┐
-│ ValidationResult │  ← IsValid, Errors[]
-└──────────────────┘
-```
+📖 **Ver guía completa de validación:** [Validation Usage](examples/entities/patterns/04-validation.md)
 
 ---
 
 ## Ejemplos Reales
 
-Basados en [hashira.stone.backend](D:\apsys-mx\inspeccion-distancia\hashira.stone.backend):
+Los siguientes ejemplos están basados en proyectos reales y organizados por complejidad. Cada ejemplo incluye la entidad completa, validator, tests y casos de uso.
 
-### User - Entidad con Colección
+### 📁 Ejemplos por Complejidad
 
-```csharp
-// domain/entities/User.cs
-namespace hashira.stone.backend.domain.entities;
+#### [Role - Entidad Simple](examples/entities/simple/Role.md)
 
-using FluentValidation;
-using hashira.stone.backend.domain.entities.validators;
-
-public class User : AbstractDomainObject
-{
-    /// <summary>
-    /// Gets or sets the user's email address
-    /// </summary>
-    public virtual string Email { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the user's full name
-    /// </summary>
-    public virtual string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets whether the user account is locked
-    /// </summary>
-    public virtual bool Locked { get; set; }
-
-    /// <summary>
-    /// Gets or sets the roles assigned to this user
-    /// </summary>
-    public virtual IList<Role> Roles { get; set; } = new List<Role>();
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// This constructor is used by NHibernate for mapping purposes.
-    /// </summary>
-    public User()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="User"/> class.
-    /// </summary>
-    /// <param name="email">The user's email address</param>
-    /// <param name="name">The user's full name</param>
-    public User(string email, string name)
-    {
-        Email = email;
-        Name = name;
-        Locked = false;
-    }
-
-    /// <summary>
-    /// Get the validator for the User entity.
-    /// </summary>
-    public override IValidator GetValidator()
-        => new UserValidator();
-}
-```
-
-**Características:**
-- Propiedades simples: `Email`, `Name`, `Locked`
-- Colección: `IList<Role>`
-- Dos constructores
-- GetValidator sobrescrito
-
-### Role - Entidad Simple
+**Complejidad:** Simple | **Una sola propiedad**
 
 ```csharp
-// domain/entities/Role.cs
-namespace hashira.stone.backend.domain.entities;
-
-using FluentValidation;
-using hashira.stone.backend.domain.entities.validators;
-
-/// <summary>
-/// Represents a role in the system.
-/// </summary>
 public class Role : AbstractDomainObject
 {
-    /// <summary>
-    /// Gets or sets the name of the role.
-    /// </summary>
     public virtual string Name { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Role"/> class.
-    /// This constructor is used by NHibernate for mapping purposes.
-    /// </summary>
-    public Role()
-    {
-    }
+    public Role() { }
+    public Role(string name) { Name = name; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Role"/> class with the specified name.
-    /// </summary>
-    /// <param name="name">The role name</param>
-    public Role(string name)
-    {
-        Name = name;
-    }
-
-    /// <summary>
-    /// Get the validator for the Role entity.
-    /// </summary>
-    public override IValidator GetValidator()
-        => new RoleValidator();
+    public override IValidator GetValidator() => new RoleValidator();
 }
 ```
 
-**Características:**
-- Entidad muy simple con una sola propiedad
-- Patrón completo sigue aplicando
+✅ **Aprende:** Estructura básica, patrón completo en entidad simple
+📖 **Ver ejemplo completo con tests:** [Role.md](examples/entities/simple/Role.md)
 
-### Prototype - Entidad con Fechas
+---
+
+#### [User - Complejidad Media](examples/entities/medium/User.md)
+
+**Complejidad:** Media | **Propiedades + Colecciones**
 
 ```csharp
-// domain/entities/Prototype.cs
-namespace hashira.stone.backend.domain.entities;
+public class User : AbstractDomainObject
+{
+    public virtual string Email { get; set; } = string.Empty;
+    public virtual string Name { get; set; } = string.Empty;
+    public virtual bool Locked { get; set; }
+    public virtual IList<Role> Roles { get; set; } = new List<Role>();
 
-using FluentValidation;
-using hashira.stone.backend.domain.entities.validators;
+    public User() { }
+    public User(string email, string name) { /* ... */ }
 
-/// <summary>
-/// Represents a prototype domain object with properties for tracking its number, issue date, expiration date, and
-/// status.
-/// </summary>
+    public override IValidator GetValidator() => new UserValidator();
+}
+```
+
+✅ **Aprende:** Colecciones, email validation, boolean properties
+📖 **Ver ejemplo completo con tests:** [User.md](examples/entities/medium/User.md)
+
+---
+
+#### [Prototype - Entidad Compleja](examples/entities/complex/Prototype.md)
+
+**Complejidad:** Compleja | **DateTime + Cross-Property Validations**
+
+```csharp
 public class Prototype : AbstractDomainObject
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Prototype"/> class.
-    /// </summary>
-    public Prototype()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Prototype"/> class with the specified details.
-    /// </summary>
-    /// <param name="number">The unique identifier for the prototype.</param>
-    /// <param name="issueDate">The date when the prototype was issued.</param>
-    /// <param name="expirationDate">The date when the prototype expires.</param>
-    /// <param name="status">The current status of the prototype.</param>
-    public Prototype(string number, DateTime issueDate, DateTime expirationDate, string status)
-    {
-        Number = number;
-        IssueDate = issueDate;
-        ExpirationDate = expirationDate;
-        Status = status;
-    }
-
-    /// <summary>
-    /// Gets or sets the number as a string.
-    /// </summary>
     public virtual string Number { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the date when the issue was created or recorded.
-    /// </summary>
     public virtual DateTime IssueDate { get; set; }
-
-    /// <summary>
-    /// Gets or sets the expiration date of the item.
-    /// </summary>
     public virtual DateTime ExpirationDate { get; set; }
-
-    /// <summary>
-    /// Gets or sets the current status of the operation.
-    /// </summary>
     public virtual string Status { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Retrieves the validator associated with the current instance.
-    /// </summary>
-    public override IValidator GetValidator()
-    {
-        return new PrototypeValidator();
-    }
+    public Prototype() { }
+    public Prototype(string number, DateTime issueDate,
+                     DateTime expirationDate, string status) { /* ... */ }
+
+    public override IValidator GetValidator() => new PrototypeValidator();
 }
 ```
 
-**Características:**
-- Múltiples tipos de datos: `string`, `DateTime`
-- Constructor con 4 parámetros
-- Documentación XML completa
+✅ **Aprende:** DateTime validation, cross-property rules, allowed values
+📖 **Ver ejemplo completo con tests:** [Prototype.md](examples/entities/complex/Prototype.md)
 
-### TechnicalStandard - Entidad Completa
+---
+
+#### [TechnicalStandard - Entidad Completa](examples/entities/complex/TechnicalStandard.md)
+
+**Complejidad:** Compleja | **Múltiples Propiedades + Allowed Values**
 
 ```csharp
-// domain/entities/TechnicalStandard.cs
-namespace hashira.stone.backend.domain.entities;
-
-using FluentValidation;
-using hashira.stone.backend.domain.entities.validators;
-
-/// <summary>
-/// Represents a technical standard in the system.
-/// A technical standard defines a set of criteria, guidelines, or characteristics for processes, products, or services.
-/// </summary>
 public class TechnicalStandard : AbstractDomainObject
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TechnicalStandard"/> class.
-    /// </summary>
-    public TechnicalStandard()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TechnicalStandard"/> class.
-    /// </summary>
-    public TechnicalStandard(string code, string name, string edition, string status, string type)
-    {
-        this.CreationDate = DateTime.UtcNow;  // Re-asignar CreationDate
-        Code = code;
-        Name = name;
-        Edition = edition;
-        Status = status;
-        Type = type;
-    }
-
-    /// <summary>
-    /// Gets or sets the unique code of the technical standard.
-    /// This code is required and must be unique within the system.
-    /// </summary>
     public virtual string Code { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the name of the technical standard.
-    /// This is a descriptive name and is required.
-    /// </summary>
     public virtual string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the edition or version of the technical standard.
-    /// This property is required and typically indicates the publication or revision version.
-    /// </summary>
     public virtual string Edition { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the status of the technical standard.
-    /// Typical values are "Active" or "Deprecated".
-    /// This property is required.
-    /// </summary>
     public virtual string Status { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the type of the technical standard.
-    /// Typical values are "CFE" or "Externa".
-    /// This property is required.
-    /// </summary>
     public virtual string Type { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets the validator for the <see cref="TechnicalStandard"/> entity.
-    /// </summary>
-    public override IValidator GetValidator()
-        => new TechnicalStandardValidator();
+    public TechnicalStandard() { }
+    public TechnicalStandard(string code, string name, string edition,
+                             string status, string type) { /* ... */ }
+
+    public override IValidator GetValidator() => new TechnicalStandardValidator();
 }
 ```
 
-**Características:**
-- Múltiples propiedades string
-- Constructor con 5 parámetros
-- Re-asigna `CreationDate` en constructor personalizado
-- Documentación detallada de valores típicos
+✅ **Aprende:** Múltiples propiedades, allowed values, constructores complejos
+📖 **Ver ejemplo completo con tests:** [TechnicalStandard.md](examples/entities/complex/TechnicalStandard.md)
+
+---
+
+### 📚 Más Ejemplos
+
+**Por Proyecto:**
+- [hashira-stone ejemplos](examples/entities/by-project/hashira-stone/) - Ejemplos del proyecto real
+
+**Todos los ejemplos incluyen:**
+- ✅ Código completo de Entity y Validator
+- ✅ Tests unitarios completos con AAA pattern
+- ✅ Ejemplos de uso en código
+- ✅ Lecciones clave y conceptos demostrados
+- ✅ Referencias cruzadas a guías relacionadas
 
 ---
 
 ## Patrones y Best Practices
 
-### ✅ DO - Hacer
+### ✅ DO - Las 6 Reglas de Oro
 
-#### 1. Siempre Heredar de AbstractDomainObject
-
-```csharp
-✅ Correcto:
-public class Product : AbstractDomainObject
-{
-    // ...
-}
-
-❌ Incorrecto:
-public class Product  // No hereda
-{
-    public Guid Id { get; set; }  // Duplica lógica
-    public DateTime CreationDate { get; set; }
-}
-```
-
-#### 2. Propiedades Virtual
+1. **Heredar de AbstractDomainObject** - Funcionalidad común automática
+2. **Propiedades virtual** - Obligatorio para NHibernate
+3. **Dos constructores** - Vacío (NHibernate) + Parametrizado (Creación)
+4. **Sobrescribir GetValidator** - Integración con FluentValidation
+5. **Inicializar colecciones** - Evitar NullReferenceException
+6. **Documentación XML** - Mejor experiencia de desarrollo
 
 ```csharp
-✅ Correcto:
-public virtual string Name { get; set; } = string.Empty;
-
-❌ Incorrecto:
-public string Name { get; set; } = string.Empty;  // Falta virtual
-```
-
-#### 3. Dos Constructores
-
-```csharp
-✅ Correcto:
-public User() { }  // Para NHibernate
-public User(string email, string name) { }  // Para creación
-
-❌ Incorrecto:
-// Solo un constructor
-public User(string email, string name) { }
-```
-
-#### 4. Sobrescribir GetValidator
-
-```csharp
-✅ Correcto:
-public override IValidator GetValidator()
-    => new UserValidator();
-
-❌ Incorrecto:
-// No sobrescribir GetValidator
-```
-
-#### 5. Inicializar Colecciones
-
-```csharp
-✅ Correcto:
-public virtual IList<Role> Roles { get; set; } = new List<Role>();
-
-❌ Incorrecto:
-public virtual IList<Role> Roles { get; set; }  // Puede ser null
-```
-
-#### 6. Documentación XML
-
-```csharp
-✅ Correcto:
-/// <summary>
-/// Gets or sets the user's email address
-/// </summary>
-public virtual string Email { get; set; } = string.Empty;
-
-❌ Incorrecto:
-public virtual string Email { get; set; } = string.Empty;  // Sin docs
-```
-
-### ❌ DON'T - No Hacer
-
-#### 1. No Agregar Lógica de Persistencia
-
-```csharp
-❌ Incorrecto:
+// ✅ Entidad perfecta siguiendo todas las best practices
 public class User : AbstractDomainObject
 {
-    public void SaveToDatabase()  // ❌ NO!
-    {
-        // Lógica de base de datos
-    }
-}
+    public virtual string Email { get; set; } = string.Empty;
+    public virtual IList<Role> Roles { get; set; } = new List<Role>();
 
-✅ Correcto:
-// Persistencia va en Infrastructure Layer (Repositories)
+    public User() { }
+    public User(string email) { Email = email; }
+
+    public override IValidator GetValidator() => new UserValidator();
+}
 ```
 
-#### 2. No Usar Atributos de ORM
+📖 **Ver guía completa de best practices:** [Best Practices](examples/entities/patterns/05-best-practices.md)
+
+---
+
+### ❌ DON'T - Los 7 Anti-Patterns Críticos
+
+1. **NO persistencia en entidades** - Va en Repositories
+2. **NO atributos de ORM** - Va en Mappers
+3. **NO dependencias externas** - Dominio debe ser limpio
+4. **NO propiedades internas públicas** - Mantener encapsulación
+5. **NO mezclar responsabilidades** - Cada capa tiene su rol
+6. **NO factory methods estáticos** - Usar Domain Services
+7. **NO validación en setters** - Usar Validators
 
 ```csharp
-❌ Incorrecto:
-[Table("users")]  // ❌ Atributos de NHibernate/EF
+❌ NUNCA hacer esto:
+[Table("users")]  // ❌ Atributo de ORM
 public class User : AbstractDomainObject
 {
-    [Column("user_email")]  // ❌ NO!
+    [JsonProperty("email")]  // ❌ Atributo de serialización
     public virtual string Email { get; set; }
-}
 
-✅ Correcto:
-// Mapeo va en Infrastructure Layer (Mappers)
-public class User : AbstractDomainObject
-{
-    public virtual string Email { get; set; }
+    public void SaveToDatabase() { }  // ❌ Lógica de persistencia
 }
 ```
 
-#### 3. No Depender de Frameworks Externos
-
-```csharp
-❌ Incorrecto:
-public class User : AbstractDomainObject
-{
-    [JsonProperty("email")]  // ❌ Atributo de Newtonsoft
-    public virtual string Email { get; set; }
-}
-
-✅ Correcto:
-// Serialización va en WebApi Layer (DTOs)
-public class User : AbstractDomainObject
-{
-    public virtual string Email { get; set; }
-}
-```
-
-#### 4. No Exponer Propiedades Internas como Públicas
-
-```csharp
-❌ Incorrecto:
-public class Order : AbstractDomainObject
-{
-    public virtual List<OrderItem> _items { get; set; }  // ❌ Público
-}
-
-✅ Correcto:
-public class Order : AbstractDomainObject
-{
-    public virtual IList<OrderItem> Items { get; set; } = new List<OrderItem>();
-}
-```
+📖 **Ver guía completa de anti-patterns:** [Anti-Patterns](examples/entities/patterns/06-anti-patterns.md)
 
 ---
 
