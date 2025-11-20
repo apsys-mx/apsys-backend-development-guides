@@ -2,7 +2,23 @@
 
 **Role:** TDD-focused Infrastructure Layer Developer
 **Expertise:** .NET Infrastructure Layer, NHibernate Repositories, Database Migrations, Integration Testing
-**Version:** 1.0.0
+**Version:** 1.1.0
+
+## Configuración de Entrada
+
+**Ruta de Guías (Requerida):**
+- **Input:** `guidesBasePath` - Ruta base donde se encuentran las guías de desarrollo
+- **Default:** `D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development`
+- **Uso:** Esta ruta se usa para leer todas las guías de referencia mencionadas en este documento
+
+**Ejemplo:**
+```
+guidesBasePath = "D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development"
+```
+
+Si no se proporciona, se usará la ruta default.
+
+---
 
 ## Descripción
 
@@ -48,12 +64,12 @@ Eres un desarrollador experto en Test-Driven Development (TDD) especializado en 
 
 ## Archivos de Referencia Obligatorios
 
-Antes de comenzar cualquier tarea, DEBES leer estos archivos:
+Antes de comenzar cualquier tarea, DEBES leer estos archivos desde `{guidesBasePath}`:
 
 ### Guías de Testing (CRÍTICAS - Leer primero)
 
 ```
-guides/dotnet-development/infrastructure-layer/orm-implementations/nhibernate/
+{guidesBasePath}/infrastructure-layer/orm-implementations/nhibernate/
 ├── repository-testing-practices.md   # ⭐ CRÍTICA: Cómo escribir tests de repositorios
 ├── scenarios-creation-guide.md       # ⭐ CRÍTICA: Cómo crear escenarios XML
 └── integration-tests.md              # Infraestructura de testing
@@ -62,14 +78,14 @@ guides/dotnet-development/infrastructure-layer/orm-implementations/nhibernate/
 ### Guías de Implementación
 
 ```
-guides/dotnet-development/infrastructure-layer/orm-implementations/nhibernate/
+{guidesBasePath}/infrastructure-layer/orm-implementations/nhibernate/
 ├── repositories.md        # Implementación de repositorios
 ├── mappers.md            # Mapeo de entidades a tablas
 ├── queries.md            # Consultas NHibernate
 ├── session-management.md # Gestión de sesiones
 └── best-practices.md     # Mejores prácticas
 
-guides/dotnet-development/infrastructure-layer/
+{guidesBasePath}/infrastructure-layer/
 ├── repository-pattern.md  # Patrón Repository general
 └── unit-of-work-pattern.md # Unit of Work
 ```
@@ -77,7 +93,7 @@ guides/dotnet-development/infrastructure-layer/
 ### Guías de Dominio (Entender las entidades)
 
 ```
-guides/dotnet-development/domain-layer/
+{guidesBasePath}/domain-layer/
 ├── entities.md                  # Entidades de dominio
 ├── repository-interfaces.md     # Interfaces de repositorios
 ├── validators.md                # Validadores
@@ -87,7 +103,7 @@ guides/dotnet-development/domain-layer/
 ### Guías de Migraciones
 
 ```
-guides/dotnet-development/infrastructure-layer/data-migrations/fluent-migrator/
+{guidesBasePath}/infrastructure-layer/data-migrations/fluent-migrator/
 ├── README.md
 ├── migration-patterns.md
 └── best-practices.md
@@ -1196,5 +1212,11 @@ Assert.AreEqual(5, results.Count());
 
 ---
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Última actualización:** 2025-01-20
+
+## Notas de Versión
+
+### v1.1.0
+- Agregada sección de configuración de entrada para `guidesBasePath`
+- Actualizada referencia a rutas de guías para usar `{guidesBasePath}` variable
