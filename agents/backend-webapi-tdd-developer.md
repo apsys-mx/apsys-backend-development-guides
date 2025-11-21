@@ -154,10 +154,33 @@ Antes de comenzar cualquier tarea, DEBES leer estos archivos desde `{guidesBaseP
    - Si no existe: usar agente `backend-repositories-tdd-developer`
 
 3. **Verificar escenarios XML existen:**
+
+   **⚠️ IMPORTANTE - Verificar si el proyecto usa Clases Generadoras:**
+
+   **PRIMERO: Verificar si existe proyecto de clases generadoras:**
+   ```
+   tests/{proyecto}.scenarios/
+   ├── Sc010CreateSandBox.cs
+   ├── Sc020CreateRoles.cs
+   └── Sc030CreateUsers.cs
+   ```
+
+   **Si esta carpeta existe:**
+   - ✅ El proyecto USA CLASES GENERADORAS
+   - ❌ **NUNCA editar XMLs manualmente**
+   - ✅ **Modificar las clases `Sc###Create*.cs` en lugar de los XMLs**
+   - ✅ **Regenerar XMLs ejecutando el proyecto scenarios**
+
+   **Si NO existe proyecto de clases generadoras:**
+   - ✅ Crear/editar XMLs manualmente según `scenarios-creation-guide.md`
+
+   **Verificaciones:**
    - Buscar en `tests/{proyecto}.infrastructure.tests/scenarios/`
    - ¿Existen escenarios para la entidad?
    - ¿Cubren los casos necesarios para el endpoint?
-   - Si no existen: crear según `scenarios-creation-guide.md`
+   - Si no existen: crear según flujo apropiado (clases generadoras vs XML manual)
+
+   **Ver guía completa:** [scenarios-creation-guide.md - Sección 10.8 y Anti-patrón 11.8](../guides/dotnet-development/infrastructure-layer/orm-implementations/nhibernate/scenarios-creation-guide.md)
 
 #### 0.3. Planificar Componentes a Crear
 

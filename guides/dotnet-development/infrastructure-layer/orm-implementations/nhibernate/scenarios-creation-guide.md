@@ -1036,6 +1036,236 @@ scenarios/
 
 ---
 
+## 10.8. Generación de Escenarios mediante Clases C#
+
+### ¿Por qué usar Clases Generadoras?
+
+En proyectos maduros, los escenarios XML NO se crean ni editan manualmente. En su lugar, se **generan** a partir de **clases C# que implementan `IScenario`**. Este approach tiene múltiples ventajas:
+
+**✅ Ventajas de Clases Generadoras:**
+
+1. **Type Safety** - El compilador verifica que las propiedades y métodos existen
+2. **Refactoring** - Cambios en entidades se reflejan automáticamente en escenarios
+3. **Reutilización** - Usar repositorios y lógica de dominio para crear datos consistentes
+4. **Validación** - Los datos generados pasan por las mismas validaciones que el código de producción
+5. **Mantenibilidad** - Un cambio en el modelo actualiza todos los escenarios al regenerar
+6. **Dependencias Explícitas** - Las clases pueden especificar escenarios prerequisitos
+
+### Anatomía de una Clase Generadora
+
+```csharp
+using hashira.stone.backend.domain.interfaces.repositories;
+using hashira.stone.backend.scenarios;
+
+namespace tests.hashira.stone.backend.scenarios;
+
+/// <summary>
+/// Scenario to create users
+/// </summary>
+public class Sc030CreateUsers(IUnitOfWork uoW) : IScenario
+{
+    private readonly IUnitOfWork _uoW = uoW;
+
+    // Nombre del archivo XML que se generará
+    public string ScenarioFileName => "CreateUsers";
+
+    // Escenario que debe ejecutarse antes (opcional)
+    public Type? PreloadScenario => typeof(Sc020CreateRoles);
+
+    // Método que crea los datos usando repositorios
+    public async Task SeedData()
+    {
+        var users = new List<(string Email, string Name)>
+        {
+            ("usuario1@example.com", "Carlos Rodríguez"),
+            ("usuario2@example.com", "Ana María González"),
+            ("usuario3@example.com", "José Luis Martínez")
+        };
+
+        try
+        {
+            this._uoW.BeginTransaction();
+            foreach (var (email, name) in users)
+                await this._uoW.Users.CreateAsync(email, name);
+            this._uoW.Commit();
+        }
+        catch
+        {
+            this._uoW.Rollback();
+            throw;
+        }
+    }
+}
+```
+
+### Elementos Clave
+
+| Elemento | Propósito | Ejemplo |
+|----------|-----------|---------|
+| `IScenario` | Interface que todas las clases deben implementar | `public class Sc030CreateUsers : IScenario` |
+| `ScenarioFileName` | Nombre del XML que se generará (sin extensión) | `"CreateUsers"` → `CreateUsers.xml` |
+| `PreloadScenario` | Escenario que debe ejecutarse antes (opcional) | `typeof(Sc020CreateRoles)` |
+| `SeedData()` | Método async que crea los datos en BD | Usa repositorios del UnitOfWork |
+| Inyección de Dependencias | Constructor recibe `IUnitOfWork` | `Sc030CreateUsers(IUnitOfWork uoW)` |
+
+### Convención de Nombres
+
+```
+Sc###Create{Entity}.cs
+
+Donde:
+- Sc = Scenario
+- ### = Número de orden (010, 020, 030...)
+- Create{Entity} = Nombre descriptivo
+```
+
+**Ejemplos:**
+```
+Sc010CreateSandBox.cs       → Escenario vacío (limpia DB)
+Sc020CreateRoles.cs         → Crea roles base
+Sc030CreateUsers.cs         → Crea usuarios (depende de Roles)
+Sc031CreateAdminUser.cs     → Variante: usuario admin
+Sc040CreateTechnicalStandards.cs
+Sc050CreatePrototypes.cs
+```
+
+### Flujo de Generación
+
+```
+1. Escribir clase Sc###Create{Entity}.cs
+   ↓
+2. Implementar SeedData() usando repositorios
+   ↓
+3. Ejecutar generador de escenarios (script/tool)
+   ↓
+4. Se genera archivo XML en carpeta scenarios/
+   ↓
+5. Los tests cargan el XML con LoadScenario()
+```
+
+### Estructura de Proyecto
+
+```
+tests/
+├── {proyecto}.scenarios/           # Proyecto de clases generadoras
+│   ├── IScenario.cs               # Interface base
+│   ├── ScenarioBuilder.cs         # Builder para ejecutar generadores
+│   ├── Sc010CreateSandBox.cs
+│   ├── Sc020CreateRoles.cs
+│   ├── Sc030CreateUsers.cs
+│   ├── Sc031CreateAdminUser.cs
+│   ├── Sc040CreateTechnicalStandards.cs
+│   └── Sc050CreatePrototypes.cs
+│
+└── {proyecto}.infrastructure.tests/
+    └── scenarios/                  # Archivos XML generados
+        ├── CreateSandBox.xml
+        ├── CreateRoles.xml
+        ├── CreateUsers.xml
+        ├── CreateAdminUser.xml
+        ├── CreateTechnicalStandards.xml
+        └── CreatePrototypes.xml
+```
+
+### Ejemplo con Dependencias
+
+```csharp
+// Sc050CreatePrototypes.cs
+public class Sc050CreatePrototypes(IUnitOfWork uow) : IScenario
+{
+    private readonly IUnitOfWork _uow = uow;
+
+    public string ScenarioFileName => "CreatePrototypes";
+
+    // Depende de TechnicalStandards
+    public Type? PreloadScenario => typeof(Sc040CreateTechnicalStandards);
+
+    public async Task SeedData()
+    {
+        var prototypes = new List<(string Number, DateTime IssueDate, DateTime ExpirationDate, string Status)>
+        {
+            ("PR-001", DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), "Active"),
+            ("PR-002", DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(25), "Active"),
+            ("PR-003", DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(30), "Expired")
+        };
+
+        try
+        {
+            this._uow.BeginTransaction();
+            foreach (var (number, issueDate, expirationDate, status) in prototypes)
+                await this._uow.Prototypes.CreateAsync(number, issueDate, expirationDate, status);
+            this._uow.Commit();
+        }
+        catch
+        {
+            this._uow.Rollback();
+            throw;
+        }
+    }
+}
+```
+
+### Cuándo Usar Clases Generadoras vs XML Manual
+
+| Escenario | Usar Clases Generadoras | Usar XML Manual |
+|-----------|------------------------|-----------------|
+| Proyecto nuevo | ❌ No (empezar simple) | ✅ Sí |
+| Proyecto maduro con >10 escenarios | ✅ Sí | ❌ No |
+| Modelo cambia frecuentemente | ✅ Sí | ❌ No |
+| Necesita validación de dominio | ✅ Sí | ❌ No |
+| Prototipo rápido | ❌ No | ✅ Sí |
+| CI/CD con regeneración automática | ✅ Sí | ❌ No |
+
+### Best Practices para Clases Generadoras
+
+1. **Usar repositorios, no SQL directo**
+   ```csharp
+   // ✅ CORRECTO
+   await this._uoW.Users.CreateAsync(email, name);
+
+   // ❌ INCORRECTO
+   await session.ExecuteAsync("INSERT INTO users...");
+   ```
+
+2. **Manejar transacciones explícitamente**
+   ```csharp
+   try {
+       this._uoW.BeginTransaction();
+       // ... operaciones
+       this._uoW.Commit();
+   } catch {
+       this._uoW.Rollback();
+       throw;
+   }
+   ```
+
+3. **Datos realistas y consistentes**
+   ```csharp
+   // ✅ CORRECTO - Datos realistas
+   ("usuario1@example.com", "Carlos Rodríguez")
+
+   // ❌ INCORRECTO - Datos sin sentido
+   ("test@test.com", "Test Test")
+   ```
+
+4. **Documentar propósito del escenario**
+   ```csharp
+   /// <summary>
+   /// Scenario to create 5 users with different statuses for filter testing
+   /// Used in: NHUserRepositoryTests
+   /// </summary>
+   public class Sc030CreateUsers : IScenario
+   ```
+
+5. **Organizar por número de orden**
+   - `Sc010` = Base/SandBox
+   - `Sc020` = Entidades sin dependencias
+   - `Sc030-Sc039` = Entidades con dependencias nivel 1
+   - `Sc040-Sc049` = Entidades con dependencias nivel 2
+   - Y así sucesivamente
+
+---
+
 ## 11. Anti-Patterns
 
 ### 11.1. ❌ Escenarios Monolíticos
@@ -1233,6 +1463,110 @@ public async Task Test()
   <user_id>550e8400-e29b-41d4-a716-446655440001</user_id>
   <role_id>660e8400-e29b-41d4-a716-446655440001</role_id>
 </users_in_roles>
+```
+
+### 11.8. ❌ Editar XMLs Manualmente en Proyectos con Clases Generadoras
+
+**⚠️ ANTI-PATRÓN CRÍTICO**
+
+En proyectos que usan clases generadoras (`Sc###Create*.cs`), los archivos XML son **archivos generados** y NO deben editarse manualmente.
+
+**INCORRECTO:**
+
+```xml
+<!-- ❌ Editar CreateUsers.xml directamente -->
+<AppSchema xmlns="http://tempuri.org/AppSchema.xsd">
+  <users>
+    <id>550e8400-e29b-41d4-a716-446655440001</id>
+    <email>usuario1@example.com</email>
+    <!-- Agregando usuario manualmente en el XML -->
+  </users>
+
+  <users>
+    <id>550e8400-e29b-41d4-a716-446655440002</id>
+    <email>nuevousuario@example.com</email>  <!-- ❌ Editado a mano -->
+    <name>Usuario Nuevo</name>
+  </users>
+</AppSchema>
+```
+
+**CORRECTO:**
+
+```csharp
+// ✅ Modificar la clase generadora Sc030CreateUsers.cs
+public class Sc030CreateUsers(IUnitOfWork uoW) : IScenario
+{
+    private readonly IUnitOfWork _uoW = uoW;
+
+    public string ScenarioFileName => "CreateUsers";
+    public Type? PreloadScenario => typeof(Sc020CreateRoles);
+
+    public async Task SeedData()
+    {
+        var users = new List<(string Email, string Name)>
+        {
+            ("usuario1@example.com", "Carlos Rodríguez"),
+            // ✅ Agregar nuevo usuario en la clase generadora
+            ("nuevousuario@example.com", "Usuario Nuevo")
+        };
+
+        try
+        {
+            this._uoW.BeginTransaction();
+            foreach (var (email, name) in users)
+                await this._uoW.Users.CreateAsync(email, name);
+            this._uoW.Commit();
+        }
+        catch
+        {
+            this._uoW.Rollback();
+            throw;
+        }
+    }
+}
+
+// Luego ejecutar el generador para regenerar CreateUsers.xml
+```
+
+**Por qué es un problema:**
+
+1. **Pérdida de cambios** - Si se regenera el XML, los cambios manuales se pierden
+2. **Inconsistencia** - El XML no refleja la clase generadora
+3. **No hay validación** - Los cambios manuales no pasan por validaciones de dominio
+4. **Breaking refactoring** - Cambios en el modelo rompen el XML editado manualmente
+5. **Debugging difícil** - No está claro qué datos vienen de clases vs edición manual
+
+**Cómo identificar si un proyecto usa clases generadoras:**
+
+```
+tests/
+├── {proyecto}.scenarios/           # ✅ Si esta carpeta existe → USA CLASES GENERADORAS
+│   ├── Sc010CreateSandBox.cs
+│   ├── Sc020CreateRoles.cs
+│   └── Sc030CreateUsers.cs
+│
+└── {proyecto}.infrastructure.tests/
+    └── scenarios/                  # XMLs son archivos GENERADOS
+        ├── CreateRoles.xml         # ❌ NO EDITAR MANUALMENTE
+        └── CreateUsers.xml         # ❌ NO EDITAR MANUALMENTE
+```
+
+**Regla de oro:**
+
+> **Si existe una carpeta `*.scenarios/` con clases `Sc###Create*.cs`, entonces los XMLs son archivos generados y NUNCA deben editarse manualmente. Siempre modificar las clases generadoras y regenerar.**
+
+**Flujo correcto cuando necesitas cambiar un escenario:**
+
+```
+1. Localizar la clase generadora (Sc###Create*.cs)
+   ↓
+2. Modificar el método SeedData()
+   ↓
+3. Ejecutar el generador de escenarios
+   ↓
+4. Verificar el XML generado
+   ↓
+5. Ejecutar tests para validar
 ```
 
 ---

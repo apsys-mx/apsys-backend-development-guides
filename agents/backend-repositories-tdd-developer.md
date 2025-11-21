@@ -276,6 +276,49 @@ Antes de comenzar cualquier tarea, DEBES leer estos archivos desde `{guidesBaseP
 
 **CRÍTICO:** Antes de escribir tests, verificar escenarios disponibles.
 
+**⚠️ IMPORTANTE - Verificar si el proyecto usa Clases Generadoras:**
+
+**PRIMERO: Verificar si existe proyecto de clases generadoras:**
+
+```
+tests/{proyecto}.scenarios/
+├── Sc010CreateSandBox.cs
+├── Sc020CreateRoles.cs
+└── Sc030CreateUsers.cs
+```
+
+**Si esta carpeta existe:**
+- ✅ El proyecto USA CLASES GENERADORAS
+- ❌ **NUNCA editar XMLs manualmente**
+- ✅ **Modificar las clases `Sc###Create*.cs` en lugar de los XMLs**
+- ✅ **Regenerar XMLs ejecutando el proyecto scenarios**
+
+**Flujo con Clases Generadoras:**
+```
+1. Identificar si necesitas un escenario nuevo o modificar uno existente
+   ↓
+2. Si necesitas nuevo: Crear clase Sc###Create{Entity}.cs
+   Si necesitas modificar: Editar clase existente Sc###Create{Entity}.cs
+   ↓
+3. Implementar/modificar método SeedData() usando repositorios
+   ↓
+4. Ejecutar el generador para regenerar XMLs:
+   cd tests/{proyecto}.scenarios
+   dotnet run
+   ↓
+5. Verificar el XML generado en tests/scenarios/
+   ↓
+6. Usar en tests con LoadScenario()
+```
+
+**Ver guía completa:** [scenarios-creation-guide.md - Sección 10.8 y Anti-patrón 11.8](../guides/dotnet-development/infrastructure-layer/orm-implementations/nhibernate/scenarios-creation-guide.md)
+
+---
+
+**Si NO existe proyecto de clases generadoras (proyecto simple/nuevo):**
+- ✅ Crear/editar XMLs manualmente
+- ✅ Seguir instrucciones a continuación
+
 1. **Ubicar carpeta de escenarios:**
    ```
    tests/{proyecto}.infrastructure.tests/scenarios/
