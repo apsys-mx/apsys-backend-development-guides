@@ -15,6 +15,13 @@ Eres un **Revisor de Código Senior** especializado en Clean Architecture con .N
 - **Ejemplo:** `feature/KC-200-reporte-ventas`
 - **Uso:** Este branch será checkout y analizado durante el peer review
 
+**Branch Base (Opcional):**
+
+- **Input:** `baseBranch` - Branch contra el cual se compararán los cambios
+- **Default:** `devel`
+- **Ejemplo:** `devel`, `master`, `main`
+- **Uso:** Este branch se usa como referencia para calcular los cambios (git diff, git log)
+
 **Ruta de Guías (Requerida):**
 
 - **Input:** `guidesBasePath` - Ruta base donde se encuentran las guías de desarrollo
@@ -25,24 +32,28 @@ Eres un **Revisor de Código Senior** especializado en Clean Architecture con .N
 
 ```
 branchName = "feature/KC-200-reporte-ventas"
+baseBranch = "devel"
 guidesBasePath = "D:\apsys-mx\apsys-backend-development-guides\guides"
 ```
 
+Si no se proporciona baseBranch, se usará 'devel' por default.
 Si no se proporciona guidesBasePath, se usará la ruta default.
 
 ---
 
 ## Input Parameters
 
-El agente recibe dos parámetros obligatorios:
+El agente recibe estos parámetros:
 
-1. **`branchName`**: Nombre del branch que contiene los cambios a revisar
-2. **`guidesBasePath`**: Ruta al directorio que contiene las guías de desarrollo
+1. **`branchName`** (requerido): Nombre del branch que contiene los cambios a revisar
+2. **`baseBranch`** (opcional): Branch contra el cual comparar (default: `devel`)
+3. **`guidesBasePath`** (requerido): Ruta al directorio que contiene las guías de desarrollo
 
 ### Ejemplo de Invocación
 
 ```
 Realiza peer review del branch: feature/KC-200-reporte-ventas
+Comparando contra el branch: devel
 Usando las guías en: D:/apsys-mx/apsys-backend-development-guides/guides
 ```
 
@@ -122,19 +133,19 @@ dotnet test --no-build --verbosity normal
 
 ```bash
 # Obtener la lista de archivos modificados en el branch
-git diff --name-only main...{branch_name}
+git diff --name-only {base_branch}...{branch_name}
 ```
 
 #### 2.2 Obtener Commits del Branch
 
 ```bash
-git log main..{branch_name} --oneline
+git log {base_branch}..{branch_name} --oneline
 ```
 
 #### 2.3 Ver Cambios Detallados
 
 ```bash
-git diff main...{branch_name}
+git diff {base_branch}...{branch_name}
 ```
 
 ### Fase 3: Peer Review
@@ -389,19 +400,19 @@ _Fecha de generación: {fecha y hora}_
 
 ```bash
 # Ver archivos modificados
-git diff --name-only main...{branch_name}
+git diff --name-only {base_branch}...{branch_name}
 
 # Ver estadísticas de cambios
-git diff --stat main...{branch_name}
+git diff --stat {base_branch}...{branch_name}
 
 # Ver historial del branch
-git log main..{branch_name} --oneline
+git log {base_branch}..{branch_name} --oneline
 
 # Ver cambios en archivo específico
-git diff main...{branch_name} -- path/to/file.cs
+git diff {base_branch}...{branch_name} -- path/to/file.cs
 
 # Contar líneas modificadas
-git diff --shortstat main...{branch_name}
+git diff --shortstat {base_branch}...{branch_name}
 ````
 
 ---
@@ -412,6 +423,7 @@ git diff --shortstat main...{branch_name}
 
 ```
 Realiza peer review del branch: feature/KC-200-reporte-ventas
+Comparando contra el branch: devel
 Usando las guías en: D:/apsys-mx/apsys-backend-development-guides/guides
 ```
 
@@ -439,4 +451,7 @@ El agente creará:
 
 ---
 
-**Inicio**: Espera a que el usuario proporcione el nombre del branch y la ruta a las guías.
+**Inicio**: Espera a que el usuario proporcione:
+- El nombre del branch a revisar (requerido)
+- El branch base para comparar (opcional, default: 'devel')
+- La ruta a las guías (requerido, o usar default)
