@@ -18,6 +18,123 @@ guidesBasePath = "D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-dev
 
 Si no se proporciona, se usará la ruta default.
 
+### Parámetros Opcionales
+
+**Plan Context (Opcional):**
+- **Input:** `planContext` - Contexto de un plan de feature generado por Backend Feature Planner
+- **Contenido esperado:** Sección "Fase 3: Application Layer" y "Fase 4: WebAPI Layer" del plan
+- **Uso:** Si se proporciona, el agente implementa según las especificaciones del plan
+- **Sin plan:** El agente funciona de forma autónoma, analizando requisitos desde cero
+
+**Ejemplo con plan:**
+```
+planContext = {
+  "entity": "Proveedor",
+  "endpoints": [
+    {
+      "operation": "CREATE",
+      "route": "/api/proveedores",
+      "requestModel": "CreateProveedorRequest",
+      "responseModel": "ProveedorResponse",
+      "useCase": "CreateProveedorCommand"
+    },
+    {
+      "operation": "GET_SINGLE",
+      "route": "/api/proveedores/{id}",
+      "requestModel": "GetProveedorByIdRequest",
+      "responseModel": "ProveedorResponse",
+      "useCase": "GetProveedorByIdQuery"
+    },
+    {
+      "operation": "GET_MANY",
+      "route": "/api/proveedores",
+      "requestModel": "GetProveedoresRequest",
+      "responseModel": "GetProveedoresResponse",
+      "useCase": "GetProveedoresQuery",
+      "pagination": true,
+      "filters": ["Codigo", "NombreComercial"]
+    },
+    {
+      "operation": "UPDATE",
+      "route": "/api/proveedores/{id}",
+      "requestModel": "UpdateProveedorRequest",
+      "responseModel": "ProveedorResponse",
+      "useCase": "UpdateProveedorCommand"
+    },
+    {
+      "operation": "DELETE",
+      "route": "/api/proveedores/{id}",
+      "requestModel": "DeleteProveedorRequest",
+      "responseModel": null,
+      "useCase": "DeleteProveedorCommand"
+    }
+  ],
+  "dtos": [
+    {"name": "ProveedorDto", "properties": ["Id", "Codigo", "NombreComercial"]}
+  ],
+  "mappingProfiles": ["ProveedorMappingProfile"]
+}
+```
+
+---
+
+## Modos de Operación
+
+### Modo 1: Con Plan Context (Orquestado)
+
+Cuando se proporciona `planContext`:
+
+1. **NO solicitar información al usuario** - El plan ya tiene toda la información
+2. **Extraer del plan:**
+   - Endpoints a implementar (rutas, operaciones)
+   - Request/Response Models para cada endpoint
+   - Use Cases (Commands/Queries) para cada operación
+   - DTOs necesarios
+   - Mapping Profiles a crear
+3. **Ejecutar el flujo TDD completo** sin interrupciones
+4. **Reportar al orquestador** al finalizar:
+   ```markdown
+   ## WebAPI Layer Completado (TDD)
+
+   ### DTOs Creados
+   - [x] {proyecto}.webapi/models/dtos/{Entity}Dto.cs
+
+   ### Request/Response Models
+   - [x] {proyecto}.webapi/models/requests/{Operation}{Entity}Request.cs
+   - [x] {proyecto}.webapi/models/responses/{Entity}Response.cs
+
+   ### Mapping Profiles
+   - [x] {proyecto}.webapi/mappings/{Entity}MappingProfile.cs
+
+   ### Use Cases (Application Layer)
+   - [x] {proyecto}.application/commands/{Operation}{Entity}Command.cs
+   - [x] {proyecto}.application/queries/{Query}{Entity}Query.cs
+
+   ### Endpoints
+   - [x] {proyecto}.webapi/endpoints/{entity}/{Operation}{Entity}Endpoint.cs
+
+   ### Tests
+   - Integration Tests: {n}
+   - Mapping Tests: {n}
+   - Total Pasando: {n}
+
+   **Status:** SUCCESS | FAILED
+   **Errores (si aplica):** {descripción}
+   ```
+
+### Modo 2: Sin Plan (Autónomo)
+
+Cuando NO se proporciona `planContext`:
+
+1. **Solicitar información al usuario:**
+   - Entidad a exponer
+   - Operaciones CRUD requeridas
+   - Operaciones custom adicionales
+   - Campos para filtros/búsquedas
+2. **Verificar infraestructura existente** (entity, repo, scenarios)
+3. **Proponer estructura de API** y pedir confirmación
+4. **Ejecutar flujo TDD** con reportes intermedios al usuario
+
 ---
 
 ## Descripción
@@ -1598,10 +1715,18 @@ Ejemplos:
 
 ---
 
-**Version:** 1.0.0
-**Última actualización:** 2025-01-20
+**Version:** 1.1.0
+**Última actualización:** 2025-01-25
 
 ## Notas de Versión
+
+### v1.1.0
+- Agregado soporte para `planContext` como parámetro opcional de entrada
+- Nueva sección "Modos de Operación" con dos modos: Orquestado y Autónomo
+- Modo Orquestado: ejecuta sin interrupciones basándose en el plan del Feature Planner
+- Modo Autónomo: comportamiento original con interacción del usuario
+- Formato de reporte estructurado para comunicación con el orquestador
+- planContext incluye: endpoints, DTOs, mapping profiles y use cases
 
 ### v1.0.0
 - Versión inicial

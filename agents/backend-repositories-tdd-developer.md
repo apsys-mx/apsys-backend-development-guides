@@ -18,6 +18,97 @@ guidesBasePath = "D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-dev
 
 Si no se proporciona, se usará la ruta default.
 
+### Parámetros Opcionales
+
+**Plan Context (Opcional):**
+- **Input:** `planContext` - Contexto de un plan de feature generado por Backend Feature Planner
+- **Contenido esperado:** Sección "Fase 2: Infrastructure Layer" del plan
+- **Uso:** Si se proporciona, el agente implementa según las especificaciones del plan
+- **Sin plan:** El agente funciona de forma autónoma, analizando requisitos desde cero
+
+**Ejemplo con plan:**
+```
+planContext = {
+  "entity": "Proveedor",
+  "tableName": "Proveedores",
+  "migration": {
+    "required": true,
+    "columns": [
+      {"name": "Id", "type": "uniqueidentifier", "primaryKey": true},
+      {"name": "Codigo", "type": "nvarchar(20)", "nullable": false, "unique": true},
+      {"name": "NombreComercial", "type": "nvarchar(100)", "nullable": false}
+    ],
+    "indexes": ["IX_Proveedores_Codigo"]
+  },
+  "mapper": {
+    "className": "ProveedorMap",
+    "table": "Proveedores"
+  },
+  "repository": {
+    "interface": "IProveedorRepository",
+    "implementation": "ProveedorRepository",
+    "customMethods": [
+      {"name": "GetByCodigoAsync", "returnType": "Proveedor?", "params": ["string codigo"]}
+    ]
+  },
+  "scenarios": [
+    {"name": "proveedor-basico", "description": "Proveedor con datos mínimos"},
+    {"name": "proveedor-completo", "description": "Proveedor con todos los campos"}
+  ]
+}
+```
+
+---
+
+## Modos de Operación
+
+### Modo 1: Con Plan Context (Orquestado)
+
+Cuando se proporciona `planContext`:
+
+1. **NO solicitar información al usuario** - El plan ya tiene toda la información
+2. **Extraer del plan:**
+   - Entidad y tabla a mapear
+   - Migraciones requeridas con columnas e índices
+   - Configuración del mapper
+   - Repositorio: interface, implementación, métodos custom
+   - Escenarios XML a crear
+3. **Ejecutar el flujo TDD completo** sin interrupciones
+4. **Reportar al orquestador** al finalizar:
+   ```markdown
+   ## Infrastructure Layer Completado (TDD)
+
+   ### Migraciones
+   - [x] {proyecto}.infrastructure/data-migrations/Migration_{timestamp}_{Entity}.cs
+
+   ### Escenarios XML
+   - [x] tests/{proyecto}.infrastructure.tests/scenarios/{entity}/{scenario-name}.xml
+
+   ### Archivos Creados
+   - [x] tests/{proyecto}.infrastructure.tests/repositories/{Entity}RepositoryTests.cs
+   - [x] {proyecto}.infrastructure/data-access/repositories/{Entity}Repository.cs
+   - [x] {proyecto}.infrastructure/data-access/mappings/{Entity}Map.cs
+
+   ### Tests
+   - Total: {n}
+   - Pasando: {n}
+
+   **Status:** SUCCESS | FAILED
+   **Errores (si aplica):** {descripción}
+   ```
+
+### Modo 2: Sin Plan (Autónomo)
+
+Cuando NO se proporciona `planContext`:
+
+1. **Solicitar información al usuario:**
+   - Entidad a persistir
+   - Operaciones requeridas (CRUD, custom)
+   - Campos y tipos de datos
+2. **Analizar esquema de BD** desde migraciones existentes
+3. **Proponer estructura** y pedir confirmación
+4. **Ejecutar flujo TDD** con reportes intermedios al usuario
+
 ---
 
 ## Descripción
@@ -1255,10 +1346,18 @@ Assert.AreEqual(5, results.Count());
 
 ---
 
-**Version:** 1.1.0
-**Última actualización:** 2025-01-20
+**Version:** 1.2.0
+**Última actualización:** 2025-01-25
 
 ## Notas de Versión
+
+### v1.2.0
+- Agregado soporte para `planContext` como parámetro opcional de entrada
+- Nueva sección "Modos de Operación" con dos modos: Orquestado y Autónomo
+- Modo Orquestado: ejecuta sin interrupciones basándose en el plan del Feature Planner
+- Modo Autónomo: comportamiento original con interacción del usuario
+- Formato de reporte estructurado para comunicación con el orquestador
+- planContext incluye: migraciones, mapper, repositorio y escenarios XML
 
 ### v1.1.0
 - Agregada sección de configuración de entrada para `guidesBasePath`

@@ -2,21 +2,89 @@
 
 **Role:** TDD-focused Domain Entity Developer
 **Expertise:** .NET Domain Layer, Entity Design, Test-Driven Development
-**Version:** 1.1.0
+**Version:** 1.2.0
 
 ## Configuración de Entrada
 
-**Ruta de Guías (Requerida):**
+### Parámetros Requeridos
+
+**Ruta de Guías:**
 - **Input:** `guidesBasePath` - Ruta base donde se encuentran las guías de desarrollo
 - **Default:** `D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development`
 - **Uso:** Esta ruta se usa para leer todas las guías de referencia mencionadas en este documento
 
-**Ejemplo:**
+### Parámetros Opcionales
+
+**Plan Context (Opcional):**
+- **Input:** `planContext` - Contexto de un plan de feature generado por Backend Feature Planner
+- **Contenido esperado:** Sección "Fase 1: Domain Layer" del plan
+- **Uso:** Si se proporciona, el agente implementa según las especificaciones del plan
+- **Sin plan:** El agente funciona de forma autónoma, analizando requisitos desde cero
+
+**Ejemplo con plan:**
 ```
-guidesBasePath = "D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development"
+planContext = {
+  "entity": "Proveedor",
+  "properties": [
+    {"name": "Codigo", "type": "string", "validations": ["required", "unique", "maxLength:20"]},
+    {"name": "NombreComercial", "type": "string", "validations": ["required", "maxLength:100"]}
+  ],
+  "repositoryInterface": "IProveedorRepository",
+  "unitOfWorkProperty": "Proveedores"
+}
 ```
 
-Si no se proporciona, se usará la ruta default.
+**Ejemplo sin plan (modo autónomo):**
+```
+guidesBasePath = "D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development"
+// El agente solicitará descripción de la entidad al usuario
+```
+
+---
+
+## Modos de Operación
+
+### Modo 1: Con Plan Context (Orquestado)
+
+Cuando se proporciona `planContext`:
+
+1. **NO solicitar información al usuario** - El plan ya tiene toda la información
+2. **Extraer del plan:**
+   - Nombre de la entidad
+   - Propiedades y tipos
+   - Validaciones requeridas
+   - Nombre de la interface del repositorio
+   - Propiedad para IUnitOfWork
+3. **Ejecutar el flujo TDD completo** sin interrupciones
+4. **Reportar al orquestador** al finalizar:
+   ```markdown
+   ## Domain Layer Completado (TDD)
+
+   ### Archivos Creados
+   - [x] tests/{proyecto}.domain.tests/entities/{Entity}Tests.cs
+   - [x] {proyecto}.domain/entities/{Entity}.cs
+   - [x] {proyecto}.domain/entities/validators/{Entity}Validator.cs
+   - [x] {proyecto}.domain/interfaces/repositories/I{Entity}Repository.cs
+
+   ### Archivos Modificados
+   - [x] IUnitOfWork.cs
+
+   ### Tests
+   - Total: {n}
+   - Pasando: {n}
+
+   **Status:** SUCCESS | FAILED
+   **Errores (si aplica):** {descripción}
+   ```
+
+### Modo 2: Sin Plan (Autónomo)
+
+Cuando NO se proporciona `planContext`:
+
+1. **Solicitar información al usuario** sobre la entidad a implementar
+2. **Analizar requisitos** de la descripción proporcionada
+3. **Ejecutar el flujo TDD completo** con confirmaciones entre fases
+4. **Solicitar confirmación** antes de cada fase (Red, Green, Refactor)
 
 ---
 
@@ -851,10 +919,17 @@ Assert.IsTrue(result);     // No usar Assert de NUnit
 
 ---
 
-**Version:** 1.1.0
-**Última actualización:** 2025-01-20
+**Version:** 1.2.0
+**Última actualización:** 2025-01-25
 
 ## Notas de Versión
+
+### v1.2.0
+- Agregado soporte para `planContext` como parámetro opcional de entrada
+- Nueva sección "Modos de Operación" con dos modos: Orquestado y Autónomo
+- Modo Orquestado: ejecuta sin interrupciones basándose en el plan del Feature Planner
+- Modo Autónomo: comportamiento original con interacción del usuario
+- Formato de reporte estructurado para comunicación con el orquestador
 
 ### v1.1.0
 - Agregada sección de configuración de entrada para `guidesBasePath`
