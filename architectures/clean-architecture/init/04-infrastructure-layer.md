@@ -62,8 +62,11 @@ Editar el .csproj y eliminar atributos `Version`.
 
 ```bash
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package AutoFixture.AutoMoq
+dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package Castle.Core
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package FluentAssertions
 ```
+
+> **Nota:** `Castle.Core` se agrega explícitamente para evitar warnings de versiones con dependencias transitivas de Moq.
 
 ### 7. Agregar referencias en tests
 

@@ -87,6 +87,16 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 
 ## Proceso de Ejecucion
 
+### Fase 0: Mostrar Informacion del Comando
+
+Al iniciar, mostrar:
+
+```
+Init Backend Project
+Version: 3.1.0
+Ultima actualizacion: 2025-12-23
+```
+
 ### Fase 1: Validacion
 
 1. **Verificar .NET SDK**:
@@ -220,7 +230,12 @@ Si ocurre un error:
 ```
 Usuario: /init-backend
 
-Asistente: ¿Como se llamara el proyecto?
+Asistente:
+Init Backend Project
+Version: 3.1.0
+Ultima actualizacion: 2025-12-23
+
+¿Como se llamara el proyecto?
 Usuario: gestion.inventario
 
 Asistente: ¿Donde crear el proyecto?
