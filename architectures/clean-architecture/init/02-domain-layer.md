@@ -1,106 +1,71 @@
 # 02 - Capa de Dominio (Domain Layer)
 
-> **Versión:** 2.0.0 | **Última actualización:** 2025-01-30 | **Estado:** Estable
-
 ## Descripción
 
-Este documento describe cómo crear la **capa de dominio (Domain Layer)** de un proyecto backend con Clean Architecture para APSYS. Esta capa contiene:
+Crea la **capa de dominio** del proyecto. Esta capa contiene:
+- Entidades de dominio (objetos de negocio con reglas y validaciones)
+- Excepciones de dominio
+- Proyecto de tests unitarios
 
-- **Entidades de dominio**: Objetos de negocio con sus reglas y validaciones
-- **Excepciones de dominio**: Excepciones específicas del negocio
-- **Proyecto de tests**: Pruebas unitarias para la capa de dominio
+Esta capa es **independiente de la infraestructura** y de cualquier base de datos.
 
-Esta capa es **completamente independiente de la infraestructura** y de cualquier base de datos específica. No tiene dependencias externas excepto FluentValidation para validaciones.
+**Requiere:** [01-estructura-base.md](./01-estructura-base.md)
 
-> **Nota sobre Repositorios:** Las interfaces de repositorios (IRepository, IUnitOfWork, etc.) se agregan al configurar la base de datos con el comando `configure-database`. El dominio base no asume ningún tipo de persistencia.
-
-## Dependencias
-
-Este paso requiere que se haya completado:
-- ✅ **[01-estructura-base.md](./01-estructura-base.md)** - Estructura base del proyecto
-
-## Estructura de Archivos a Crear
+## Estructura Final
 
 ```
-./
-├── src/
-│   └── {ProjectName}.domain/
-│       ├── {ProjectName}.domain.csproj
-│       ├── entities/
-│       │   └── AbstractDomainObject.cs
-│       └── exceptions/
-│           ├── InvalidDomainException.cs
-│           └── InvalidFilterArgumentException.cs
-└── tests/
-    └── {ProjectName}.domain.tests/
-        ├── {ProjectName}.domain.tests.csproj
-        └── entities/
-            └── DomainTestBase.cs
+src/{ProjectName}.domain/
+├── {ProjectName}.domain.csproj
+├── entities/
+│   └── AbstractDomainObject.cs
+└── exceptions/
+    ├── InvalidDomainException.cs
+    └── InvalidFilterArgumentException.cs
+
+tests/{ProjectName}.domain.tests/
+├── {ProjectName}.domain.tests.csproj
+└── entities/
+    └── DomainTestBase.cs
 ```
 
-> **Ejemplo:** Para el proyecto "InventorySystem":
-> ```
-> ./
-> ├── src/
-> │   └── InventorySystem.domain/
-> └── tests/
->     └── InventorySystem.domain.tests/
-> ```
+## Paquetes NuGet
 
-## Paquetes NuGet Requeridos
-
-### Para el proyecto source (domain):
+**Domain:**
 - `FluentValidation` - Validación de entidades
 
-### Para el proyecto de tests (domain.tests):
-- `NUnit` - Framework de testing (incluido en template)
-- `Microsoft.NET.Test.Sdk` - SDK de testing (incluido en template)
-- `NUnit3TestAdapter` - Adaptador de NUnit (incluido en template)
-- `AutoFixture.AutoMoq` - Generación automática de datos de prueba
-- `FluentAssertions` - Aserciones fluidas para tests
-- `Castle.Core` - Dependencia de Moq (previene warnings de versiones)
+**Tests:**
+- `NUnit`, `NUnit3TestAdapter`, `Microsoft.NET.Test.Sdk` (incluidos en template)
+- `AutoFixture.AutoMoq` - Generación de datos de prueba
+- `FluentAssertions` - Aserciones fluidas
+- `Castle.Core` - Evita warnings de Moq
 
-## Proceso de Construcción
+## Pasos
 
-> **Nota:** Los placeholders como `{ProjectName}` serán reemplazados automáticamente por el servidor MCP con el nombre real de tu proyecto.
-
-### Paso 1: Crear proyecto domain
+### 1. Crear proyecto domain
 
 ```bash
 dotnet new classlib -n {ProjectName}.domain -o src/{ProjectName}.domain
 dotnet sln add src/{ProjectName}.domain/{ProjectName}.domain.csproj
-```
-
-> Esto crea un proyecto de biblioteca de clases para la capa de dominio y lo agrega a la solución.
-
-### Paso 2: Eliminar archivo Class1.cs autogenerado
-
-```bash
 rm src/{ProjectName}.domain/Class1.cs
 ```
 
-### Paso 3: Instalar paquetes NuGet en domain
+### 2. Instalar FluentValidation
 
 ```bash
 dotnet add src/{ProjectName}.domain/{ProjectName}.domain.csproj package FluentValidation
 ```
 
-> FluentValidation se usa para validaciones de entidades de dominio.
-
-### Paso 4: Crear proyecto de tests
+### 3. Crear proyecto de tests
 
 ```bash
 dotnet new nunit -n {ProjectName}.domain.tests -o tests/{ProjectName}.domain.tests
 dotnet sln add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj
+rm tests/{ProjectName}.domain.tests/UnitTest1.cs
 ```
 
-> Esto crea un proyecto de pruebas con NUnit.
+### 4. Remover versiones en .csproj de tests
 
-### Paso 5: Remover versiones de paquetes en .csproj de tests
-
-**⚠️ IMPORTANTE:** El template de NUnit genera referencias de paquetes con versiones explícitas. Debes removerlas porque usamos gestión centralizada.
-
-Edita el archivo `tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj` y elimina todos los atributos `Version`:
+Editar `tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj` y eliminar atributos `Version`:
 
 ```xml
 <!-- Cambiar esto: -->
@@ -110,9 +75,7 @@ Edita el archivo `tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.cs
 <PackageReference Include="NUnit" />
 ```
 
-> Haz lo mismo para todos los `PackageReference` en el archivo.
-
-### Paso 6: Instalar paquetes NuGet adicionales en tests
+### 5. Instalar paquetes en tests
 
 ```bash
 dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package AutoFixture.AutoMoq
@@ -120,17 +83,13 @@ dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj pa
 dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj package Castle.Core
 ```
 
-> **Nota:** Castle.Core se agrega explícitamente para evitar warnings de dependencias transitivas de Moq.
-
-### Paso 7: Agregar referencia al proyecto domain en tests
+### 6. Agregar referencia a domain
 
 ```bash
 dotnet add tests/{ProjectName}.domain.tests/{ProjectName}.domain.tests.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
 ```
 
-> Esto permite que los tests accedan a las clases del dominio.
-
-### Paso 8: Crear estructura de carpetas del domain
+### 7. Crear carpetas
 
 ```bash
 mkdir src/{ProjectName}.domain/entities
@@ -138,138 +97,35 @@ mkdir src/{ProjectName}.domain/exceptions
 mkdir tests/{ProjectName}.domain.tests/entities
 ```
 
-### Paso 9: Eliminar archivo de test autogenerado
+### 8. Copiar templates
 
-```bash
-rm tests/{ProjectName}.domain.tests/UnitTest1.cs
-```
-
-### Paso 10: Copiar archivos de código desde templates
-
-📁 COPIAR DIRECTORIO COMPLETO: `templates/init-clean-architecture/domain/` → `src/{ProjectName}.domain/`
-
-> El servidor MCP debe:
-> 1. Descargar todos los archivos desde `templates/init-clean-architecture/domain/` en el repositorio de GitHub
-> 2. Copiarlos a `src/{ProjectName}.domain/` respetando la estructura de carpetas
-> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
-
-**Archivos que se copiarán:**
+Copiar desde `templates/domain/` a `src/{ProjectName}.domain/`:
 - `entities/AbstractDomainObject.cs`
 - `exceptions/InvalidDomainException.cs`
 - `exceptions/InvalidFilterArgumentException.cs`
 
-### Paso 11: Copiar archivos de tests desde templates
-
-📁 COPIAR DIRECTORIO COMPLETO: `templates/init-clean-architecture/domain.tests/` → `tests/{ProjectName}.domain.tests/`
-
-> El servidor MCP debe:
-> 1. Descargar todos los archivos desde `templates/init-clean-architecture/domain.tests/` en el repositorio de GitHub
-> 2. Copiarlos a `tests/{ProjectName}.domain.tests/` respetando la estructura de carpetas
-> 3. **Reemplazar** el placeholder `{ProjectName}` con el nombre real del proyecto en todos los archivos
-
-**Archivos que se copiarán:**
+Copiar desde `templates/domain.tests/` a `tests/{ProjectName}.domain.tests/`:
 - `entities/DomainTestBase.cs`
 
-## Referencia de Templates
+**Reemplazar `{ProjectName}`** en namespaces con el nombre real del proyecto.
 
-> Los templates están en el directorio `templates/init-clean-architecture/` del repositorio de GitHub.
-> Para ver el código completo de cada archivo, consulta directamente los archivos en `templates/init-clean-architecture/domain/` y `templates/init-clean-architecture/domain.tests/`.
-
-### Archivos del Domain
+## Templates
 
 | Archivo | Propósito |
 |---------|-----------|
-| **entities/AbstractDomainObject.cs** | Clase base abstracta para todas las entidades de dominio. Proporciona propiedades comunes (Id, CreationDate) y métodos de validación integrados con FluentValidation. |
-| **exceptions/InvalidDomainException.cs** | Excepción lanzada cuando una entidad de dominio no cumple con sus reglas de validación. |
-| **exceptions/InvalidFilterArgumentException.cs** | Excepción lanzada cuando los argumentos de filtrado (queries) son inválidos. |
-
-### Archivos de Tests
-
-| Archivo | Propósito |
-|---------|-----------|
-| **entities/DomainTestBase.cs** | Clase base abstracta para tests de entidades de dominio. Configura AutoFixture con manejo de recursión (OmitOnRecursionBehavior) en OneTimeSetUp. |
-
-> **Nota:** Todos los archivos usan el placeholder `{ProjectName}` en sus namespaces, que el servidor MCP debe reemplazar con el nombre real del proyecto.
+| `AbstractDomainObject.cs` | Clase base para entidades. Proporciona Id, CreationDate y validación con FluentValidation. |
+| `InvalidDomainException.cs` | Excepción para validaciones de dominio fallidas. |
+| `InvalidFilterArgumentException.cs` | Excepción para argumentos de filtrado inválidos. |
+| `DomainTestBase.cs` | Clase base para tests. Configura AutoFixture con OmitOnRecursionBehavior. |
 
 ## Verificación
 
-### 1. Compilar la solución
-
 ```bash
 dotnet build
-```
-
-> Debería mostrar: "Build succeeded. 0 Warning(s). 0 Error(s)."
-
-### 2. Verificar estructura de carpetas
-
-```bash
-ls -R src/{ProjectName}.domain
-```
-
-Deberías ver:
-- `entities/AbstractDomainObject.cs`
-- `exceptions/InvalidDomainException.cs`
-- `exceptions/InvalidFilterArgumentException.cs`
-- `interfaces/repositories/` con todas las interfaces
-
-> **Ejemplo:** Para el proyecto "InventorySystem":
-> ```
-> src/InventorySystem.domain/
-> ├── entities/
-> │   └── AbstractDomainObject.cs
-> ├── exceptions/
-> │   ├── InvalidDomainException.cs
-> │   └── InvalidFilterArgumentException.cs
-> └── interfaces/
->     └── repositories/
->         ├── IRepository.cs
->         ├── IReadOnlyRepository.cs
->         ├── IUnitOfWork.cs
->         ├── IGetManyAndCountResultWithSorting.cs
->         ├── GetManyAndCountResult.cs
->         └── SortingCriteria.cs
-> ```
-
-### 3. Ejecutar tests
-
-```bash
 dotnet test
 ```
 
-> Debería mostrar: "Passed! - Failed: 0, Passed: 1"
-
-## Siguientes Pasos
-
-Una vez completada la capa de dominio, el proyecto está listo para continuar con los siguientes componentes:
-
-- **03-infrastructure-filtering.md** - Sistema de filtrado avanzado (Milestone 2)
-- **04-infrastructure-repositories.md** - Implementación de repositorios (Milestone 2)
-
-## Notas Adicionales
-
-### Principios de Clean Architecture
-
-Esta capa de dominio sigue los principios de Clean Architecture:
-
-✅ **Independencia de frameworks:** No depende de ningún framework específico
-✅ **Independencia de UI:** No tiene referencias a capas de presentación
-✅ **Independencia de BD:** No tiene código específico de base de datos
-✅ **Independencia de agentes externos:** Puro código de negocio
-✅ **Testeable:** Puede probarse sin infraestructura externa
-
-### Patrón Repository
-
-El patrón Repository implementado proporciona:
-
-- **Abstracción del acceso a datos:** El dominio no conoce cómo se persisten los datos
-- **Separación de lectura/escritura:** `IReadOnlyRepository` vs `IRepository`
-- **Operaciones paginadas:** Con filtrado y ordenamiento
-- **Soporte async:** Todos los métodos tienen versión asíncrona
-
-### Validaciones con FluentValidation
-
-Las entidades pueden definir sus propias validaciones heredando de `AbstractDomainObject` y sobreescribiendo `GetValidator()`:
+## Ejemplo: Validaciones con FluentValidation
 
 ```csharp
 public class Usuario : AbstractDomainObject
@@ -277,10 +133,7 @@ public class Usuario : AbstractDomainObject
     public string Nombre { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
 
-    public override IValidator? GetValidator()
-    {
-        return new UsuarioValidator();
-    }
+    public override IValidator? GetValidator() => new UsuarioValidator();
 }
 
 public class UsuarioValidator : AbstractValidator<Usuario>
@@ -293,19 +146,6 @@ public class UsuarioValidator : AbstractValidator<Usuario>
 }
 ```
 
-## Troubleshooting
+## Siguiente Paso
 
-### Problema: "Package FluentValidation could not be found"
-
-**Solución:** Verificar que `Directory.Packages.props` incluya FluentValidation y esté en la raíz de la solución.
-
-### Problema: Errores de compilación con versiones de paquetes
-
-**Solución:** Verificar que en el .csproj de tests se hayan removido todos los atributos `Version` de los `PackageReference`.
-
-### Problema: Tests no se descubren en el Test Explorer
-
-**Solución:**
-- Hacer rebuild de la solución
-- Verificar que NUnit3TestAdapter esté instalado
-- Reiniciar el IDE
+→ [03-application-layer.md](./03-application-layer.md)
