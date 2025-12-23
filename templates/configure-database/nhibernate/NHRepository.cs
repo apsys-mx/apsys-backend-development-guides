@@ -50,13 +50,20 @@ public abstract class NHRepository<T, TKey> : NHReadOnlyRepository<T, TKey>, IRe
     }
 
     /// <summary>
-    /// Asynchronously adds a new entity to the repository.
-    /// Note: This method does not perform validation.
+    /// Asynchronously adds a new entity to the repository after validating it.
     /// </summary>
     /// <param name="item">The entity to add to the repository</param>
     /// <returns>A task representing the asynchronous operation</returns>
-    public Task AddAsync(T item)
-        => this._session.SaveAsync(item);
+    /// <exception cref="InvalidDomainException">Thrown when the entity fails validation</exception>
+    public async Task AddAsync(T item)
+    {
+        var validationResult = this.validator.Validate(item);
+        if (!validationResult.IsValid)
+            throw new InvalidDomainException(validationResult.Errors);
+
+        await this._session.SaveAsync(item);
+        await this.FlushWhenNotActiveTransactionAsync();
+    }
 
     /// <summary>
     /// Saves or updates an existing entity in the repository after validating it.
@@ -75,13 +82,20 @@ public abstract class NHRepository<T, TKey> : NHReadOnlyRepository<T, TKey>, IRe
     }
 
     /// <summary>
-    /// Asynchronously saves or updates an existing entity in the repository.
-    /// Note: This method does not perform validation.
+    /// Asynchronously saves or updates an existing entity in the repository after validating it.
     /// </summary>
     /// <param name="item">The entity to save or update</param>
     /// <returns>A task representing the asynchronous operation</returns>
-    public Task SaveAsync(T item)
-        => this._session.UpdateAsync(item);
+    /// <exception cref="InvalidDomainException">Thrown when the entity fails validation</exception>
+    public async Task SaveAsync(T item)
+    {
+        var validationResult = this.validator.Validate(item);
+        if (!validationResult.IsValid)
+            throw new InvalidDomainException(validationResult.Errors);
+
+        await this._session.UpdateAsync(item);
+        await this.FlushWhenNotActiveTransactionAsync();
+    }
 
     /// <summary>
     /// Deletes an entity from the repository.
@@ -98,8 +112,11 @@ public abstract class NHRepository<T, TKey> : NHReadOnlyRepository<T, TKey>, IRe
     /// </summary>
     /// <param name="item">The entity to delete</param>
     /// <returns>A task representing the asynchronous operation</returns>
-    public Task DeleteAsync(T item)
-        => this._session.DeleteAsync(item);
+    public async Task DeleteAsync(T item)
+    {
+        await this._session.DeleteAsync(item);
+        await this.FlushWhenNotActiveTransactionAsync();
+    }
 
     /// <summary>
     /// Determines if there is an active transaction in the current NHibernate session.
@@ -117,5 +134,16 @@ public abstract class NHRepository<T, TKey> : NHReadOnlyRepository<T, TKey>, IRe
         var currentTransaction = this._session.GetCurrentTransaction();
         if (currentTransaction == null || !currentTransaction.IsActive)
             this._session.Flush();
+    }
+
+    /// <summary>
+    /// Asynchronously flushes changes to the database when there is no active transaction.
+    /// This method is used to ensure changes are persisted immediately when not within a transaction.
+    /// </summary>
+    protected internal async Task FlushWhenNotActiveTransactionAsync()
+    {
+        var currentTransaction = this._session.GetCurrentTransaction();
+        if (currentTransaction == null || !currentTransaction.IsActive)
+            await this._session.FlushAsync();
     }
 }

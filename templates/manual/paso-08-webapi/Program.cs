@@ -13,7 +13,11 @@ var environment = builder.Environment;
 
 // Configure dependency injection container
 builder.Services
-    .AddSwaggerGen()
+    .AddSwaggerGen(c =>
+    {
+        // Use full type name for nested classes to avoid schema ID conflicts
+        c.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
+    })
     .AddEndpointsApiExplorer()
     .ConfigurePolicy()
     .ConfigureCors(configuration)
@@ -21,6 +25,7 @@ builder.Services
     .ConfigureUnitOfWork(configuration)
     .ConfigureAutoMapper()
     .ConfigureValidators()
+    .ConfigureUseCases()
     .AddLogging()
     .AddAuthorization()
     .AddFastEndpoints()
