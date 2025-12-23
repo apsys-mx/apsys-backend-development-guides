@@ -109,9 +109,9 @@ Ultima actualizacion: 2025-12-23
    - Si no existe: crear
 
 3. **Validar nombre del proyecto**:
-   - Debe ser PascalCase
-   - Sin espacios ni caracteres especiales
-   - Sugerir correccion si no cumple
+   - Usar el nombre exacto que proporcione el usuario
+   - Sin espacios ni caracteres especiales (excepto punto)
+   - NO convertir a PascalCase
 
 ### Fase 2: Crear Todo List
 
