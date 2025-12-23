@@ -74,7 +74,7 @@ El nombre debe ser un identificador C# válido:
 - ❌ Sin espacios ni guiones medios
 - ❌ Sin palabras reservadas de C#
 
-**Ejemplos válidos:** `MiProyecto`, `Mi_Proyecto`, `MiProyecto.API`
+**Ejemplos válidos:** `miproyecto`, `mi_proyecto`, `miproyecto.api`
 
 ## Siguiente Paso
 

@@ -42,7 +42,7 @@ apsys-backend-development-guides/
 Inicializa un proyecto backend completo con Clean Architecture.
 
 **Solicita:**
-- Nombre del proyecto (PascalCase)
+- Nombre del proyecto (minusculas, sin espacios)
 - Ubicacion del proyecto
 - Base de datos (PostgreSQL / SQL Server)
 - Framework WebAPI (FastEndpoints / ninguno)

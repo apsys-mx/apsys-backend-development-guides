@@ -49,8 +49,7 @@ Los templates usan placeholders que se reemplazan al copiar:
 
 | Placeholder | Descripcion | Ejemplo |
 |-------------|-------------|---------|
-| `{ProjectName}` | Nombre del proyecto (PascalCase) | `MiProyecto` |
-| `{projectname}` | Nombre del proyecto (lowercase) | `miproyecto` |
+| `{ProjectName}` | Nombre del proyecto (como lo proporciona el usuario) | `backend.api` |
 
 **Ejemplo:**
 
@@ -58,8 +57,8 @@ Los templates usan placeholders que se reemplazan al copiar:
 // Template
 namespace {ProjectName}.domain.entities;
 
-// Resultado (proyecto: MiProyecto)
-namespace MiProyecto.domain.entities;
+// Resultado (proyecto: backend.api)
+namespace backend.api.domain.entities;
 ```
 
 ---
