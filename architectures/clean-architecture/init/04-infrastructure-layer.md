@@ -5,10 +5,9 @@
 Crea la **capa de infraestructura** del proyecto. Esta capa contendrá:
 - Implementaciones de repositorios
 - Configuración de persistencia (ORM)
-- Servicios externos
-- Configuración de DI
+- Servicios externos (HTTP, email, autenticación, etc.)
 
-Esta guía crea una **estructura agnóstica**. La implementación específica (NHibernate, EF, etc.) se configura en `stacks/orm/`.
+Esta guía crea una **estructura base**. La implementación específica del ORM (NHibernate, EF, etc.) se configura en `stacks/orm/`.
 
 **Requiere:** [03-application-layer.md](./03-application-layer.md)
 
@@ -17,10 +16,21 @@ Esta guía crea una **estructura agnóstica**. La implementación específica (N
 ```
 src/{ProjectName}.infrastructure/
 ├── {ProjectName}.infrastructure.csproj
-├── repositories/          # Implementaciones de IRepository
-├── persistence/           # Configuración de ORM/DB
-├── services/              # Servicios externos (HTTP, email, etc.)
-└── configuration/         # Setup de DI
+├── nhibernate/                    # Organizado por ORM
+│   ├── ConnectionStringBuilder.cs
+│   ├── NHSessionFactory.cs
+│   ├── NHUnitOfWork.cs
+│   ├── NHRepository.cs
+│   ├── NHReadOnlyRepository.cs
+│   ├── SortingCriteriaExtender.cs
+│   ├── mappers/                   # ClassMaps de NHibernate
+│   │   └── {Entity}Mapper.cs
+│   └── filtering/                 # Lógica de filtrado de queries
+│       ├── FilterExpressionParser.cs
+│       ├── QueryStringParser.cs
+│       └── ...
+└── services/                      # Servicios externos (opcional)
+    └── {ServiceName}Service.cs
 
 tests/{ProjectName}.infrastructure.tests/
 └── {ProjectName}.infrastructure.tests.csproj
@@ -42,20 +52,16 @@ rm src/{ProjectName}.infrastructure/Class1.cs
 dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
 ```
 
-### 3. Crear carpetas
+### 3. Crear carpetas base
 
 ```bash
-mkdir src/{ProjectName}.infrastructure/repositories
-mkdir src/{ProjectName}.infrastructure/persistence
+mkdir src/{ProjectName}.infrastructure/nhibernate
+mkdir src/{ProjectName}.infrastructure/nhibernate/mappers
+mkdir src/{ProjectName}.infrastructure/nhibernate/filtering
 mkdir src/{ProjectName}.infrastructure/services
-mkdir src/{ProjectName}.infrastructure/configuration
 ```
 
-### 4. Copiar templates
-
-Copiar READMEs desde `templates/infrastructure/` a cada carpeta.
-
-### 5. Crear proyecto de tests
+### 4. Crear proyecto de tests
 
 ```bash
 dotnet new nunit -n {ProjectName}.infrastructure.tests -o tests/{ProjectName}.infrastructure.tests
@@ -63,18 +69,18 @@ dotnet sln add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastruc
 rm tests/{ProjectName}.infrastructure.tests/UnitTest1.cs
 ```
 
-### 6. Remover versiones en .csproj de tests
+### 5. Remover versiones en .csproj de tests
 
 Editar el .csproj y eliminar atributos `Version`.
 
-### 7. Instalar paquetes en tests
+### 6. Instalar paquetes en tests
 
 ```bash
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package AutoFixture.AutoMoq
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj package FluentAssertions
 ```
 
-### 8. Agregar referencias en tests
+### 7. Agregar referencias en tests
 
 ```bash
 dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure.tests.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
@@ -83,43 +89,71 @@ dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure
 
 ## Principios
 
+### Organización por Tecnología
+
+Los archivos se organizan por tecnología/ORM, no por tipo:
+
+```
+# ✅ CORRECTO - Por tecnología
+nhibernate/
+├── NHUserRepository.cs
+├── NHRoleRepository.cs
+└── mappers/
+    ├── UserMapper.cs
+    └── RoleMapper.cs
+
+# ❌ INCORRECTO - Por tipo genérico
+repositories/
+├── UserRepository.cs
+└── RoleRepository.cs
+```
+
 ### Implementa Interfaces de Domain
 
 ```csharp
 // Domain define la interfaz
-public interface IUserRepository : IRepository<User, int>
+public interface IUserRepository : IRepository<User, Guid>
 {
     Task<User?> GetByEmailAsync(string email);
 }
 
-// Infrastructure la implementa
-public class UserRepository : IUserRepository
+// Infrastructure la implementa con NHibernate
+public class NHUserRepository : NHRepository<User, Guid>, IUserRepository
 {
-    // Implementación con NHibernate, EF, Dapper, etc.
+    public NHUserRepository(ISession session, IServiceProvider serviceProvider)
+        : base(session, serviceProvider) { }
+
+    public async Task<User?> GetByEmailAsync(string email)
+        => await _session.Query<User>()
+            .FirstOrDefaultAsync(u => u.Email == email);
 }
 ```
 
-### Independencia de Framework
+### Mappers de NHibernate
 
 ```csharp
-// ❌ INCORRECTO en Application
-var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
-
-// ✅ CORRECTO en Application
-var user = await _userRepository.GetByEmailAsync(email);
-```
-
-### Configuración de DI
-
-```csharp
-public static class InfrastructureServiceCollectionExtensions
+// nhibernate/mappers/UserMapper.cs
+public class UserMapper : ClassMapping<User>
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public UserMapper()
     {
-        services.AddScoped<IUserRepository, UserRepository>();
-        return services;
+        Table("users");
+        Id(x => x.Id, m => m.Generator(Generators.GuidComb));
+        Property(x => x.Email, m => m.NotNullable(true));
+        Property(x => x.Name, m => m.Length(100));
+        Property(x => x.CreationDate);
     }
 }
+```
+
+### Independencia de Framework en Application
+
+```csharp
+// ❌ INCORRECTO en Application - Acoplamiento a ORM
+var user = await _session.Query<User>().FirstOrDefaultAsync(x => x.Email == email);
+
+// ✅ CORRECTO en Application - Usa abstracción
+var user = await _userRepository.GetByEmailAsync(email);
 ```
 
 ## Verificación
@@ -130,8 +164,8 @@ dotnet build
 
 ## Implementaciones de ORM
 
-Para agregar un ORM específico, ver:
-- `stacks/orm/nhibernate/` - NHibernate
+Para configurar el ORM específico, ver:
+- `stacks/orm/nhibernate/` - NHibernate (recomendado)
 - `stacks/orm/entity-framework/` - Entity Framework
 
 ## Siguiente Paso
