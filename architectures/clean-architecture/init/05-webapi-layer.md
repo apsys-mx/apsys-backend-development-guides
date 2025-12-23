@@ -4,7 +4,8 @@
 
 Crea la **capa de presentación WebApi** del proyecto. Esta guía crea la estructura base con:
 - Program.cs mínimo con endpoint `/health`
-- Estructura de carpetas para endpoints, DTOs y configuración
+- Estructura de carpetas para features (endpoints + modelos)
+- Carpeta infrastructure para configuración de servicios
 - Manejo de variables de entorno con `.env`
 
 El framework específico (FastEndpoints, Minimal APIs, etc.) se configura en `stacks/webapi/`.
@@ -19,9 +20,13 @@ src/{ProjectName}.webapi/
 ├── Program.cs
 ├── .env
 ├── appsettings.json
-├── endpoints/
-├── dtos/
-├── configuration/
+├── features/                   # Endpoints organizados por feature
+│   └── {feature}/
+│       ├── endpoint/           # Endpoints del feature
+│       └── models/             # DTOs request/response
+├── infrastructure/             # Configuración de servicios (DI, etc.)
+├── mappingprofiles/            # Perfiles de AutoMapper (opcional)
+├── dtos/                       # DTOs compartidos (opcional)
 └── Properties/
     └── InternalsVisibleTo.cs
 
@@ -64,18 +69,19 @@ dotnet add src/{ProjectName}.webapi/{ProjectName}.webapi.csproj reference src/{P
 ### 4. Crear carpetas
 
 ```bash
-mkdir src/{ProjectName}.webapi/endpoints
-mkdir src/{ProjectName}.webapi/dtos
-mkdir src/{ProjectName}.webapi/configuration
+mkdir src/{ProjectName}.webapi/features
+mkdir src/{ProjectName}.webapi/infrastructure
 ```
 
 ### 5. Copiar templates
 
-Copiar desde `templates/webapi/`:
-- `Program.cs`
-- `.env.example` → `.env`
-- READMEs para cada carpeta
-- `Properties/InternalsVisibleTo.cs`
+Copiar desde `templates/manual/paso-08-webapi/`:
+
+| Template | Destino | Descripción |
+|----------|---------|-------------|
+| `Program.cs` | raíz | Program base con health endpoint |
+| `.env` | raíz | Variables de entorno (no commitear) |
+| `properties/InternalsVisibleTo.cs` | `Properties/` | Expone internals para tests |
 
 ### 6. Crear proyecto de tests
 
@@ -112,7 +118,10 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(type => type.FullName?.Replace("+", ".") ?? type.Name);
+});
 
 var app = builder.Build();
 
@@ -134,6 +143,54 @@ app.MapGet("/health", () => Results.Ok(new
 app.Run();
 
 public partial class Program { }
+```
+
+## Organización por Features
+
+Los endpoints se organizan por feature, con sus modelos locales:
+
+```
+features/
+├── users/
+│   ├── endpoint/
+│   │   ├── GetUserByIdEndpoint.cs
+│   │   ├── GetUsersEndpoint.cs
+│   │   └── CreateUserEndpoint.cs
+│   └── models/
+│       ├── GetUserByIdRequest.cs
+│       ├── GetUserByIdResponse.cs
+│       └── CreateUserRequest.cs
+├── organizations/
+│   ├── endpoint/
+│   └── models/
+└── hello/
+    └── HelloEndpoint.cs          # Features simples sin modelos
+```
+
+## Configuración de Servicios (infrastructure/)
+
+```csharp
+// infrastructure/UseCaseServiceCollectionExtensions.cs
+namespace {ProjectName}.webapi.infrastructure;
+
+public static class UseCaseServiceCollectionExtensions
+{
+    public static IServiceCollection ConfigureUseCases(
+        this IServiceCollection services)
+    {
+        // Use cases
+        services.AddScoped<GetUserByIdUseCase>();
+        services.AddScoped<GetUsersUseCase>();
+        services.AddScoped<CreateUserUseCase>();
+
+        return services;
+    }
+}
+```
+
+Usar en Program.cs:
+```csharp
+builder.Services.ConfigureUseCases();
 ```
 
 ## Verificación

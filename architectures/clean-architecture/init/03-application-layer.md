@@ -3,9 +3,8 @@
 ## Descripción
 
 Crea la **capa de aplicación** del proyecto. Esta capa contiene:
-- Casos de uso (lógica de aplicación)
-- DTOs (objetos de transferencia de datos)
-- Validadores de aplicación
+- Casos de uso (lógica de aplicación/orquestación)
+- Errores de aplicación
 
 Esta capa es **independiente de infraestructura**. Solo depende de Domain.
 
@@ -17,13 +16,15 @@ Esta capa es **independiente de infraestructura**. Solo depende de Domain.
 src/{ProjectName}.application/
 ├── {ProjectName}.application.csproj
 ├── usecases/
-├── dtos/
-└── validators/
+│   └── {feature}/           # Casos de uso agrupados por feature
+└── errors/                  # Errores de aplicación
 
 tests/{ProjectName}.application.tests/
 ├── {ProjectName}.application.tests.csproj
 └── ApplicationTestBase.cs
 ```
+
+> **Nota:** Los DTOs y validadores de request/response se definen en la capa WebApi junto a los endpoints (en `features/{feature}/models/`).
 
 ## Paquetes NuGet
 
@@ -60,8 +61,7 @@ dotnet add src/{ProjectName}.application/{ProjectName}.application.csproj refere
 
 ```bash
 mkdir src/{ProjectName}.application/usecases
-mkdir src/{ProjectName}.application/dtos
-mkdir src/{ProjectName}.application/validators
+mkdir src/{ProjectName}.application/errors
 ```
 
 ### 5. Crear proyecto de tests
@@ -93,7 +93,7 @@ dotnet add tests/{ProjectName}.application.tests/{ProjectName}.application.tests
 
 ### 9. Copiar template
 
-Copiar `templates/application.tests/ApplicationTestBase.cs` a `tests/{ProjectName}.application.tests/`
+Copiar `templates/manual/paso-05-common-tests/ApplicationTestBase.cs` a `tests/{ProjectName}.application.tests/`
 
 ## Principios
 
@@ -114,21 +114,55 @@ public class GetUserByIdUseCase
 }
 ```
 
-### DTOs como Records
+### Casos de Uso por Feature
 
-```csharp
-public record UserDto(int Id, string Name, string Email, DateTime CreatedAt);
+```
+usecases/
+├── users/
+│   ├── GetUserByIdUseCase.cs
+│   ├── GetUsersUseCase.cs
+│   └── CreateUserUseCase.cs
+├── organizations/
+│   ├── GetOrganizationByIdUseCase.cs
+│   └── CreateOrganizationUseCase.cs
+└── folios/
+    └── GenerateFolioUseCase.cs
 ```
 
-### Validadores con FluentValidation
+### Ejemplo de Use Case
 
 ```csharp
-public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
+using {ProjectName}.domain.entities;
+using {ProjectName}.domain.interfaces.repositories;
+
+namespace {ProjectName}.application.usecases.users;
+
+public class GetUserByIdUseCase
 {
-    public CreateUserRequestValidator()
+    private readonly IUserRepository _userRepository;
+
+    public GetUserByIdUseCase(IUserRepository userRepository)
     {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        _userRepository = userRepository;
     }
+
+    public async Task<User?> ExecuteAsync(Guid id)
+    {
+        return await _userRepository.GetByIdAsync(id);
+    }
+}
+```
+
+### Errores de Aplicación
+
+```csharp
+// errors/UserNotFoundError.cs
+namespace {ProjectName}.application.errors;
+
+public class UserNotFoundError : Exception
+{
+    public UserNotFoundError(Guid userId)
+        : base($"User with ID {userId} was not found") { }
 }
 ```
 
