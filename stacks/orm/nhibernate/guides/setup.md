@@ -8,7 +8,11 @@ Configura **NHibernate** como ORM en la capa de infraestructura. Esta guía agre
 - Sistema de filtrado de queries
 - Mappers base
 
-**Requiere:** [04-infrastructure-layer.md](../../../architectures/clean-architecture/init/04-infrastructure-layer.md)
+**Requiere:**
+- [04-infrastructure-layer.md](../../../architectures/clean-architecture/init/04-infrastructure-layer.md)
+- **Base de datos configurada** (elegir una):
+  - [PostgreSQL](../../database/postgresql/guides/setup.md)
+  - [SQL Server](../../database/sqlserver/guides/setup.md)
 
 ## Estructura Final
 
@@ -16,7 +20,7 @@ Configura **NHibernate** como ORM en la capa de infraestructura. Esta guía agre
 src/{ProjectName}.infrastructure/
 ├── {ProjectName}.infrastructure.csproj
 ├── nhibernate/
-│   ├── ConnectionStringBuilder.cs
+│   ├── ConnectionStringBuilder.cs    ← Viene del setup de BD
 │   ├── NHSessionFactory.cs
 │   ├── NHUnitOfWork.cs
 │   ├── NHRepository.cs
@@ -25,14 +29,7 @@ src/{ProjectName}.infrastructure/
 │   ├── mappers/
 │   │   └── {Entity}Mapper.cs
 │   └── filtering/
-│       ├── FilterExpressionParser.cs
-│       ├── FilterOperator.cs
-│       ├── InvalidQueryStringArgumentException.cs
-│       ├── QueryStringParser.cs
-│       ├── QuickSearch.cs
-│       ├── RelationalOperator.cs
-│       ├── Sorting.cs
-│       └── StringExtender.cs
+│       └── *.cs
 └── services/
 ```
 
@@ -45,7 +42,18 @@ dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj 
 
 ## Pasos
 
-### 1. Crear carpetas
+### 1. Configurar Base de Datos (si no lo has hecho)
+
+Antes de continuar, debes configurar tu base de datos:
+
+| Base de Datos | Guía |
+|---------------|------|
+| PostgreSQL | [stacks/database/postgresql/guides/setup.md](../../database/postgresql/guides/setup.md) |
+| SQL Server | [stacks/database/sqlserver/guides/setup.md](../../database/sqlserver/guides/setup.md) |
+
+Esto instalará el driver y creará el `ConnectionStringBuilder.cs`.
+
+### 2. Crear carpetas
 
 ```bash
 mkdir src/{ProjectName}.infrastructure/nhibernate
@@ -53,7 +61,7 @@ mkdir src/{ProjectName}.infrastructure/nhibernate/mappers
 mkdir src/{ProjectName}.infrastructure/nhibernate/filtering
 ```
 
-### 2. Copiar templates base
+### 3. Copiar templates base
 
 Copiar desde `stacks/orm/nhibernate/templates/` a `src/{ProjectName}.infrastructure/nhibernate/`:
 
@@ -64,9 +72,44 @@ Copiar desde `stacks/orm/nhibernate/templates/` a `src/{ProjectName}.infrastruct
 | `NHSessionFactory.cs` | `nhibernate/` | Factory para crear sesiones |
 | `NHUnitOfWork.cs` | `nhibernate/` | Patrón Unit of Work |
 | `SortingCriteriaExtender.cs` | `nhibernate/` | Extensiones para ordenamiento |
-| `ConnectionStringBuilder.cs` | `nhibernate/` | Constructor de connection string |
 
-### 3. Copiar templates de filtering
+> **Nota:** `ConnectionStringBuilder.cs` viene del setup de la base de datos elegida.
+
+### 4. Configurar Driver y Dialect
+
+Editar `NHSessionFactory.cs` según la base de datos elegida:
+
+**Para PostgreSQL:**
+```csharp
+using NHibernate.Driver;
+using NHibernate.Dialect;
+
+// En BuildNHibernateSessionFactory():
+cfg.DataBaseIntegration(c =>
+{
+    c.Driver<NpgsqlDriver>();
+    c.Dialect<PostgreSQL83Dialect>();
+    c.ConnectionString = this.ConnectionString;
+    c.KeywordsAutoImport = Hbm2DDLKeyWords.AutoQuote;
+});
+```
+
+**Para SQL Server:**
+```csharp
+using NHibernate.Driver;
+using NHibernate.Dialect;
+
+// En BuildNHibernateSessionFactory():
+cfg.DataBaseIntegration(c =>
+{
+    c.Driver<MicrosoftDataSqlClientDriver>();
+    c.Dialect<MsSql2012Dialect>();
+    c.ConnectionString = this.ConnectionString;
+    c.KeywordsAutoImport = Hbm2DDLKeyWords.AutoQuote;
+});
+```
+
+### 5. Copiar templates de filtering
 
 Copiar desde `stacks/orm/nhibernate/templates/filtering/` a `src/{ProjectName}.infrastructure/nhibernate/filtering/`:
 
@@ -81,12 +124,12 @@ Copiar desde `stacks/orm/nhibernate/templates/filtering/` a `src/{ProjectName}.i
 | `Sorting.cs` | Modelo de ordenamiento |
 | `StringExtender.cs` | Extensiones de string |
 
-### 4. Reemplazar namespaces
+### 6. Reemplazar namespaces
 
 En todos los archivos copiados, reemplazar:
 - `{ProjectName}` → nombre real del proyecto
 
-### 5. Crear mapper de ejemplo
+### 7. Crear mapper de ejemplo
 
 Crear `src/{ProjectName}.infrastructure/nhibernate/mappers/{Entity}Mapper.cs`:
 
@@ -140,14 +183,18 @@ Agregar en `src/{ProjectName}.webapi/infrastructure/`:
 ```csharp
 public static class NHibernateServiceCollectionExtensions
 {
-    public static IServiceCollection ConfigureUnitOfWork(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection ConfigureNHibernate(
+        this IServiceCollection services)
     {
+        // Connection string from environment
+        var connectionString = ConnectionStringBuilder.Build();
+
         // Session Factory
-        services.AddSingleton<NHSessionFactory>();
+        services.AddSingleton(new NHSessionFactory(connectionString));
         services.AddScoped(sp =>
-            sp.GetRequiredService<NHSessionFactory>().OpenSession());
+            sp.GetRequiredService<NHSessionFactory>()
+              .BuildNHibernateSessionFactory()
+              .OpenSession());
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, NHUnitOfWork>();
@@ -164,6 +211,19 @@ public static class NHibernateServiceCollectionExtensions
 
 ```bash
 dotnet build
+```
+
+## Resumen de Dependencias
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Tu Proyecto                              │
+├─────────────────────────────────────────────────────────────┤
+│  stacks/orm/nhibernate/          stacks/database/{db}/      │
+│  ├── NHSessionFactory.cs    +    ├── ConnectionStringBuilder│
+│  ├── NHRepository.cs             └── Driver NuGet           │
+│  └── ...                                                    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Siguiente Paso
