@@ -7,7 +7,7 @@ Crea la **capa de infraestructura** del proyecto. Esta capa contendrá:
 - Configuración de persistencia (ORM)
 - Servicios externos (HTTP, email, autenticación, etc.)
 
-Esta guía crea una **estructura base**. La implementación específica del ORM (NHibernate, EF, etc.) se configura en `stacks/orm/`.
+Esta guía crea una **estructura base agnóstica**. La implementación específica del ORM se configura después con las guías de `stacks/orm/`.
 
 **Requiere:** [03-application-layer.md](./03-application-layer.md)
 
@@ -16,25 +16,13 @@ Esta guía crea una **estructura base**. La implementación específica del ORM 
 ```
 src/{ProjectName}.infrastructure/
 ├── {ProjectName}.infrastructure.csproj
-├── nhibernate/                    # Organizado por ORM
-│   ├── ConnectionStringBuilder.cs
-│   ├── NHSessionFactory.cs
-│   ├── NHUnitOfWork.cs
-│   ├── NHRepository.cs
-│   ├── NHReadOnlyRepository.cs
-│   ├── SortingCriteriaExtender.cs
-│   ├── mappers/                   # ClassMaps de NHibernate
-│   │   └── {Entity}Mapper.cs
-│   └── filtering/                 # Lógica de filtrado de queries
-│       ├── FilterExpressionParser.cs
-│       ├── QueryStringParser.cs
-│       └── ...
 └── services/                      # Servicios externos (opcional)
-    └── {ServiceName}Service.cs
 
 tests/{ProjectName}.infrastructure.tests/
 └── {ProjectName}.infrastructure.tests.csproj
 ```
+
+> **Nota:** La estructura específica del ORM (carpetas `nhibernate/`, `entityframework/`, etc.) se crea en el paso de configuración del stack correspondiente.
 
 ## Pasos
 
@@ -52,12 +40,9 @@ rm src/{ProjectName}.infrastructure/Class1.cs
 dotnet add src/{ProjectName}.infrastructure/{ProjectName}.infrastructure.csproj reference src/{ProjectName}.domain/{ProjectName}.domain.csproj
 ```
 
-### 3. Crear carpetas base
+### 3. Crear carpeta services (opcional)
 
 ```bash
-mkdir src/{ProjectName}.infrastructure/nhibernate
-mkdir src/{ProjectName}.infrastructure/nhibernate/mappers
-mkdir src/{ProjectName}.infrastructure/nhibernate/filtering
 mkdir src/{ProjectName}.infrastructure/services
 ```
 
@@ -89,25 +74,6 @@ dotnet add tests/{ProjectName}.infrastructure.tests/{ProjectName}.infrastructure
 
 ## Principios
 
-### Organización por Tecnología
-
-Los archivos se organizan por tecnología/ORM, no por tipo:
-
-```
-# ✅ CORRECTO - Por tecnología
-nhibernate/
-├── NHUserRepository.cs
-├── NHRoleRepository.cs
-└── mappers/
-    ├── UserMapper.cs
-    └── RoleMapper.cs
-
-# ❌ INCORRECTO - Por tipo genérico
-repositories/
-├── UserRepository.cs
-└── RoleRepository.cs
-```
-
 ### Implementa Interfaces de Domain
 
 ```csharp
@@ -117,32 +83,10 @@ public interface IUserRepository : IRepository<User, Guid>
     Task<User?> GetByEmailAsync(string email);
 }
 
-// Infrastructure la implementa con NHibernate
-public class NHUserRepository : NHRepository<User, Guid>, IUserRepository
+// Infrastructure la implementa (el ORM específico se define en stacks/)
+public class UserRepository : IUserRepository
 {
-    public NHUserRepository(ISession session, IServiceProvider serviceProvider)
-        : base(session, serviceProvider) { }
-
-    public async Task<User?> GetByEmailAsync(string email)
-        => await _session.Query<User>()
-            .FirstOrDefaultAsync(u => u.Email == email);
-}
-```
-
-### Mappers de NHibernate
-
-```csharp
-// nhibernate/mappers/UserMapper.cs
-public class UserMapper : ClassMapping<User>
-{
-    public UserMapper()
-    {
-        Table("users");
-        Id(x => x.Id, m => m.Generator(Generators.GuidComb));
-        Property(x => x.Email, m => m.NotNullable(true));
-        Property(x => x.Name, m => m.Length(100));
-        Property(x => x.CreationDate);
-    }
+    // Implementación depende del ORM elegido
 }
 ```
 
@@ -150,7 +94,7 @@ public class UserMapper : ClassMapping<User>
 
 ```csharp
 // ❌ INCORRECTO en Application - Acoplamiento a ORM
-var user = await _session.Query<User>().FirstOrDefaultAsync(x => x.Email == email);
+var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
 
 // ✅ CORRECTO en Application - Usa abstracción
 var user = await _userRepository.GetByEmailAsync(email);
@@ -162,12 +106,13 @@ var user = await _userRepository.GetByEmailAsync(email);
 dotnet build
 ```
 
-## Implementaciones de ORM
+## Siguiente Paso: Configurar ORM
 
-Para configurar el ORM específico, ver:
-- `stacks/orm/nhibernate/` - NHibernate (recomendado)
-- `stacks/orm/entity-framework/` - Entity Framework
+Después de crear la estructura base, configura el ORM:
 
-## Siguiente Paso
+- **NHibernate (recomendado):** → [stacks/orm/nhibernate/setup.md](../../../stacks/orm/nhibernate/setup.md)
+- **Entity Framework:** → `stacks/orm/entity-framework/setup.md`
+
+## Siguiente Paso del Init
 
 → [05-webapi-layer.md](./05-webapi-layer.md)
