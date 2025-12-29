@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.exceptions;
+namespace {ProjectName}.domain.exceptions;
 
 /// <summary>
 /// Exception that is thrown when an invalid argument is provided for a filter operation.

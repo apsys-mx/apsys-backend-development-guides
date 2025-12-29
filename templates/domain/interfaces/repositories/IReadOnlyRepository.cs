@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace MiProyecto.domain.interfaces.repositories;
+namespace {ProjectName}.domain.interfaces.repositories;
 
 /// <summary>
 /// Defines a read-only repository for retrieving entities from a data store.

@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.interfaces.repositories;
+namespace {ProjectName}.domain.interfaces.repositories;
 
 /// <summary>
 /// Defines a full repository implementation with both read and write operations.

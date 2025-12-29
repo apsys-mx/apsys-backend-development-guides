@@ -1,7 +1,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace MiProyecto.domain.entities;
+namespace {ProjectName}.domain.entities;
 
 /// <summary>
 /// Clase base abstracta para objetos de dominio.

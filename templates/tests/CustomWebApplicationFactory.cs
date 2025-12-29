@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace MiProyecto.webapi.tests;
+namespace {ProjectName}.webapi.tests;
 
 /// <summary>
 /// Custom WebApplicationFactory for testing

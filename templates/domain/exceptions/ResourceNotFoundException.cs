@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.exceptions;
+namespace {ProjectName}.domain.exceptions;
 
 /// <summary>
 /// Exception thrown when a requested resource is not found in the system.

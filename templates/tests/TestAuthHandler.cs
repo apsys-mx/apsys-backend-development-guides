@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MiProyecto.webapi.tests;
+namespace {ProjectName}.webapi.tests;
 
 /// <summary>
 /// Test authorization handler for simulating authenticated users in tests

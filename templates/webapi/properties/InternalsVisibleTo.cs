@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("MiProyecto.webapi.tests")]
+[assembly: InternalsVisibleTo("{ProjectName}.webapi.tests")]

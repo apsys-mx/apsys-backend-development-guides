@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.interfaces.repositories;
+namespace {ProjectName}.domain.interfaces.repositories;
 
 /// <summary>
 /// Interface for objects that provide sorting capabilities in paginated results.

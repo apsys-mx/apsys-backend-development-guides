@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.interfaces.repositories;
+namespace {ProjectName}.domain.interfaces.repositories;
 
 /// <summary>
 /// Class to return the result for a paginated query with sorting capabilities.

@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.interfaces.repositories;
+namespace {ProjectName}.domain.interfaces.repositories;
 
 /// <summary>
 /// Class representing a sorting criteria

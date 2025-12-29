@@ -1,7 +1,7 @@
 using System.Data;
-using MiProyecto.domain.resources;
+using {ProjectName}.domain.resources;
 
-namespace MiProyecto.common.tests;
+namespace {ProjectName}.common.tests;
 
 public static class AppSchemaExtender
 {

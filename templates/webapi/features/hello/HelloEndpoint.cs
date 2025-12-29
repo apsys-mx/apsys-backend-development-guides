@@ -1,6 +1,6 @@
 using FastEndpoints;
 
-namespace MiProyecto.webapi.features.hello;
+namespace {ProjectName}.webapi.features.hello;
 
 /// <summary>
 /// Hello endpoint for testing the API is working
@@ -31,7 +31,7 @@ public class HelloEndpoint : EndpointWithoutRequest
     /// </summary>
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var message = $"Hello from MiProyecto API - Environment: {environment.EnvironmentName}";
+        var message = $"Hello from {ProjectName} API - Environment: {environment.EnvironmentName}";
         Logger.LogInformation(message);
         await SendOkAsync(message, cancellation: ct);
     }

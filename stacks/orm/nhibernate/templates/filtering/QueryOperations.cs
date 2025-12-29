@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace MiProyecto.infrastructure.nhibernate.filtering;
+namespace {ProjectName}.infrastructure.nhibernate.filtering;
 
 /// <summary>
 /// Defines QueryOperations class

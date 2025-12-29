@@ -1,6 +1,5 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 using System.Configuration;
@@ -21,7 +20,6 @@ namespace {ProjectName}.infrastructure.tests.nhibernate;
 public abstract class NHRepositoryTestInfrastructureBase
 {
     protected internal ISessionFactory _sessionFactory;
-    protected internal IConfiguration configuration;
     protected internal INDbUnit nDbUnitTest;
     protected internal IFixture fixture;
     protected internal ServiceProvider _serviceProvider;
@@ -30,11 +28,6 @@ public abstract class NHRepositoryTestInfrastructureBase
     public void OneTimeSetup()
     {
         Env.Load();
-        string? environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-        this.configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .AddJsonFile($"appsettings.{environment}.json", true)
-            .Build();
         string connectionStringValue = ConnectionStringBuilder.BuildPostgresConnectionString();
         var nHSessionFactory = new NHSessionFactory(connectionStringValue);
         this._sessionFactory = nHSessionFactory.BuildNHibernateSessionFactory();

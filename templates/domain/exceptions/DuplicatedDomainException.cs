@@ -1,4 +1,4 @@
-namespace MiProyecto.domain.exceptions;
+namespace {ProjectName}.domain.exceptions;
 
 /// <summary>
 /// Exception thrown when attempting to create or update an entity that would result in a duplicate.

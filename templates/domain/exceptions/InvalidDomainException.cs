@@ -1,7 +1,7 @@
 using FluentValidation.Results;
 using System.Text.Json;
 
-namespace MiProyecto.domain.exceptions;
+namespace {ProjectName}.domain.exceptions;
 
 /// <summary>
 /// Invalid domain exception class

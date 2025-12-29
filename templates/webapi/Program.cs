@@ -1,6 +1,6 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using MiProyecto.webapi.infrastructure;
+using {ProjectName}.webapi.infrastructure;
 
 // Load environment variables from .env file
 DotNetEnv.Env.Load();

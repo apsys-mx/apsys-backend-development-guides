@@ -1,13 +1,13 @@
 using FluentValidation;
-using MiProyecto.domain.entities;
-using MiProyecto.domain.entities.validators;
-using MiProyecto.domain.interfaces.repositories;
-using MiProyecto.infrastructure.nhibernate;
-using MiProyecto.webapi.mappingprofiles;
+using {ProjectName}.domain.entities;
+using {ProjectName}.domain.entities.validators;
+using {ProjectName}.domain.interfaces.repositories;
+using {ProjectName}.infrastructure.nhibernate;
+using {ProjectName}.webapi.mappingprofiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MiProyecto.webapi.infrastructure;
+namespace {ProjectName}.webapi.infrastructure;
 
 public static class ServiceCollectionExtender
 {
