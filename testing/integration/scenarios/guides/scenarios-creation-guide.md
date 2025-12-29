@@ -408,30 +408,48 @@ public class Sc010CreateSandBox(IUnitOfWork uoW) : IScenario
 
 ### Argumentos de Línea de Comandos
 
+El formato de argumentos es `/argname:"argvalue"`:
+
 | Argumento | Descripción | Ejemplo |
 |-----------|-------------|---------|
-| `cnn` | Connection string a la BD de desarrollo | `Host=localhost;Database=mydb_test;...` |
-| `output` | Ruta donde se generarán los XMLs | `../infrastructure.tests/scenarios` |
+| `/cnn:` | Connection string a la BD de desarrollo | `/cnn:"Host=localhost;Database=mydb_test;..."` |
+| `/output:` | Ruta donde se generarán los XMLs | `/output:"D:\path\to\scenarios"` |
 
-### Ejecución
+### Compilar y Ejecutar
 
 ```bash
-# Desde la carpeta del proyecto de escenarios
+# 1. Compilar el proyecto
 cd tests/{proyecto}.scenarios
+dotnet build
 
-# Ejecutar el generador
-dotnet run -- cnn="Host=localhost;Database=mydb_test;Username=user;Password=pass" output="../{proyecto}.infrastructure.tests/scenarios"
+# 2. Ejecutar el .exe compilado
+cd bin/Debug/net9.0
+{proyecto}.scenarios.exe /cnn:"Host=localhost;Port=5432;Database=mydb_test;Username=postgres;Password=root;" /output:"D:\path\to\scenarios"
+```
+
+### Script de Build (Recomendado)
+
+Crear un archivo `buildscenarios.bat` en la raíz del proyecto:
+
+```batch
+cd tests/{proyecto}.scenarios\bin\Debug\net9.0
+{proyecto}.scenarios.exe /cnn:"Host=localhost;Port=5432;Database={dbname};Username=postgres;Password=root;" /output:"D:\path\to\scenarios"
+cd "../../../../.."
+```
+
+**Ejemplo real:**
+
+```batch
+cd tests/hashira.stone.backend.scenarios\bin\Debug\net9.0
+hashira.stone.backend.scenarios.exe /cnn:"Host=localhost;Port=5432;Database=hashira-stonedb;Username=postgres;Password=root;" /output:"D:\apsys-mx\inspeccion-distancia\hashira.stone.scenarios"
+cd "../../../../.."
 ```
 
 ### Ruta de Salida
 
-La ruta de salida (`output`) es **relativa al ambiente de trabajo** de cada desarrollador. Típicamente apunta a:
+La ruta de salida (`/output:`) es **específica de cada ambiente de trabajo**. Cada desarrollador configura dónde quiere que se generen los XMLs según su estructura de carpetas local.
 
-```
-tests/{proyecto}.infrastructure.tests/scenarios/
-```
-
-Esta carpeta es donde los tests de integración buscan los XMLs para cargarlos.
+**IMPORTANTE:** Esta ruta no está dentro del repositorio git. Los XMLs generados son artefactos locales que no se versionan.
 
 ---
 
