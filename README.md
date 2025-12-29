@@ -1,6 +1,6 @@
 # APSYS Backend Development Guides
 
-> **Version:** 3.0.0 | **Last Update:** 2025-12-23
+> **Version:** 4.0.0 | **Last Update:** 2025-12-29
 
 Guias de desarrollo y templates para crear proyectos backend .NET con **Clean Architecture**.
 
@@ -10,27 +10,37 @@ Guias de desarrollo y templates para crear proyectos backend .NET con **Clean Ar
 
 ```
 apsys-backend-development-guides/
-├── architectures/          # Guias de arquitectura
-│   └── clean-architecture/ # Clean Architecture para .NET
-│       ├── init/           # Guias de inicializacion (01-05)
-│       └── layers/         # Guias por capa (domain, application, etc.)
 │
-├── stacks/                 # Stacks tecnologicos
-│   ├── database/           # Bases de datos (postgresql, sqlserver, migrations)
-│   ├── orm/                # ORMs (nhibernate, entity-framework)
-│   └── webapi/             # Frameworks WebAPI (fastendpoints)
+├── fundamentals/              # Patrones agnósticos de arquitectura
+│   └── patterns/
+│       ├── domain-modeling/   # Entidades, validadores, excepciones
+│       ├── repository/        # Repository, UoW, transacciones
+│       └── best-practices/    # Async/await, DI, error handling
 │
-├── templates/              # Templates de codigo reutilizables
-│   ├── domain/             # Entidades, value objects, repositorios
-│   ├── application/        # Use cases, DTOs, validators
-│   ├── infrastructure/     # Implementaciones de repositorios
-│   ├── webapi/             # Endpoints, configuracion
-│   └── tests/              # Unit tests, integration tests
+├── architectures/             # Guias de arquitectura
+│   └── clean-architecture/
+│       ├── init/              # Guias de inicializacion (01-05)
+│       ├── guides/            # Guias por capa con referencias
+│       └── examples/          # Ejemplos de features completos
 │
-├── prompts/                # Prompts y comandos para agentes IA
-│   └── commands/           # Comandos ejecutables (/init-backend, etc.)
+├── stacks/                    # Stacks tecnologicos
+│   ├── database/              # PostgreSQL, SQL Server, migrations
+│   ├── orm/                   # NHibernate, Entity Framework
+│   ├── webapi/                # FastEndpoints
+│   └── external-services/     # Caching, identity providers
 │
-└── guides/                 # [Legacy] Guias en proceso de migracion
+├── templates/                 # Templates de codigo reutilizables
+│   ├── domain/                # Entidades, interfaces, excepciones
+│   ├── webapi/                # Endpoints, configuracion
+│   └── tests/                 # Test bases
+│
+├── testing/                   # Guias y templates de testing
+│   ├── fundamentals/          # Convenciones de testing
+│   ├── unit/                  # Tests unitarios
+│   └── integration/           # Tests de integracion
+│
+└── prompts/                   # Prompts y comandos para agentes IA
+    └── commands/              # Comandos ejecutables
 ```
 
 ---
@@ -95,6 +105,27 @@ Los proyectos generados siguen **Clean Architecture**:
 
 ---
 
+## Organizacion de la Documentacion
+
+### Patrones Fundamentales (agnósticos)
+Patrones que funcionan en cualquier arquitectura:
+- [fundamentals/patterns/domain-modeling/](fundamentals/patterns/domain-modeling/) - Entidades, validadores
+- [fundamentals/patterns/repository/](fundamentals/patterns/repository/) - Repository, UoW
+- [fundamentals/patterns/best-practices/](fundamentals/patterns/best-practices/) - Mejores practicas
+
+### Guias de Arquitectura (específicas)
+Como aplicar los patrones en Clean Architecture:
+- [architectures/clean-architecture/init/](architectures/clean-architecture/init/) - Inicializacion
+- [architectures/clean-architecture/guides/](architectures/clean-architecture/guides/) - Guias por capa
+
+### Stacks Tecnologicos (implementaciones)
+Configuracion de tecnologias específicas:
+- [stacks/orm/nhibernate/](stacks/orm/nhibernate/) - NHibernate
+- [stacks/database/](stacks/database/) - PostgreSQL, SQL Server, migrations
+- [stacks/webapi/fastendpoints/](stacks/webapi/fastendpoints/) - FastEndpoints
+
+---
+
 ## Stack Tecnologico
 
 | Categoria | Tecnologia | Version |
@@ -138,11 +169,12 @@ Agente: [Ejecuta el comando siguiendo las guias]
 
 | Carpeta | Proposito |
 |---------|-----------|
+| `fundamentals/` | Patrones agnósticos de arquitectura |
 | `architectures/` | Guias de arquitectura (Clean Architecture, etc.) |
 | `stacks/` | Configuracion de tecnologias especificas |
-| `templates/` | Codigo reutilizable con placeholders |
+| `templates/` | Codigo reutilizable con placeholders `{ProjectName}` |
+| `testing/` | Guias y templates de testing |
 | `prompts/` | Comandos y prompts para agentes IA |
-| `guides/` | [Legacy] Contenido en proceso de migracion |
 
 ---
 
@@ -150,7 +182,7 @@ Agente: [Ejecuta el comando siguiendo las guias]
 
 Este repositorio usa **versionado semantico** (MAJOR.MINOR.PATCH).
 
-- **Version actual:** 3.0.0
+- **Version actual:** 4.0.0
 - **Compatibilidad:** .NET 9.0
 
 ---
