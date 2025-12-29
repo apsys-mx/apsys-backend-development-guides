@@ -1,7 +1,7 @@
 # Init Backend Project
 
-> **Version:** 3.1.0
-> **Ultima actualizacion:** 2025-12-23
+> **Version:** 3.2.0
+> **Ultima actualizacion:** 2025-12-29
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
 
@@ -43,6 +43,15 @@ Antes de comenzar, solicita al usuario:
 - `yes` - Incluir proyecto de migraciones con FluentMigrator
 - `no` - Sin proyecto de migraciones
 
+### 6. Incluir generador de escenarios
+- `yes` - Incluir proyectos para testing de integracion:
+  - `{ProjectName}.ndbunit` - Libreria para cargar/limpiar datos en BD
+  - `{ProjectName}.common.tests` - Recursos compartidos (Schema, IDs)
+  - `{ProjectName}.scenarios` - Generador de escenarios XML
+- `no` - Sin proyectos de escenarios
+
+> **Nota:** Estos proyectos son necesarios para pruebas de integracion con datos pre-cargados.
+
 ---
 
 ## Rutas de Recursos
@@ -72,6 +81,15 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
     └── fastendpoints/guides/setup.md
 ```
 
+**Guias de testing:**
+```
+{GUIDES_REPO}/testing/integration/
+├── tools/ndbunit/guides/setup.md
+└── scenarios/guides/
+    ├── setup.md
+    └── scenarios-creation-guide.md
+```
+
 **Templates:**
 ```
 {GUIDES_REPO}/templates/
@@ -81,6 +99,24 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 └── Directory.Packages.props
 
 {GUIDES_REPO}/stacks/{stack}/templates/
+
+{GUIDES_REPO}/testing/integration/
+├── tools/ndbunit/templates/project/
+│   ├── INDbUnit.cs
+│   ├── NDbUnit.cs
+│   ├── PostgreSQLNDbUnit.cs
+│   └── SqlServerNDbUnit.cs
+└── scenarios/templates/
+    ├── project/                    # Proyecto scenarios
+    │   ├── IScenario.cs
+    │   ├── ScenarioBuilder.cs
+    │   ├── Program.cs
+    │   ├── CommandLineArgs.cs
+    │   ├── ExitCode.cs
+    │   └── Sc010CreateSandBox.cs
+    └── common.tests/               # Proyecto common.tests
+        ├── AppSchemaExtender.cs
+        └── ScenarioIds.cs
 ```
 
 ---
@@ -93,8 +129,8 @@ Al iniciar, mostrar:
 
 ```
 Init Backend Project
-Version: 3.1.0
-Ultima actualizacion: 2025-12-23
+Version: 3.2.0
+Ultima actualizacion: 2025-12-29
 ```
 
 ### Fase 1: Validacion
@@ -127,6 +163,9 @@ Crear lista de tareas segun opciones seleccionadas:
 - [ ] Configurar NHibernate
 - [ ] Configurar FastEndpoints (si aplica)
 - [ ] Configurar migraciones (si aplica)
+- [ ] Configurar NDbUnit (si aplica)
+- [ ] Configurar common.tests (si aplica)
+- [ ] Configurar generador de escenarios (si aplica)
 - [ ] Verificacion final
 ```
 
@@ -152,6 +191,8 @@ Para cada guia, en orden:
 | 7 | `{GUIDES_REPO}/stacks/orm/nhibernate/guides/setup.md` | Repositorios NHibernate |
 | 8 | `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/setup.md` | FastEndpoints (si aplica) |
 | 9 | `{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/setup.md` | Migraciones (si aplica) |
+| 10 | `{GUIDES_REPO}/testing/integration/tools/ndbunit/guides/setup.md` | NDbUnit (si aplica) |
+| 11 | `{GUIDES_REPO}/testing/integration/scenarios/guides/setup.md` | Escenarios (si aplica) |
 
 ### Fase 4: Verificacion Final
 
@@ -181,6 +222,7 @@ Mostrar al usuario:
    ├── {ProjectName}.sln
    ├── Directory.Packages.props
    ├── Directory.Build.props
+   ├── buildscenarios.bat  (si aplica)
    ├── src/
    │   ├── {ProjectName}.domain/
    │   ├── {ProjectName}.application/
@@ -188,12 +230,16 @@ Mostrar al usuario:
    │   ├── {ProjectName}.webapi/
    │   └── {ProjectName}.migrations/  (si aplica)
    └── tests/
+       ├── {ProjectName}.ndbunit/         (si aplica)
+       ├── {ProjectName}.common.tests/    (si aplica)
+       └── {ProjectName}.scenarios/       (si aplica)
    ```
 3. **Comandos utiles**:
    ```bash
    dotnet build                                    # Compilar
    dotnet run --project src/{ProjectName}.webapi  # Ejecutar API
    dotnet run --project src/{ProjectName}.migrations cnn="..."  # Migraciones
+   buildscenarios.bat                             # Generar escenarios (si aplica)
    ```
 4. **Proximos pasos**:
    - Crear entidades de dominio
@@ -232,8 +278,8 @@ Usuario: /init-backend
 
 Asistente:
 Init Backend Project
-Version: 3.1.0
-Ultima actualizacion: 2025-12-23
+Version: 3.2.0
+Ultima actualizacion: 2025-12-29
 
 ¿Como se llamara el proyecto?
 Usuario: gestion.inventario
@@ -254,12 +300,16 @@ Usuario: 1
 Asistente: ¿Incluir proyecto de migraciones?
 Usuario: Si
 
+Asistente: ¿Incluir generador de escenarios para testing?
+Usuario: Si
+
 Asistente:
 Inicializando: gestion.inventario
 Ubicacion: C:\projects\inventario
 Base de datos: PostgreSQL
 Framework: FastEndpoints
 Migraciones: Si
+Escenarios: Si
 
 [Ejecuta guias en orden...]
 [Muestra progreso con todo list...]

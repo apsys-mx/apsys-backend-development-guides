@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Para PostgreSQL -->
+  <ItemGroup Condition="'$(Database)' == 'postgresql'">
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <!-- Para SQL Server -->
+  <ItemGroup Condition="'$(Database)' == 'sqlserver'">
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+  </ItemGroup>
+
+</Project>

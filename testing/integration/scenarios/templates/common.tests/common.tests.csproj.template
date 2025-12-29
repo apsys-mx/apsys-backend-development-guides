@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\{ProjectName}.domain\{ProjectName}.domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AppSchema.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppSchema.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AppSchema.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AppSchema.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

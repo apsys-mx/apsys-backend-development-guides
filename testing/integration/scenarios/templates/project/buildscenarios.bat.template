@@ -1,0 +1,3 @@
+cd tests/{ProjectName}.scenarios\bin\Debug\net9.0
+{ProjectName}.scenarios.exe /cnn:"Host=localhost;Port=5432;Database={dbname};Username=postgres;Password=root;" /output:"D:\path\to\scenarios"
+cd "../../../../.."
