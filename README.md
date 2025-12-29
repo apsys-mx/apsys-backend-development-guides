@@ -2,7 +2,10 @@
 
 > **Version:** 4.0.0 | **Last Update:** 2025-12-29
 
-Guias de desarrollo y templates para crear proyectos backend .NET con **Clean Architecture**.
+Guias de desarrollo, patrones y templates para crear proyectos backend .NET.
+
+**Arquitectura actual:** Clean Architecture
+**Proximas:** Vertical Slices, Modular Monolith
 
 ---
 
@@ -79,7 +82,7 @@ Inicializa un proyecto backend completo con Clean Architecture.
 
 ## Arquitectura de Proyectos
 
-Los proyectos generados siguen **Clean Architecture**:
+Los proyectos generados actualmente siguen **Clean Architecture** (ver [architectures/](architectures/) para otras opciones):
 
 ```
 ┌─────────────────────────────────────────┐
@@ -114,9 +117,9 @@ Patrones que funcionan en cualquier arquitectura:
 - [fundamentals/patterns/best-practices/](fundamentals/patterns/best-practices/) - Mejores practicas
 
 ### Guias de Arquitectura (específicas)
-Como aplicar los patrones en Clean Architecture:
-- [architectures/clean-architecture/init/](architectures/clean-architecture/init/) - Inicializacion
-- [architectures/clean-architecture/guides/](architectures/clean-architecture/guides/) - Guias por capa
+Como aplicar los patrones en cada arquitectura:
+- [architectures/](architectures/) - Todas las arquitecturas disponibles
+- [architectures/clean-architecture/](architectures/clean-architecture/) - Clean Architecture (actual)
 
 ### Stacks Tecnologicos (implementaciones)
 Configuracion de tecnologias específicas:
