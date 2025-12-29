@@ -23,10 +23,15 @@ stacks/
 │       ├── guides/
 │       └── templates/
 │
-└── webapi/                 # Frameworks WebAPI
-    └── fastendpoints/
-        ├── guides/
-        └── templates/
+├── webapi/                 # Frameworks WebAPI
+│   └── fastendpoints/
+│       ├── guides/
+│       └── templates/
+│
+└── external-services/      # Servicios externos
+    ├── caching/            # Cache (memory, Redis)
+    ├── identity-providers/ # Auth0, JWT
+    └── http-clients.md     # Clientes HTTP
 ```
 
 ---
@@ -87,6 +92,30 @@ Framework de endpoints con minimo boilerplate.
 | Recurso | Descripcion |
 |---------|-------------|
 | [guides/setup.md](webapi/fastendpoints/guides/setup.md) | Configuracion de FastEndpoints |
+
+---
+
+## Servicios Externos
+
+### Caching
+
+| Recurso | Descripcion |
+|---------|-------------|
+| [memory-cache.md](external-services/caching/memory-cache.md) | Cache en memoria |
+| [redis.md](external-services/caching/redis.md) | Redis cache |
+
+### Identity Providers
+
+| Recurso | Descripcion |
+|---------|-------------|
+| [auth0.md](external-services/identity-providers/auth0.md) | Integracion con Auth0 |
+| [custom-jwt.md](external-services/identity-providers/custom-jwt.md) | JWT personalizado |
+
+### HTTP Clients
+
+| Recurso | Descripcion |
+|---------|-------------|
+| [http-clients.md](external-services/http-clients.md) | Clientes HTTP para APIs externas |
 
 ---
 
