@@ -1,6 +1,6 @@
 # Init Backend Project
 
-> **Version:** 3.4.0
+> **Version:** 3.5.0
 > **Ultima actualizacion:** 2025-12-30
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
@@ -194,7 +194,7 @@ Para cada guia, en orden:
 4. **Ejecutar los comandos** reemplazando `{ProjectName}`
 5. **Copiar templates** desde `{GUIDES_REPO}`, reemplazando placeholders
 6. **Registrar hora de fin y errores** en reporte de fase
-7. **Guardar reporte de fase** en `.claude/init/` (JSON y Markdown)
+7. **Guardar reporte de fase** en `.claude/init/` (Markdown)
 8. **Marcar tarea como `completed`** en TodoWrite inmediatamente al terminar
 
 > **IMPORTANTE:** Actualizar TodoWrite despues de CADA paso completado, no al final de todos.
@@ -217,37 +217,7 @@ Para cada guia, en orden:
 
 ### Fase 5: Generacion de Reportes por Fase
 
-Para CADA fase, crear DOS archivos en `.claude/init/`:
-
-#### 5.1 Reporte JSON (para analisis automatizado)
-
-**Nombre:** `phase-{numero}-{nombre-corto}.json`
-
-```json
-{
-  "phase": 1,
-  "name": "estructura-base",
-  "guide": "architectures/clean-architecture/init/01-estructura-base.md",
-  "startTime": "2025-01-15T10:30:00",
-  "endTime": "2025-01-15T10:35:00",
-  "durationSeconds": 300,
-  "status": "success",
-  "commands": [
-    {
-      "command": "dotnet new sln -n proyecto",
-      "exitCode": 0,
-      "output": "..."
-    }
-  ],
-  "errors": [],
-  "filesCreated": [
-    "proyecto.sln",
-    "Directory.Build.props"
-  ]
-}
-```
-
-#### 5.2 Reporte Markdown (para revision visual)
+Para CADA fase, crear un archivo Markdown en `.claude/init/`:
 
 **Nombre:** `phase-{numero}-{nombre-corto}.md`
 
@@ -279,7 +249,7 @@ Para CADA fase, crear DOS archivos en `.claude/init/`:
 Ninguno
 ```
 
-**Usar el tool Write** para crear ambos reportes al finalizar cada fase.
+**Usar el tool Write** para crear el reporte al finalizar cada fase.
 
 ### Fase 6: Verificacion Final
 
@@ -298,42 +268,9 @@ Ninguno
    dotnet run --project src/{ProjectName}.webapi
    ```
 
-### Fase 7: Reportes Finales
+### Fase 7: Reporte Final
 
-Al finalizar TODAS las fases, crear dos archivos de resumen:
-
-#### 7.1 summary.json (para analisis)
-
-```json
-{
-  "projectName": "nombre.proyecto",
-  "projectPath": "D:\\projects\\nombre-proyecto",
-  "database": "postgresql",
-  "webapi": "fastendpoints",
-  "migrations": true,
-  "scenarios": true,
-  "execution": {
-    "startTime": "2025-01-15T10:30:00",
-    "endTime": "2025-01-15T11:10:00",
-    "totalDurationSeconds": 2400,
-    "totalDurationMinutes": 40
-  },
-  "phases": [
-    {
-      "phase": 1,
-      "name": "estructura-base",
-      "durationSeconds": 300,
-      "status": "success"
-    }
-  ],
-  "totalPhases": 11,
-  "successPhases": 11,
-  "failedPhases": 0,
-  "overallStatus": "success"
-}
-```
-
-#### 7.2 summary.md (para revision visual)
+Al finalizar TODAS las fases, crear el archivo de resumen `summary.md`:
 
 ```markdown
 # Init Backend Report
@@ -388,9 +325,8 @@ Mostrar al usuario:
    ├── buildscenarios.bat  (si aplica)
    ├── .claude/
    │   └── init/
-   │       ├── summary.json
    │       ├── summary.md
-   │       └── phase-*.json/md
+   │       └── phase-*.md
    ├── src/
    │   ├── {ProjectName}.domain/
    │   ├── {ProjectName}.application/
@@ -431,9 +367,9 @@ En todos los archivos y rutas:
 
 Si ocurre un error:
 
-1. **Registrar el error** en el reporte de la fase actual (JSON y MD)
-2. **Actualizar status** a "failed" en ambos reportes
-3. **Guardar los reportes** inmediatamente
+1. **Registrar el error** en el reporte de la fase actual
+2. **Actualizar status** a "failed" en el reporte
+3. **Guardar el reporte** inmediatamente
 4. **Reportar** con contexto:
    - Guia en la que fallo
    - Comando que causo el error
@@ -449,29 +385,17 @@ Si ocurre un error:
 {ProjectPath}/
 └── .claude/
     └── init/
-        ├── summary.json                          # Resumen para analisis
-        ├── summary.md                            # Resumen visual
-        ├── phase-01-estructura-base.json
+        ├── summary.md                            # Resumen general
         ├── phase-01-estructura-base.md
-        ├── phase-02-domain-layer.json
         ├── phase-02-domain-layer.md
-        ├── phase-03-application-layer.json
         ├── phase-03-application-layer.md
-        ├── phase-04-infrastructure-layer.json
         ├── phase-04-infrastructure-layer.md
-        ├── phase-05-webapi-layer.json
         ├── phase-05-webapi-layer.md
-        ├── phase-06-database-setup.json
         ├── phase-06-database-setup.md
-        ├── phase-07-nhibernate-setup.json
         ├── phase-07-nhibernate-setup.md
-        ├── phase-08-fastendpoints-setup.json     (si aplica)
         ├── phase-08-fastendpoints-setup.md       (si aplica)
-        ├── phase-09-migrations-setup.json        (si aplica)
         ├── phase-09-migrations-setup.md          (si aplica)
-        ├── phase-10-ndbunit-setup.json           (si aplica)
         ├── phase-10-ndbunit-setup.md             (si aplica)
-        ├── phase-11-scenarios-setup.json         (si aplica)
         └── phase-11-scenarios-setup.md           (si aplica)
 ```
 
@@ -484,7 +408,7 @@ Usuario: /init-backend
 
 Asistente:
 Init Backend Project
-Version: 3.4.0
+Version: 3.5.0
 Ultima actualizacion: 2025-12-30
 
 ¿Como se llamara el proyecto?
@@ -535,7 +459,7 @@ Escenarios: Si
 - **Respetar el orden** de ejecucion (hay dependencias)
 - **Reemplazar TODOS los placeholders** en archivos y rutas
 - **Validar cada paso** antes de continuar
-- **Generar reportes** para cada fase (JSON y Markdown)
+- **Generar reportes** para cada fase (Markdown)
 
 ### Uso Obligatorio de TodoWrite
 
@@ -553,8 +477,8 @@ Esto es critico para que el usuario vea el progreso en tiempo real.
 
 **SIEMPRE** generar reportes para:
 
-1. **Cada fase:** JSON + Markdown con tiempos, comandos y errores
-2. **Al finalizar:** summary.json + summary.md con resumen total
+1. **Cada fase:** Markdown con tiempos, comandos y errores
+2. **Al finalizar:** summary.md con resumen total
 3. **En errores:** Registrar inmediatamente antes de preguntar al usuario
 
 Esto permite analizar y optimizar el proceso posteriormente.

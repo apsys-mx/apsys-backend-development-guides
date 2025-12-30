@@ -92,7 +92,6 @@ Configuracion del proyecto:
 ### 3. Crear Carpeta de Reportes
 INMEDIATAMENTE despues de recopilar la informacion:
 1. Crear carpeta `.claude/init` en la raiz del proyecto
-2. Crear archivo `summary.json` con la configuracion inicial
 
 ```bash
 mkdir -p {ProjectPath}/.claude/init
@@ -122,7 +121,7 @@ Para cada guia:
 4. Ejecutar los comandos reemplazando {ProjectName}
 5. Copiar templates reemplazando placeholders
 6. Registrar TODOS los pasos en la bitacora (exitos y errores)
-7. Guardar reporte de fase en `.claude/init/` (JSON y Markdown)
+7. Guardar reporte de fase en `.claude/init/` (Markdown)
 8. Marcar tarea como `completed` en TodoWrite
 
 Orden de ejecucion:
@@ -145,75 +144,7 @@ Orden de ejecucion:
 > **IMPORTANTE:** Los reportes deben ser una BITACORA COMPLETA de todo lo que ocurrio.
 > Incluir TODOS los pasos ejecutados, exitos, errores, y problemas con las guias.
 
-Para CADA fase, crear DOS archivos en `.claude/init/`:
-
-#### 6.1 Reporte JSON (para analisis automatizado)
-
-**Nombre:** `phase-{numero}-{nombre-corto}.json`
-
-```json
-{
-  "phase": 1,
-  "name": "estructura-base",
-  "guide": "architectures/clean-architecture/init/01-estructura-base.md",
-  "startTime": "2025-01-15T10:30:00",
-  "endTime": "2025-01-15T10:35:00",
-  "durationSeconds": 300,
-  "status": "success",
-  "log": [
-    {
-      "timestamp": "2025-01-15T10:30:01",
-      "action": "read_guide",
-      "detail": "Leyendo guia 01-estructura-base.md",
-      "status": "success"
-    },
-    {
-      "timestamp": "2025-01-15T10:30:05",
-      "action": "execute_command",
-      "detail": "mkdir src tests",
-      "status": "success",
-      "output": ""
-    },
-    {
-      "timestamp": "2025-01-15T10:30:10",
-      "action": "execute_command",
-      "detail": "dotnet new sln -n proyecto",
-      "status": "success",
-      "output": "The template was created successfully."
-    },
-    {
-      "timestamp": "2025-01-15T10:30:20",
-      "action": "copy_template",
-      "detail": "Copiando Directory.Packages.props desde {GUIDES_REPO}/templates/",
-      "status": "success",
-      "source": "D:\\apsys-mx\\apsys-backend-development-guides\\templates\\Directory.Packages.props",
-      "destination": "Directory.Packages.props"
-    }
-  ],
-  "commands": [
-    {
-      "command": "dotnet new sln -n proyecto",
-      "exitCode": 0,
-      "output": "The template was created successfully."
-    }
-  ],
-  "templatesCopiados": [
-    {
-      "source": "{GUIDES_REPO}/templates/Directory.Packages.props",
-      "destination": "Directory.Packages.props",
-      "status": "success"
-    }
-  ],
-  "errors": [],
-  "guideIssues": [],
-  "filesCreated": [
-    "proyecto.sln",
-    "Directory.Packages.props"
-  ]
-}
-```
-
-#### 6.2 Reporte Markdown (para revision visual)
+Para CADA fase, crear un archivo Markdown en `.claude/init/`:
 
 **Nombre:** `phase-{numero}-{nombre-corto}.md`
 
@@ -266,7 +197,7 @@ Ninguno
 Ninguno
 ```
 
-#### 6.3 Que DEBE incluir el reporte
+#### 6.1 Que DEBE incluir el reporte
 
 **OBLIGATORIO registrar:**
 
@@ -286,65 +217,20 @@ Ninguno
 - Archivos referenciados que no existen
 - Orden de pasos incorrecto
 
-**Ejemplo de problema con guia:**
-```json
-{
-  "guideIssues": [
-    {
-      "type": "template_not_found",
-      "description": "Template no encontrado en la ruta especificada",
-      "guideInstruction": "Copiar desde templates/Directory.Packages.props",
-      "attemptedPath": "D:\\apsys-mx\\...\\architectures\\clean-architecture\\init\\templates\\Directory.Packages.props",
-      "correctPath": "D:\\apsys-mx\\...\\templates\\Directory.Packages.props",
-      "suggestion": "La guia debe usar {GUIDES_REPO}/templates/ en lugar de ruta relativa"
-    }
-  ]
-}
+**Ejemplo de problema con guia en Markdown:**
+```markdown
+## Problemas con la Guia
+
+| Tipo | Descripcion | Instruccion en Guia | Ruta Intentada | Ruta Correcta | Sugerencia |
+|------|-------------|---------------------|----------------|---------------|------------|
+| template_not_found | Template no encontrado | Copiar desde templates/Directory.Packages.props | D:\apsys-mx\...\init\templates\... | D:\apsys-mx\...\templates\... | Usar {GUIDES_REPO}/templates/ |
 ```
 
-**Usar el tool Write** para crear ambos reportes al finalizar cada fase.
+**Usar el tool Write** para crear el reporte al finalizar cada fase.
 
-### 7. Reportes Finales
+### 7. Reporte Final
 
-Al finalizar TODAS las fases, crear dos archivos de resumen:
-
-#### 7.1 summary.json (para analisis)
-
-```json
-{
-  "projectName": "nombre.proyecto",
-  "projectPath": "D:\\projects\\nombre-proyecto",
-  "database": "postgresql",
-  "webapi": "fastendpoints",
-  "migrations": true,
-  "scenarios": true,
-  "execution": {
-    "startTime": "2025-01-15T10:30:00",
-    "endTime": "2025-01-15T11:10:00",
-    "totalDurationSeconds": 2400,
-    "totalDurationMinutes": 40
-  },
-  "phases": [
-    {
-      "phase": 1,
-      "name": "estructura-base",
-      "durationSeconds": 300,
-      "status": "success",
-      "errorsCount": 0,
-      "guideIssuesCount": 0
-    }
-  ],
-  "totalPhases": 11,
-  "successPhases": 11,
-  "failedPhases": 0,
-  "totalErrors": 0,
-  "totalGuideIssues": 0,
-  "overallStatus": "success",
-  "guideIssuesSummary": []
-}
-```
-
-#### 7.2 summary.md (para revision visual)
+Al finalizar TODAS las fases, crear el archivo de resumen `summary.md`:
 
 ```markdown
 # Init Backend Report
@@ -440,29 +326,17 @@ Es CRITICO distinguir entre ambos tipos para poder corregir las guias posteriorm
 {ProjectPath}/
 └── .claude/
     └── init/
-        ├── summary.json                          # Resumen para analisis
-        ├── summary.md                            # Resumen visual
-        ├── phase-01-estructura-base.json
+        ├── summary.md                            # Resumen general
         ├── phase-01-estructura-base.md
-        ├── phase-02-domain-layer.json
         ├── phase-02-domain-layer.md
-        ├── phase-03-application-layer.json
         ├── phase-03-application-layer.md
-        ├── phase-04-infrastructure-layer.json
         ├── phase-04-infrastructure-layer.md
-        ├── phase-05-webapi-layer.json
         ├── phase-05-webapi-layer.md
-        ├── phase-06-database-setup.json
         ├── phase-06-database-setup.md
-        ├── phase-07-nhibernate-setup.json
         ├── phase-07-nhibernate-setup.md
-        ├── phase-08-fastendpoints-setup.json     (si aplica)
         ├── phase-08-fastendpoints-setup.md       (si aplica)
-        ├── phase-09-migrations-setup.json        (si aplica)
         ├── phase-09-migrations-setup.md          (si aplica)
-        ├── phase-10-ndbunit-setup.json           (si aplica)
         ├── phase-10-ndbunit-setup.md             (si aplica)
-        ├── phase-11-scenarios-setup.json         (si aplica)
         └── phase-11-scenarios-setup.md           (si aplica)
 ```
 
