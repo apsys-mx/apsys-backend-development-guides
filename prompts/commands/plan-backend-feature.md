@@ -1,7 +1,7 @@
 # Plan Backend Feature
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2025-12-02
+> **Version Comando:** 2.0.0
+> **Ultima actualizacion:** 2025-12-30
 
 ---
 
@@ -15,11 +15,26 @@ Si `$ARGUMENTS` esta vacio, pregunta al usuario que feature desea planear.
 
 ## Configuracion
 
-**Ruta de Guias:**
+**Repositorio de Guias:**
 
-- **Variable:** `guidesPath`
-- **Default:** `D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development`
-- **Override:** Usa `--guides-path=<ruta>` en los argumentos para especificar otra ubicacion
+```
+GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
+```
+
+> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
+
+**Rutas de Recursos (relativas a GUIDES_REPO):**
+
+| Categoria | Ruta |
+|-----------|------|
+| Feature Structure | `architectures/clean-architecture/guides/feature-structure/` |
+| Domain Modeling | `fundamentals/patterns/domain-modeling/` |
+| Repository Patterns | `fundamentals/patterns/repository/` |
+| Application Layer | `architectures/clean-architecture/guides/application/` |
+| WebApi Layer | `architectures/clean-architecture/guides/webapi/` |
+| NHibernate | `stacks/orm/nhibernate/guides/` |
+| FastEndpoints | `stacks/webapi/fastendpoints/guides/` |
+| Examples | `architectures/clean-architecture/examples/` |
 
 ---
 
@@ -152,22 +167,23 @@ Analiza la descripcion para identificar:
 
 ### 2. Consulta de Guias
 
-Consulta las guias relevantes en `{guidesPath}/`:
+Consulta las guias relevantes desde `{GUIDES_REPO}`:
 
 **Siempre consultar:**
 
-- `{guidesPath}/feature-structure/folder-organization.md` - Estructura de carpetas por capa
-- `{guidesPath}/feature-structure/entity-to-endpoint-flow.md` - Flujo completo de datos
-- `{guidesPath}/feature-structure/naming-conventions.md` - Convenciones de nombres
+- `architectures/clean-architecture/guides/feature-structure/folder-organization.md` - Estructura de carpetas por capa
+- `architectures/clean-architecture/guides/feature-structure/entity-to-endpoint-flow.md` - Flujo completo de datos
+- `architectures/clean-architecture/guides/feature-structure/naming-conventions.md` - Convenciones de nombres
 
 **Segun el tipo de feature:**
 
-- Para Domain: `{guidesPath}/domain-layer/entities.md`, `{guidesPath}/domain-layer/validators.md`
-- Para Repository: `{guidesPath}/domain-layer/repository-interfaces.md`
-- Para Use Cases: `{guidesPath}/application-layer/use-cases.md`
-- Para Infrastructure: `{guidesPath}/infrastructure-layer/orm-implementations/nhibernate/repositories.md`
-- Para WebApi: `{guidesPath}/webapi-layer/fastendpoints-basics.md`, `{guidesPath}/webapi-layer/automapper-profiles.md`
-- Si es read-only: `{guidesPath}/domain-layer/daos.md`
+- Para Domain: `fundamentals/patterns/domain-modeling/entities.md`, `fundamentals/patterns/domain-modeling/validators.md`
+- Para Repository: `fundamentals/patterns/domain-modeling/repository-interfaces.md`
+- Para Use Cases: `architectures/clean-architecture/guides/application/use-cases.md`
+- Para Infrastructure: `stacks/orm/nhibernate/guides/repositories.md`, `stacks/orm/nhibernate/guides/mappers.md`
+- Para WebApi: `stacks/webapi/fastendpoints/guides/fastendpoints-basics.md`, `stacks/webapi/fastendpoints/guides/automapper-profiles.md`
+- Para DTOs: `architectures/clean-architecture/guides/webapi/dtos.md`
+- Si es read-only: `fundamentals/patterns/domain-modeling/daos.md`
 
 ### 3. Identificacion de Elementos por Capa
 
@@ -258,20 +274,20 @@ Ordena los elementos por orden de implementacion:
 Guarda el plan generado en:
 
 ```
-.claude/planning/{nombre-descriptivo}-plan.md
+.claude/planning/{nombre-descriptivo}-implementation-plan.md
 ```
 
 **Convenciones de nombre:**
 
 - Usar kebab-case
 - Nombre descriptivo basado en la solicitud del usuario
-- Sufijo `-plan.md`
+- Sufijo `-implementation-plan.md`
 
 **Ejemplos:**
 
-- Solicitud: "Gestion de proveedores" -> `.claude/planning/gestion-proveedores-plan.md`
-- Solicitud: "Feature de reportes de ventas" -> `.claude/planning/reportes-ventas-plan.md`
-- Solicitud: "Modulo de inventario" -> `.claude/planning/modulo-inventario-plan.md`
+- Solicitud: "Gestion de proveedores" -> `.claude/planning/gestion-proveedores-implementation-plan.md`
+- Solicitud: "Feature de reportes de ventas" -> `.claude/planning/reportes-ventas-implementation-plan.md`
+- Solicitud: "Modulo de inventario" -> `.claude/planning/modulo-inventario-implementation-plan.md`
 
 **Si la carpeta no existe:**
 
@@ -387,7 +403,7 @@ public virtual {tipo} {Propiedad} { get; set; }
 - Constructor vacio requerido para NHibernate
 - Constructor con parametros requeridos para factory
 
-**Referencia**: `{guidesPath}/domain-layer/entities.md`
+**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/domain-modeling/entities.md`
 
 ---
 
@@ -411,7 +427,7 @@ public virtual {tipo} {Propiedad} { get; set; }
 - {campo}: {regla}
 - {campo}: {regla}
 
-**Referencia**: `{guidesPath}/domain-layer/validators.md`
+**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/domain-modeling/validators.md`
 
 ---
 
@@ -438,7 +454,7 @@ Task<{Entity}?> GetBy{Campo}Async({tipo} {campo});
 Task<{Entity}> UpdateAsync(Guid id, {parametros});
 ```
 
-**Referencia**: `{guidesPath}/domain-layer/repository-interfaces.md`
+**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/domain-modeling/repository-interfaces.md`
 
 ---
 
@@ -476,7 +492,7 @@ Task<{Entity}> UpdateAsync(Guid id, {parametros});
 - Schema: usar AppSchemaResource.{Schema}
 - Generator: Generators.GuidComb para Guid
 
-**Referencia**: `{guidesPath}/infrastructure-layer/orm-implementations/nhibernate/mappers.md`
+**Referencia**: `{GUIDES_REPO}/stacks/orm/nhibernate/guides/mappers.md`
 
 ---
 
@@ -512,7 +528,7 @@ public async Task<{Entity}> CreateAsync({parametros})
 }
 ```
 
-**Referencia**: `{guidesPath}/infrastructure-layer/orm-implementations/nhibernate/repositories.md`
+**Referencia**: `{GUIDES_REPO}/stacks/orm/nhibernate/guides/repositories.md`
 
 ---
 
@@ -563,7 +579,7 @@ public class Command : ICommand<Result<{Entity}>>
 - Commit o Rollback
 - Retornar Result.Ok() o Result.Fail()
 
-**Referencia**: `{guidesPath}/application-layer/use-cases.md`
+**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -577,7 +593,7 @@ public class Command : ICommand<Result<{Entity}>>
 - NO requiere transaccion (solo lectura)
 - Retornar Result.Fail si no encuentra
 
-**Referencia**: `{guidesPath}/application-layer/use-cases.md`
+**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -591,7 +607,7 @@ public class Command : ICommand<Result<{Entity}>>
 - Llamar repository.GetManyAndCountAsync()
 - Retornar GetManyAndCountResult<{Entity}>
 
-**Referencia**: `{guidesPath}/application-layer/use-cases.md`
+**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -605,7 +621,7 @@ public class Command : ICommand<Result<{Entity}>>
 - Manejar transacciones
 - Manejar ResourceNotFoundException, InvalidDomainException, DuplicatedDomainException
 
-**Referencia**: `{guidesPath}/application-layer/use-cases.md`
+**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -628,7 +644,7 @@ public Guid Id { get; set; }
 public {tipo} {Propiedad} { get; set; }
 ```
 
-**Referencia**: `{guidesPath}/webapi-layer/dtos.md`
+**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md`
 
 ---
 
@@ -651,7 +667,7 @@ CreateMap<{Entity}, Create{Entity}Model.Response>()
     .ForMember(dest => dest.{Entity}, opt => opt.MapFrom(src => src));
 ```
 
-**Referencia**: `{guidesPath}/webapi-layer/automapper-profiles.md`
+**Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/automapper-profiles.md`
 
 ---
 
@@ -681,7 +697,7 @@ public class Create{Entity}Model
 }
 ```
 
-**Referencia**: `{guidesPath}/webapi-layer/request-response-models.md`
+**Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/request-response-models.md`
 
 ---
 
@@ -716,7 +732,7 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 }
 ```
 
-**Referencia**: `{guidesPath}/webapi-layer/fastendpoints-basics.md`
+**Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md`
 
 ---
 
@@ -759,12 +775,15 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 
 ## Referencias
 
-- [Feature Structure]({guidesPath}/feature-structure/README.md)
-- [Domain Layer]({guidesPath}/domain-layer/README.md)
-- [Application Layer]({guidesPath}/application-layer/README.md)
-- [Infrastructure Layer]({guidesPath}/infrastructure-layer/README.md)
-- [WebApi Layer]({guidesPath}/webapi-layer/README.md)
-- [Best Practices]({guidesPath}/best-practices/README.md)
+- [Feature Structure]({GUIDES_REPO}/architectures/clean-architecture/guides/feature-structure/README.md)
+- [Domain Modeling]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/README.md)
+- [Application Layer]({GUIDES_REPO}/architectures/clean-architecture/guides/application/README.md)
+- [Repository Patterns]({GUIDES_REPO}/fundamentals/patterns/repository/README.md)
+- [WebApi Layer]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/README.md)
+- [NHibernate]({GUIDES_REPO}/stacks/orm/nhibernate/guides/README.md)
+- [FastEndpoints]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/README.md)
+- [Best Practices]({GUIDES_REPO}/fundamentals/patterns/best-practices/README.md)
+- [Examples]({GUIDES_REPO}/architectures/clean-architecture/examples/README.md)
 
 ````
 
