@@ -53,7 +53,7 @@ Para cada guia:
 3. Leer la guia completa con Read desde GUIDES_REPO
 4. Ejecutar los comandos reemplazando {ProjectName}
 5. Copiar templates reemplazando placeholders
-6. Registrar hora de fin y errores en reporte de fase
+6. Registrar TODOS los pasos en la bitacora (exitos y errores)
 7. Guardar reporte de fase en `.claude/init/` (JSON y Markdown)
 8. Marcar tarea como `completed` en TodoWrite
 
@@ -74,6 +74,9 @@ Orden de ejecucion:
 
 ### 6. Generacion de Reportes por Fase
 
+> **IMPORTANTE:** Los reportes deben ser una BITACORA COMPLETA de todo lo que ocurrio.
+> Incluir TODOS los pasos ejecutados, exitos, errores, y problemas con las guias.
+
 Para CADA fase, crear DOS archivos en `.claude/init/`:
 
 #### 6.1 Reporte JSON (para analisis automatizado)
@@ -89,17 +92,55 @@ Para CADA fase, crear DOS archivos en `.claude/init/`:
   "endTime": "2025-01-15T10:35:00",
   "durationSeconds": 300,
   "status": "success",
+  "log": [
+    {
+      "timestamp": "2025-01-15T10:30:01",
+      "action": "read_guide",
+      "detail": "Leyendo guia 01-estructura-base.md",
+      "status": "success"
+    },
+    {
+      "timestamp": "2025-01-15T10:30:05",
+      "action": "execute_command",
+      "detail": "mkdir src tests",
+      "status": "success",
+      "output": ""
+    },
+    {
+      "timestamp": "2025-01-15T10:30:10",
+      "action": "execute_command",
+      "detail": "dotnet new sln -n proyecto",
+      "status": "success",
+      "output": "The template was created successfully."
+    },
+    {
+      "timestamp": "2025-01-15T10:30:20",
+      "action": "copy_template",
+      "detail": "Copiando Directory.Packages.props desde {GUIDES_REPO}/templates/",
+      "status": "success",
+      "source": "D:\\apsys-mx\\apsys-backend-development-guides\\templates\\Directory.Packages.props",
+      "destination": "Directory.Packages.props"
+    }
+  ],
   "commands": [
     {
       "command": "dotnet new sln -n proyecto",
       "exitCode": 0,
-      "output": "..."
+      "output": "The template was created successfully."
+    }
+  ],
+  "templatesCopiados": [
+    {
+      "source": "{GUIDES_REPO}/templates/Directory.Packages.props",
+      "destination": "Directory.Packages.props",
+      "status": "success"
     }
   ],
   "errors": [],
+  "guideIssues": [],
   "filesCreated": [
     "proyecto.sln",
-    "Directory.Build.props"
+    "Directory.Packages.props"
   ]
 }
 ```
@@ -119,21 +160,78 @@ Para CADA fase, crear DOS archivos en `.claude/init/`:
 | **Duracion** | 5 min |
 | **Status** | Success |
 
+## Bitacora de Ejecucion
+
+| Hora | Accion | Detalle | Resultado |
+|------|--------|---------|-----------|
+| 10:30:01 | Leer guia | 01-estructura-base.md | OK |
+| 10:30:05 | Comando | `mkdir src tests` | OK |
+| 10:30:10 | Comando | `dotnet new sln -n proyecto` | OK |
+| 10:30:20 | Copiar template | Directory.Packages.props | OK |
+
 ## Comandos Ejecutados
 
-| # | Comando | Resultado |
-|---|---------|-----------|
-| 1 | `dotnet new sln -n proyecto` | OK |
-| 2 | `dotnet new classlib -n proyecto.domain` | OK |
+| # | Comando | Exit Code | Resultado |
+|---|---------|-----------|-----------|
+| 1 | `mkdir src tests` | 0 | OK |
+| 2 | `dotnet new sln -n proyecto` | 0 | OK |
+
+## Templates Copiados
+
+| # | Origen | Destino | Status |
+|---|--------|---------|--------|
+| 1 | `{GUIDES_REPO}/templates/Directory.Packages.props` | `Directory.Packages.props` | OK |
 
 ## Archivos Creados
 
 - proyecto.sln
-- Directory.Build.props
+- Directory.Packages.props
+- src/
+- tests/
 
 ## Errores
 
 Ninguno
+
+## Problemas con la Guia
+
+Ninguno
+```
+
+#### 6.3 Que DEBE incluir el reporte
+
+**OBLIGATORIO registrar:**
+
+1. **Bitacora completa:** Cada accion realizada con timestamp
+2. **Comandos ejecutados:** Con exit code y output
+3. **Templates copiados:** Origen, destino y si fue exitoso
+4. **Archivos creados:** Lista de todos los archivos generados
+5. **Errores encontrados:** Cualquier error durante la ejecucion
+6. **Problemas con la guia:** Errores en la documentacion que deben corregirse
+
+**Tipos de problemas con guias a reportar:**
+
+- Rutas de templates incorrectas o no encontradas
+- Comandos que fallan por sintaxis incorrecta
+- Instrucciones ambiguas o incompletas
+- Placeholders no documentados
+- Archivos referenciados que no existen
+- Orden de pasos incorrecto
+
+**Ejemplo de problema con guia:**
+```json
+{
+  "guideIssues": [
+    {
+      "type": "template_not_found",
+      "description": "Template no encontrado en la ruta especificada",
+      "guideInstruction": "Copiar desde templates/Directory.Packages.props",
+      "attemptedPath": "D:\\apsys-mx\\...\\architectures\\clean-architecture\\init\\templates\\Directory.Packages.props",
+      "correctPath": "D:\\apsys-mx\\...\\templates\\Directory.Packages.props",
+      "suggestion": "La guia debe usar {GUIDES_REPO}/templates/ en lugar de ruta relativa"
+    }
+  ]
+}
 ```
 
 **Usar el tool Write** para crear ambos reportes al finalizar cada fase.
@@ -163,13 +261,18 @@ Al finalizar TODAS las fases, crear dos archivos de resumen:
       "phase": 1,
       "name": "estructura-base",
       "durationSeconds": 300,
-      "status": "success"
+      "status": "success",
+      "errorsCount": 0,
+      "guideIssuesCount": 0
     }
   ],
   "totalPhases": 11,
   "successPhases": 11,
   "failedPhases": 0,
-  "overallStatus": "success"
+  "totalErrors": 0,
+  "totalGuideIssues": 0,
+  "overallStatus": "success",
+  "guideIssuesSummary": []
 }
 ```
 
@@ -199,25 +302,36 @@ Al finalizar TODAS las fases, crear dos archivos de resumen:
 
 ## Resumen de Fases
 
-| # | Fase | Duracion | Status |
-|---|------|----------|--------|
-| 1 | Estructura Base | 5 min | Success |
-| 2 | Domain Layer | 3 min | Success |
-| 3 | Application Layer | 4 min | Success |
-| ... | ... | ... | ... |
+| # | Fase | Duracion | Status | Errores | Problemas Guia |
+|---|------|----------|--------|---------|----------------|
+| 1 | Estructura Base | 5 min | Success | 0 | 0 |
+| 2 | Domain Layer | 3 min | Success | 0 | 0 |
+| 3 | Application Layer | 4 min | Success | 0 | 0 |
+| ... | ... | ... | ... | ... | ... |
 
 ## Resultado
 
 - **Total Fases:** 11
 - **Exitosas:** 11
 - **Fallidas:** 0
+- **Total Errores:** 0
+- **Problemas en Guias:** 0
 - **Estado General:** Success
+
+## Problemas Encontrados en las Guias
+
+> Esta seccion lista problemas en la documentacion que deben ser corregidos.
+
+Ninguno
+
+(O listar cada problema encontrado con su solucion sugerida)
 ```
 
 ### 8. Reemplazo de Placeholders
 En todos los archivos y rutas:
 - {ProjectName} -> Nombre del proyecto exacto como lo proporciono el usuario
 - {ProjectPath} -> Ruta absoluta del proyecto
+- {GUIDES_REPO} -> D:\apsys-mx\apsys-backend-development-guides
 - {database} -> postgresql | sqlserver
 
 ### 9. Verificacion Final
@@ -225,14 +339,32 @@ En todos los archivos y rutas:
 2. Verificar: dotnet sln list
 3. Mostrar estructura final al usuario
 4. Mostrar resumen de tiempos por fase
+5. Mostrar problemas encontrados en las guias (si los hay)
 
 ### 10. Manejo de Errores
 Si ocurre un error:
-1. Registrar el error en el reporte de la fase actual (JSON y MD)
-2. Actualizar status a "failed" en ambos reportes
-3. Guardar los reportes inmediatamente
-4. Reportar el error al usuario con contexto (guia, comando, mensaje)
-5. Preguntar al usuario si continuar o cancelar
+1. Registrar el error en la bitacora del reporte de fase
+2. Si es un problema de la guia (ruta incorrecta, template no encontrado, etc.), registrarlo en `guideIssues`
+3. Actualizar status a "failed" si el error impide continuar
+4. Guardar los reportes inmediatamente
+5. Reportar el error al usuario con contexto (guia, comando, mensaje)
+6. Preguntar al usuario si continuar o cancelar
+
+### 11. Tipos de Errores a Distinguir
+
+**Errores de ejecucion (errors):**
+- Comandos que fallan (dotnet, mkdir, etc.)
+- Archivos que no se pueden crear
+- Permisos denegados
+
+**Problemas de guia (guideIssues):**
+- Templates no encontrados en la ruta indicada
+- Rutas relativas incorrectas
+- Instrucciones que no funcionan
+- Placeholders no documentados
+- Dependencias faltantes no mencionadas
+
+Es CRITICO distinguir entre ambos tipos para poder corregir las guias posteriormente.
 
 ## Estructura de Reportes Generada
 
