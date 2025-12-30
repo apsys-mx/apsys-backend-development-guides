@@ -93,7 +93,7 @@ dotnet add tests/{ProjectName}.application.tests/{ProjectName}.application.tests
 
 ### 9. Copiar template
 
-Copiar `templates/tests/ApplicationTestBase.cs` a `tests/{ProjectName}.application.tests/`
+Copiar `{GUIDES_REPO}/templates/tests/ApplicationTestBase.cs` a `tests/{ProjectName}.application.tests/`
 
 ## Principios
 

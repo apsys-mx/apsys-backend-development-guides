@@ -115,7 +115,7 @@ mkdir tests/{ProjectName}.domain.tests/entities
 
 ### 8. Copiar templates
 
-Copiar desde `templates/domain/` a `src/{ProjectName}.domain/`:
+Copiar desde `{GUIDES_REPO}/templates/domain/` a `src/{ProjectName}.domain/`:
 
 | Template | Destino | Descripción |
 |----------|---------|-------------|
@@ -130,7 +130,7 @@ Copiar desde `templates/domain/` a `src/{ProjectName}.domain/`:
 | `interfaces/repositories/SortingCriteria.cs` | `interfaces/repositories/` | Modelo para criterios de ordenamiento |
 | `interfaces/repositories/GetManyAndCountResult.cs` | `interfaces/repositories/` | Resultado paginado con conteo |
 
-Copiar desde `templates/tests/` a `tests/{ProjectName}.domain.tests/entities/`:
+Copiar desde `{GUIDES_REPO}/templates/tests/` a `tests/{ProjectName}.domain.tests/entities/`:
 - `DomainTestBase.cs`
 
 **Reemplazar `{ProjectName}`** en namespaces con el nombre real del proyecto.

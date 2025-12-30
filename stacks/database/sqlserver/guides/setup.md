@@ -33,7 +33,7 @@ DB_PASSWORD=your_password
 
 ### 1. Copiar ConnectionStringBuilder
 
-Copiar `stacks/database/sqlserver/templates/ConnectionStringBuilder.cs` a `src/{ProjectName}.infrastructure/nhibernate/`
+Copiar `{GUIDES_REPO}/stacks/database/sqlserver/templates/ConnectionStringBuilder.cs` a `src/{ProjectName}.infrastructure/nhibernate/`
 
 ### 2. Configurar NHSessionFactory
 

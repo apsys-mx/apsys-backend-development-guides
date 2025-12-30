@@ -47,7 +47,7 @@ dotnet new sln -n {ProjectName}
 
 ### 4. Crear Directory.Packages.props
 
-Copiar desde: `templates/Directory.Packages.props`
+Copiar desde: `{GUIDES_REPO}/templates/Directory.Packages.props`
 
 Este archivo centraliza las versiones de todos los paquetes NuGet. Con él habilitado, los paquetes se agregan sin especificar versión:
 

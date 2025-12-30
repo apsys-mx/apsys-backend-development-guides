@@ -75,7 +75,7 @@ mkdir src/{ProjectName}.webapi/infrastructure
 
 ### 5. Copiar templates
 
-Copiar desde `templates/webapi/`:
+Copiar desde `{GUIDES_REPO}/templates/webapi/`:
 
 | Template | Destino | Descripción |
 |----------|---------|-------------|
