@@ -1,7 +1,7 @@
 # Init Backend Project
 
-> **Version:** 3.2.0
-> **Ultima actualizacion:** 2025-12-29
+> **Version:** 3.3.0
+> **Ultima actualizacion:** 2025-12-30
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
 
@@ -129,8 +129,8 @@ Al iniciar, mostrar:
 
 ```
 Init Backend Project
-Version: 3.2.0
-Ultima actualizacion: 2025-12-29
+Version: 3.3.0
+Ultima actualizacion: 2025-12-30
 ```
 
 ### Fase 1: Validacion
@@ -151,7 +151,10 @@ Ultima actualizacion: 2025-12-29
 
 ### Fase 2: Crear Todo List
 
-Crear lista de tareas segun opciones seleccionadas:
+> **OBLIGATORIO:** Usar la herramienta `TodoWrite` para crear la lista de tareas.
+> Esto permite al usuario ver el progreso en tiempo real.
+
+Inmediatamente despues de recopilar la informacion del usuario, invocar `TodoWrite` con las siguientes tareas (omitir las que no apliquen segun las opciones seleccionadas):
 
 ```
 - [ ] Crear estructura base de solucion
@@ -173,10 +176,13 @@ Crear lista de tareas segun opciones seleccionadas:
 
 Para cada guia, en orden:
 
-1. **Leer la guia completa** con el tool Read desde `{GUIDES_REPO}`
-2. **Ejecutar los comandos** reemplazando `{ProjectName}`
-3. **Copiar templates** desde `{GUIDES_REPO}`, reemplazando placeholders
-4. **Marcar como completado** en el todo list
+1. **Marcar tarea como `in_progress`** en TodoWrite
+2. **Leer la guia completa** con el tool Read desde `{GUIDES_REPO}`
+3. **Ejecutar los comandos** reemplazando `{ProjectName}`
+4. **Copiar templates** desde `{GUIDES_REPO}`, reemplazando placeholders
+5. **Marcar tarea como `completed`** en TodoWrite inmediatamente al terminar
+
+> **IMPORTANTE:** Actualizar TodoWrite despues de CADA paso completado, no al final de todos.
 
 #### Orden de ejecucion:
 
@@ -278,8 +284,8 @@ Usuario: /init-backend
 
 Asistente:
 Init Backend Project
-Version: 3.2.0
-Ultima actualizacion: 2025-12-29
+Version: 3.3.0
+Ultima actualizacion: 2025-12-30
 
 ¿Como se llamara el proyecto?
 Usuario: gestion.inventario
@@ -325,4 +331,15 @@ Escenarios: Si
 - **Respetar el orden** de ejecucion (hay dependencias)
 - **Reemplazar TODOS los placeholders** en archivos y rutas
 - **Validar cada paso** antes de continuar
-- **Usar TodoWrite** para mantener al usuario informado
+
+### Uso Obligatorio de TodoWrite
+
+**SIEMPRE** usar la herramienta `TodoWrite` para:
+
+1. **Al inicio (Fase 2):** Crear la lista completa de tareas
+2. **Durante ejecucion (Fase 3):**
+   - Marcar tarea actual como `in_progress` ANTES de comenzar
+   - Marcar tarea como `completed` INMEDIATAMENTE al terminar
+3. **No acumular:** Actualizar despues de CADA paso, no al final
+
+Esto es critico para que el usuario vea el progreso en tiempo real.
