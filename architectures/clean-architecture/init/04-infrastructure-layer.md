@@ -113,7 +113,7 @@ dotnet build
 
 Después de crear la estructura base, configura el ORM:
 
-- **NHibernate (recomendado):** → [stacks/orm/nhibernate/setup.md](../../../stacks/orm/nhibernate/setup.md)
+- **NHibernate (recomendado):** → [stacks/orm/nhibernate/guides/setup.md](../../../stacks/orm/nhibernate/guides/setup.md)
 - **Entity Framework:** → `stacks/orm/entity-framework/setup.md`
 
 ## Siguiente Paso del Init
