@@ -26,7 +26,8 @@ src/{ProjectName}.domain/
 │       ├── IReadOnlyRepository.cs  # Interfaz solo lectura
 │       ├── IUnitOfWork.cs
 │       ├── SortingCriteria.cs
-│       └── GetManyAndCountResult.cs
+│       ├── GetManyAndCountResult.cs
+│       └── IGetManyAndCountResultWithSorting.cs
 └── exceptions/
     ├── InvalidDomainException.cs
     ├── InvalidFilterArgumentException.cs
@@ -129,6 +130,7 @@ Copiar desde `{GUIDES_REPO}/templates/domain/` a `src/{ProjectName}.domain/`:
 | `interfaces/repositories/IUnitOfWork.cs` | `interfaces/repositories/` | Patrón Unit of Work |
 | `interfaces/repositories/SortingCriteria.cs` | `interfaces/repositories/` | Modelo para criterios de ordenamiento |
 | `interfaces/repositories/GetManyAndCountResult.cs` | `interfaces/repositories/` | Resultado paginado con conteo |
+| `interfaces/repositories/IGetManyAndCountResultWithSorting.cs` | `interfaces/repositories/` | Interface para resultados con sorting |
 
 Copiar desde `{GUIDES_REPO}/templates/tests/` a `tests/{ProjectName}.domain.tests/entities/`:
 - `DomainTestBase.cs`

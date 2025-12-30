@@ -10,9 +10,9 @@ const string ActionRollback = "rollback";
 try
 {
     AnsiConsole.MarkupLine("[bold yellow]Reading command line parameters...[/]");
-    CommandLineArgs args = new();
+    CommandLineArgs cmdArgs = new();
 
-    if (!args.TryGetValue("cnn", out string? connectionString))
+    if (!cmdArgs.TryGetValue("cnn", out string? connectionString))
     {
         throw new ArgumentException(
             "Missing [cnn] parameter. Usage: dotnet run cnn=\"your_connection_string\" [action=run|rollback]");
@@ -24,7 +24,7 @@ try
     using var scope = serviceProvider.CreateScope();
     var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
 
-    if (!args.TryGetValue("action", out string? action) || string.IsNullOrEmpty(action))
+    if (!cmdArgs.TryGetValue("action", out string? action) || string.IsNullOrEmpty(action))
     {
         action = ActionRun;
     }
