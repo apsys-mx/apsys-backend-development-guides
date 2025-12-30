@@ -1,6 +1,6 @@
 # Init Backend Project
 
-> **Version:** 3.5.0
+> **Version:** 3.6.0
 > **Ultima actualizacion:** 2025-12-30
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
@@ -17,40 +17,94 @@ GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
 
 ---
 
-## Informacion Requerida
+## Recopilar Informacion
 
-Antes de comenzar, solicita al usuario:
+> **IMPORTANTE:** Hacer SIEMPRE como un asistente interactivo.
+> Preguntar UNA cosa a la vez y ESPERAR la respuesta del usuario antes de continuar.
 
 ### 1. Nombre del proyecto
-- Formato: minusculas, sin espacios ni caracteres especiales
-- Ejemplo: `miproyecto`, `gestionusuarios`, `inventario.api`
-- Se usara para reemplazar `{ProjectName}` en templates
+
+Preguntar:
+```
+¿Como se llamara el proyecto?
+(minusculas, sin espacios, puede tener puntos. Ej: mi.proyecto, inventario, gestion.usuarios)
+```
+**Esperar respuesta del usuario.**
 
 ### 2. Ubicacion del proyecto
-- Ruta absoluta donde crear el proyecto
-- Ejemplo: `C:\projects\mi-proyecto`, `D:\workspace\backend`
-- Si no existe, se creara
+
+Preguntar con opciones:
+```
+¿Donde crear el proyecto?
+1. [Ruta actual] (default)
+2. Otra ubicacion
+
+Selecciona una opcion (1-2):
+```
+- Si elige 1: usar la ruta donde se esta ejecutando
+- Si elige 2: preguntar "Ingresa la ruta absoluta:"
+
+**Esperar respuesta del usuario.**
 
 ### 3. Base de datos
-- `postgresql` - PostgreSQL (recomendado)
-- `sqlserver` - SQL Server
+
+Preguntar con opciones:
+```
+¿Que base de datos usara el proyecto?
+1. PostgreSQL (default)
+2. SQL Server
+
+Selecciona una opcion (1-2):
+```
+**Esperar respuesta del usuario.**
 
 ### 4. Framework WebAPI
-- `fastendpoints` - FastEndpoints + JWT + AutoMapper (recomendado)
-- `none` - Solo estructura base con Swagger
 
-### 5. Incluir migraciones
-- `yes` - Incluir proyecto de migraciones con FluentMigrator
-- `no` - Sin proyecto de migraciones
+Preguntar con opciones:
+```
+¿Que framework para la WebAPI?
+1. FastEndpoints (default)
+2. Solo estructura base (sin framework)
 
-### 6. Incluir generador de escenarios
-- `yes` - Incluir proyectos para testing de integracion:
-  - `{ProjectName}.ndbunit` - Libreria para cargar/limpiar datos en BD
-  - `{ProjectName}.common.tests` - Recursos compartidos (Schema, IDs)
-  - `{ProjectName}.scenarios` - Generador de escenarios XML
-- `no` - Sin proyectos de escenarios
+Selecciona una opcion (1-2):
+```
+**Esperar respuesta del usuario.**
 
-> **Nota:** Estos proyectos son necesarios para pruebas de integracion con datos pre-cargados.
+### 5. Migraciones y Escenarios
+
+Preguntar con opciones:
+```
+¿Incluir proyectos de migraciones y/o escenarios de prueba?
+1. Migraciones + Escenarios (recomendado para proyectos completos)
+2. Solo Migraciones
+3. Solo Escenarios
+4. Ninguno
+
+Selecciona una opcion (1-4):
+```
+
+> **Nota sobre escenarios:** Los proyectos de escenarios incluyen:
+> - `{ProjectName}.ndbunit` - Libreria para cargar/limpiar datos en BD
+> - `{ProjectName}.common.tests` - Recursos compartidos (Schema, IDs)
+> - `{ProjectName}.scenarios` - Generador de escenarios XML
+
+**Esperar respuesta del usuario.**
+
+### 6. Confirmar configuracion
+
+Mostrar resumen y pedir confirmacion:
+```
+Configuracion del proyecto:
+- Nombre: {nombre}
+- Ubicacion: {ruta}
+- Base de datos: {database}
+- Framework: {framework}
+- Migraciones: {si/no}
+- Escenarios: {si/no}
+
+¿Confirmar e iniciar? (si/no)
+```
+**Esperar confirmacion del usuario antes de continuar.**
 
 ---
 
@@ -129,7 +183,7 @@ Al iniciar, mostrar:
 
 ```
 Init Backend Project
-Version: 3.4.0
+Version: 3.6.0
 Ultima actualizacion: 2025-12-30
 ```
 
@@ -217,6 +271,9 @@ Para cada guia, en orden:
 
 ### Fase 5: Generacion de Reportes por Fase
 
+> **IMPORTANTE:** Los reportes deben ser una BITACORA COMPLETA de todo lo que ocurrio.
+> Incluir TODOS los pasos ejecutados, exitos, errores, y problemas con las guias.
+
 Para CADA fase, crear un archivo Markdown en `.claude/init/`:
 
 **Nombre:** `phase-{numero}-{nombre-corto}.md`
@@ -232,21 +289,71 @@ Para CADA fase, crear un archivo Markdown en `.claude/init/`:
 | **Duracion** | 5 min |
 | **Status** | Success |
 
+## Bitacora de Ejecucion
+
+| Hora | Accion | Detalle | Resultado |
+|------|--------|---------|-----------|
+| 10:30:01 | Leer guia | 01-estructura-base.md | OK |
+| 10:30:05 | Comando | `mkdir src tests` | OK |
+| 10:30:10 | Comando | `dotnet new sln -n proyecto` | OK |
+| 10:30:20 | Copiar template | Directory.Packages.props | OK |
+
 ## Comandos Ejecutados
 
-| # | Comando | Resultado |
-|---|---------|-----------|
-| 1 | `dotnet new sln -n proyecto` | OK |
-| 2 | `dotnet new classlib -n proyecto.domain` | OK |
+| # | Comando | Exit Code | Resultado |
+|---|---------|-----------|-----------|
+| 1 | `mkdir src tests` | 0 | OK |
+| 2 | `dotnet new sln -n proyecto` | 0 | OK |
+
+## Templates Copiados
+
+| # | Origen | Destino | Status |
+|---|--------|---------|--------|
+| 1 | `{GUIDES_REPO}/templates/Directory.Packages.props` | `Directory.Packages.props` | OK |
 
 ## Archivos Creados
 
 - proyecto.sln
-- Directory.Build.props
+- Directory.Packages.props
+- src/
+- tests/
 
 ## Errores
 
 Ninguno
+
+## Problemas con la Guia
+
+Ninguno
+```
+
+#### 5.1 Que DEBE incluir el reporte
+
+**OBLIGATORIO registrar:**
+
+1. **Bitacora completa:** Cada accion realizada con timestamp
+2. **Comandos ejecutados:** Con exit code y output
+3. **Templates copiados:** Origen, destino y si fue exitoso
+4. **Archivos creados:** Lista de todos los archivos generados
+5. **Errores encontrados:** Cualquier error durante la ejecucion
+6. **Problemas con la guia:** Errores en la documentacion que deben corregirse
+
+**Tipos de problemas con guias a reportar:**
+
+- Rutas de templates incorrectas o no encontradas
+- Comandos que fallan por sintaxis incorrecta
+- Instrucciones ambiguas o incompletas
+- Placeholders no documentados
+- Archivos referenciados que no existen
+- Orden de pasos incorrecto
+
+**Ejemplo de problema con guia en Markdown:**
+```markdown
+## Problemas con la Guia
+
+| Tipo | Descripcion | Instruccion en Guia | Ruta Intentada | Ruta Correcta | Sugerencia |
+|------|-------------|---------------------|----------------|---------------|------------|
+| template_not_found | Template no encontrado | Copiar desde templates/... | D:\apsys-mx\...\init\templates\... | D:\apsys-mx\...\templates\... | Usar {GUIDES_REPO}/templates/ |
 ```
 
 **Usar el tool Write** para crear el reporte al finalizar cada fase.
@@ -296,19 +403,29 @@ Al finalizar TODAS las fases, crear el archivo de resumen `summary.md`:
 
 ## Resumen de Fases
 
-| # | Fase | Duracion | Status |
-|---|------|----------|--------|
-| 1 | Estructura Base | 5 min | Success |
-| 2 | Domain Layer | 3 min | Success |
-| 3 | Application Layer | 4 min | Success |
-| ... | ... | ... | ... |
+| # | Fase | Duracion | Status | Errores | Problemas Guia |
+|---|------|----------|--------|---------|----------------|
+| 1 | Estructura Base | 5 min | Success | 0 | 0 |
+| 2 | Domain Layer | 3 min | Success | 0 | 0 |
+| 3 | Application Layer | 4 min | Success | 0 | 0 |
+| ... | ... | ... | ... | ... | ... |
 
 ## Resultado
 
 - **Total Fases:** 11
 - **Exitosas:** 11
 - **Fallidas:** 0
+- **Total Errores:** 0
+- **Problemas en Guias:** 0
 - **Estado General:** Success
+
+## Problemas Encontrados en las Guias
+
+> Esta seccion lista problemas en la documentacion que deben ser corregidos.
+
+Ninguno
+
+(O listar cada problema encontrado con su solucion sugerida)
 ```
 
 ### Fase 8: Reporte Final al Usuario
@@ -368,14 +485,31 @@ En todos los archivos y rutas:
 Si ocurre un error:
 
 1. **Registrar el error** en el reporte de la fase actual
-2. **Actualizar status** a "failed" en el reporte
-3. **Guardar el reporte** inmediatamente
-4. **Reportar** con contexto:
+2. **Si es un problema de la guia** (ruta incorrecta, template no encontrado, etc.), registrarlo en la seccion "Problemas con la Guia"
+3. **Actualizar status** a "failed" si el error impide continuar
+4. **Guardar el reporte** inmediatamente
+5. **Reportar** con contexto:
    - Guia en la que fallo
    - Comando que causo el error
    - Mensaje de error
-5. **Sugerir solucion**
-6. **Preguntar** si continuar o cancelar
+6. **Sugerir solucion**
+7. **Preguntar** si continuar o cancelar
+
+### Tipos de Errores a Distinguir
+
+**Errores de ejecucion (errors):**
+- Comandos que fallan (dotnet, mkdir, etc.)
+- Archivos que no se pueden crear
+- Permisos denegados
+
+**Problemas de guia (guideIssues):**
+- Templates no encontrados en la ruta indicada
+- Rutas relativas incorrectas
+- Instrucciones que no funcionan
+- Placeholders no documentados
+- Dependencias faltantes no mencionadas
+
+Es CRITICO distinguir entre ambos tipos para poder corregir las guias posteriormente.
 
 ---
 
@@ -408,46 +542,73 @@ Usuario: /init-backend
 
 Asistente:
 Init Backend Project
-Version: 3.5.0
+Version: 3.6.0
 Ultima actualizacion: 2025-12-30
 
 ¿Como se llamara el proyecto?
+(minusculas, sin espacios, puede tener puntos. Ej: mi.proyecto, inventario, gestion.usuarios)
+
 Usuario: gestion.inventario
 
-Asistente: ¿Donde crear el proyecto?
-Usuario: C:\projects\inventario
+Asistente:
+¿Donde crear el proyecto?
+1. [C:\projects\inventario] (default)
+2. Otra ubicacion
 
-Asistente: ¿Que base de datos?
-1. PostgreSQL (recomendado)
-2. SQL Server
+Selecciona una opcion (1-2):
+
 Usuario: 1
-
-Asistente: ¿Framework WebAPI?
-1. FastEndpoints (recomendado)
-2. Solo estructura base
-Usuario: 1
-
-Asistente: ¿Incluir proyecto de migraciones?
-Usuario: Si
-
-Asistente: ¿Incluir generador de escenarios para testing?
-Usuario: Si
 
 Asistente:
-Inicializando: gestion.inventario
-Ubicacion: C:\projects\inventario
-Base de datos: PostgreSQL
-Framework: FastEndpoints
-Migraciones: Si
-Escenarios: Si
+¿Que base de datos usara el proyecto?
+1. PostgreSQL (default)
+2. SQL Server
 
+Selecciona una opcion (1-2):
+
+Usuario: 1
+
+Asistente:
+¿Que framework para la WebAPI?
+1. FastEndpoints (default)
+2. Solo estructura base (sin framework)
+
+Selecciona una opcion (1-2):
+
+Usuario: 1
+
+Asistente:
+¿Incluir proyectos de migraciones y/o escenarios de prueba?
+1. Migraciones + Escenarios (recomendado para proyectos completos)
+2. Solo Migraciones
+3. Solo Escenarios
+4. Ninguno
+
+Selecciona una opcion (1-4):
+
+Usuario: 1
+
+Asistente:
+Configuracion del proyecto:
+- Nombre: gestion.inventario
+- Ubicacion: C:\projects\inventario
+- Base de datos: PostgreSQL
+- Framework: FastEndpoints
+- Migraciones: Si
+- Escenarios: Si
+
+¿Confirmar e iniciar? (si/no)
+
+Usuario: si
+
+Asistente:
 [Crea carpeta .claude/init...]
 [Crea todo list...]
 [Ejecuta guias en orden...]
-[Genera reportes por fase...]
+[Genera reportes por fase con bitacora...]
 [Muestra progreso con todo list...]
-[Genera reportes finales...]
-[Reporte final con tiempos...]
+[Genera summary.md con resumen...]
+[Reporte final con tiempos y problemas de guias...]
 ```
 
 ---
