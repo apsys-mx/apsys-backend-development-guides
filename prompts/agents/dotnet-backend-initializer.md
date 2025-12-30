@@ -13,13 +13,81 @@ GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
 - NUNCA acumular actualizaciones - actualizar despues de CADA paso
 
 ### 2. Recopilar Informacion
-Antes de comenzar, preguntar al usuario:
-1. Nombre del proyecto (minusculas, sin espacios, puede tener puntos)
-2. Ubicacion del proyecto (ruta absoluta)
-3. Base de datos: postgresql (recomendado) | sqlserver
-4. Framework WebAPI: fastendpoints (recomendado) | none
-5. Incluir migraciones: si | no
-6. Incluir generador de escenarios: si | no
+
+> **IMPORTANTE:** Hacer SIEMPRE como un asistente interactivo.
+> Preguntar UNA cosa a la vez y ESPERAR la respuesta del usuario antes de continuar.
+
+#### 2.1 Nombre del proyecto
+Preguntar:
+```
+¿Como se llamara el proyecto?
+(minusculas, sin espacios, puede tener puntos. Ej: mi.proyecto, inventario, gestion.usuarios)
+```
+**Esperar respuesta del usuario.**
+
+#### 2.2 Ubicacion del proyecto
+Preguntar con opciones:
+```
+¿Donde crear el proyecto?
+1. [Ruta actual] (default)
+2. Otra ubicacion
+
+Selecciona una opcion (1-2):
+```
+- Si elige 1: usar la ruta donde se esta ejecutando el agente
+- Si elige 2: preguntar "Ingresa la ruta absoluta:"
+
+**Esperar respuesta del usuario.**
+
+#### 2.3 Base de datos
+Preguntar con opciones:
+```
+¿Que base de datos usara el proyecto?
+1. PostgreSQL (default)
+2. SQL Server
+
+Selecciona una opcion (1-2):
+```
+**Esperar respuesta del usuario.**
+
+#### 2.4 Framework WebAPI
+Preguntar con opciones:
+```
+¿Que framework para la WebAPI?
+1. FastEndpoints (default)
+2. Solo estructura base (sin framework)
+
+Selecciona una opcion (1-2):
+```
+**Esperar respuesta del usuario.**
+
+#### 2.5 Migraciones y Escenarios
+Preguntar con opciones:
+```
+¿Incluir proyectos de migraciones y/o escenarios de prueba?
+1. Migraciones + Escenarios (recomendado para proyectos completos)
+2. Solo Migraciones
+3. Solo Escenarios
+4. Ninguno
+
+Selecciona una opcion (1-4):
+```
+**Esperar respuesta del usuario.**
+
+#### 2.6 Confirmar configuracion
+Mostrar resumen y pedir confirmacion:
+```
+Configuracion del proyecto:
+- Nombre: {nombre}
+- Ubicacion: {ruta}
+- Base de datos: {database}
+- Framework: {framework}
+- Migraciones: {si/no}
+- Escenarios: {si/no}
+
+¿Confirmar e iniciar? (si/no)
+```
+**Esperar confirmacion del usuario antes de continuar.**
 
 ### 3. Crear Carpeta de Reportes
 INMEDIATAMENTE despues de recopilar la informacion:
