@@ -1,346 +1,208 @@
-# Implement Backend WebAPI Layer (TDD)
+# Implement Backend Application + WebAPI Layer
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2025-12-02
+> **Version Comando:** 2.0.0
+> **Ultima actualizacion:** 2025-12-30
 
 ---
 
-Eres un desarrollador TDD especializado en WebAPI Layer de .NET con FastEndpoints. Implementas endpoints, DTOs, Use Cases y Mapping Profiles siguiendo estrictamente Red-Green-Refactor.
+Implementa las capas de Application y WebAPI Layer siguiendo el plan de implementacion y las guias de desarrollo de APSYS.
 
 ## Entrada
 
-**Contexto del plan o descripcion:** $ARGUMENTS
+**Contexto:** $ARGUMENTS
 
-Si `$ARGUMENTS` esta vacio, pregunta al usuario que endpoint desea implementar.
+- Si se proporciona un archivo de plan (`.claude/planning/*-implementation-plan.md`), extrae las secciones "Fase 3: Application Layer" y "Fase 4: WebAPI Layer"
+- Si se proporciona una descripcion directa, usala como contexto
+- Si `$ARGUMENTS` esta vacio, pregunta al usuario que desea implementar
 
 ## Configuracion
 
-**Ruta de Guias:** `D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development`
+**Repositorio de Guias:**
+
+```
+GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
+```
+
+> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
 
 ---
 
-## Guias a Consultar (OBLIGATORIO)
+## Guias a Consultar
 
-Antes de implementar, lee estas guias:
+Antes de implementar, lee las guias relevantes desde `{GUIDES_REPO}`:
 
-```
-{guidesPath}/webapi-layer/
-├── webapi-testing-practices.md   # Como escribir tests de endpoints
-├── dtos.md                       # DTOs (Data Transfer Objects)
-├── request-response-models.md   # Request/Response Models
-├── automapper-profiles.md       # Mapping Profiles
-└── fastendpoints-basics.md      # FastEndpoints framework
-```
+### Application Layer
+
+| Guia | Ruta | Cuando Usar |
+|------|------|-------------|
+| Use Cases | `architectures/clean-architecture/guides/application/use-cases.md` | Siempre |
+| Command Handler Patterns | `architectures/clean-architecture/guides/application/command-handler-patterns.md` | Siempre |
+
+### WebAPI Layer
+
+| Guia | Ruta | Cuando Usar |
+|------|------|-------------|
+| FastEndpoints Basics | `stacks/webapi/fastendpoints/guides/fastendpoints-basics.md` | Siempre |
+| Request/Response Models | `stacks/webapi/fastendpoints/guides/request-response-models.md` | Siempre |
+| DTOs | `architectures/clean-architecture/guides/webapi/dtos.md` | Siempre |
+| AutoMapper Profiles | `stacks/webapi/fastendpoints/guides/automapper-profiles.md` | Siempre |
 
 ---
 
-## Flujo TDD
+## Proceso de Implementacion
 
-### Fase 0: Analisis
+### Paso 1: Analizar el Plan
 
-1. **Identificar tipo de endpoint:**
-   - CREATE (POST) - Crear recurso
-   - GET Single (GET /{id}) - Obtener uno
-   - GET Many (GET /) - Listar con filtros/paginacion
-   - UPDATE (PUT /{id}) - Actualizar
-   - DELETE (DELETE /{id}) - Eliminar
+Extrae del plan o contexto:
 
-2. **Extraer del contexto:**
-   - Entidad principal
-   - Ruta del endpoint
-   - Request/Response models necesarios
-   - Use Case (Command o Query)
+- Entidad principal
+- Endpoints a implementar (Create, Get, GetMany, Update, Delete)
+- DTOs requeridos
+- Use Cases con Commands/Queries
+- Rutas de los endpoints
 
-3. **Componentes a crear:**
-   - DTO: `{Entity}Dto` (si no existe)
-   - Models: `{Action}{Entity}Model.Request` y `.Response`
-   - Use Case: `{Action}{Entity}UseCase` con `Command` o `Query`
-   - Mapping Profile: `{Entity}MappingProfile`
-   - Endpoint: `{Action}{Entity}Endpoint`
-   - Tests: Integracion + Mapping
+### Paso 2: Explorar Proyecto Actual
 
-### Fase 1: RED - Escribir Tests que Fallan
+Busca implementaciones existentes como referencia:
 
-**Tests de Mapping:** `tests/{proyecto}.webapi.tests/mappingprofiles/{Entity}MappingProfileTests.cs`
+```bash
+# DTOs existentes
+Glob: **/dtos/*Dto.cs
 
-```csharp
-public class {Entity}MappingProfileTests : BaseMappingProfileTests
-{
-    protected override void ConfigureProfiles(IMapperConfigurationExpression configuration)
-        => configuration.AddProfile<{Entity}MappingProfile>();
+# Use Cases existentes
+Glob: **/usecases/**/*UseCase.cs
 
-    [Test]
-    public void {Entity}ToDto_ShouldMapCorrectly()
-    {
-        // Arrange
-        var entity = fixture.Create<{Entity}>();
+# Endpoints existentes
+Glob: **/features/**/*Endpoint.cs
 
-        // Act
-        var dto = mapper.Map<{Entity}Dto>(entity);
+# Mapping Profiles
+Glob: **/mappingprofiles/*MappingProfile.cs
 
-        // Assert
-        dto.Should().NotBeNull();
-        dto.Id.Should().Be(entity.Id);
-    }
-
-    [Test]
-    public void RequestToCommand_ShouldMapCorrectly()
-    {
-        // Arrange
-        var request = fixture.Create<Create{Entity}Model.Request>();
-
-        // Act
-        var command = mapper.Map<Create{Entity}UseCase.Command>(request);
-
-        // Assert
-        command.Should().NotBeNull();
-        command.PropertyName.Should().Be(request.PropertyName);
-    }
-}
+# Request/Response Models
+Glob: **/features/**/models/*Model.cs
 ```
 
-**Tests de Endpoint:** `tests/{proyecto}.webapi.tests/features/{entity}/{Action}{Entity}EndpointTests.cs`
+### Paso 3: Implementar Componentes
 
-```csharp
-public class {Action}{Entity}EndpointTests : EndpointTestBase
-{
-    #region Success Tests
+Implementa en este orden:
 
-    [Test]
-    public async Task {Action}{Entity}_WithValidData_Returns{ExpectedStatus}()
-    {
-        // Arrange
-        LoadScenario("Scenario Name");
-        httpClient = CreateClient("usuario@example.com");
+#### 3.1 DTO
 
-        var request = new {Action}{Entity}Model.Request
-        {
-            PropertyName = "value"
-        };
+**Archivo:** `{proyecto}.webapi/dtos/{Entity}Dto.cs`
 
-        // Act
-        var response = await httpClient.PostAsJsonAsync("/endpoint", request);
+Siguiendo la guia `dtos.md`:
+- Solo propiedades (sin logica)
+- Strings inicializados con `string.Empty`
+- Colecciones con `Enumerable.Empty<T>()`
 
-        // Assert - Response
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+#### 3.2 Use Cases
 
-        // Assert - Database
-        var dataSet = nDbUnitTest.GetDataSetFromDb();
-        // Verificar registro creado...
-    }
+**Archivo:** `{proyecto}.application/usecases/{entity}/{Action}{Entity}UseCase.cs`
 
-    #endregion
+Siguiendo la guia `use-cases.md`:
+- Clase interna `Command` o `Query` con propiedades de entrada
+- Metodo `ExecuteAsync` que retorna `Result<T>`
+- Use Cases son **thin wrappers** - solo orquestacion, NO logica de negocio
+- Inyectar repositorio via constructor
 
-    #region Failure Tests
+#### 3.3 Request/Response Models
 
-    [Test]
-    public async Task {Action}{Entity}_WithInvalidData_ReturnsBadRequest()
-    {
-        // Arrange
-        httpClient = CreateClient("usuario@example.com");
-        var request = new {Action}{Entity}Model.Request { PropertyName = "" };
+**Archivo:** `{proyecto}.webapi/features/{entity}/models/{Action}{Entity}Model.cs`
 
-        // Act
-        var response = await httpClient.PostAsJsonAsync("/endpoint", request);
+Siguiendo la guia `request-response-models.md`:
+- Clase contenedora con `Request` y `Response` anidados
+- Request tiene propiedades de entrada
+- Response contiene DTO o lista de DTOs
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
+#### 3.4 Mapping Profile
 
-    #endregion
-}
-```
+**Archivo:** `{proyecto}.webapi/mappingprofiles/{Entity}MappingProfile.cs`
 
-**REGLA DE ORO:** NUNCA usar el endpoint bajo test en Arrange o Assert.
-- Arrange: Usar `LoadScenario()` y escenarios XML
-- Assert: Usar `nDbUnitTest.GetDataSetFromDb()`
+Siguiendo la guia `automapper-profiles.md`:
+- Entity → DTO
+- Request → Command/Query
+- Entity/Result → Response
 
-**Ejecutar tests -> DEBEN FALLAR**
+#### 3.5 Endpoints
 
-### Fase 2: GREEN - Implementar Minimo Necesario
+**Archivo:** `{proyecto}.webapi/features/{entity}/endpoint/{Action}{Entity}Endpoint.cs`
 
-**1. Crear DTO:** `{proyecto}.webapi/dtos/{Entity}Dto.cs`
+Siguiendo la guia `fastendpoints-basics.md`:
+- Heredar de `Endpoint<TRequest, TResponse>`
+- Configurar ruta y permisos en `Configure()`
+- Implementar `HandleAsync()`
+- Mapear Request → Command → UseCase → Response
+- Manejar errores con codigos HTTP correctos
 
-```csharp
-public class {Entity}Dto
-{
-    public Guid Id { get; set; }
-    public string PropertyName { get; set; } = string.Empty;
-}
-```
+#### 3.6 Validators (FastEndpoints)
 
-**2. Crear Request/Response:** `{proyecto}.webapi/features/{entity}/models/{Action}{Entity}Model.cs`
+**Archivo:** En el mismo archivo del Endpoint
 
-```csharp
-public class {Action}{Entity}Model
-{
-    public class Request
-    {
-        public string PropertyName { get; set; } = string.Empty;
-    }
+- Heredar de `Validator<{Action}{Entity}Model.Request>`
+- Reglas con FluentValidation
+- Mensajes de error descriptivos
 
-    public class Response
-    {
-        public {Entity}Dto {Entity} { get; set; } = new {Entity}Dto();
-    }
-}
-```
+#### 3.7 Registrar Use Cases
 
-**3. Crear Mapping Profile:** `{proyecto}.webapi/mappingprofiles/{Entity}MappingProfile.cs`
+**Archivo a modificar:** `Program.cs` o archivo de configuracion DI
 
-```csharp
-public class {Entity}MappingProfile : Profile
-{
-    public {Entity}MappingProfile()
-    {
-        // Entity -> DTO
-        CreateMap<{Entity}, {Entity}Dto>();
+- Agregar: `services.AddScoped<{Action}{Entity}UseCase>();`
 
-        // Entity -> Response
-        CreateMap<{Entity}, Create{Entity}Model.Response>()
-            .ForMember(dest => dest.{Entity}, opt => opt.MapFrom(src => src));
+### Paso 4: Verificar
 
-        // Request -> Command
-        CreateMap<Create{Entity}Model.Request, Create{Entity}UseCase.Command>();
-    }
-}
-```
-
-**4. Crear Use Case:** `{proyecto}.application/usecases/{entity}/{Action}{Entity}UseCase.cs`
-
-```csharp
-public class {Action}{Entity}UseCase
-{
-    private readonly I{Entity}Repository _{entity}Repository;
-
-    public {Action}{Entity}UseCase(I{Entity}Repository {entity}Repository)
-    {
-        _{entity}Repository = {entity}Repository;
-    }
-
-    public class Command
-    {
-        public string PropertyName { get; set; } = string.Empty;
-    }
-
-    public async Task<Result<{Entity}>> ExecuteAsync(Command command, CancellationToken ct = default)
-    {
-        if (string.IsNullOrEmpty(command.PropertyName))
-            return Result.Fail("PropertyName is required");
-
-        var entity = await _{entity}Repository.CreateAsync(command.PropertyName);
-        return Result.Ok(entity);
-    }
-}
-```
-
-**IMPORTANTE:** Use Cases son THIN WRAPPERS - solo orquestacion, NO logica de negocio.
-
-**5. Crear Endpoint:** `{proyecto}.webapi/features/{entity}/{Action}{Entity}Endpoint.cs`
-
-```csharp
-public class {Action}{Entity}Endpoint : Endpoint<{Action}{Entity}Model.Request, {Action}{Entity}Model.Response>
-{
-    private readonly {Action}{Entity}UseCase _useCase;
-    private readonly IMapper _mapper;
-
-    public {Action}{Entity}Endpoint({Action}{Entity}UseCase useCase, IMapper mapper)
-    {
-        _useCase = useCase;
-        _mapper = mapper;
-    }
-
-    public override void Configure()
-    {
-        Post("/{entities}");
-        AllowAnonymous(); // O Roles("Admin"), etc.
-    }
-
-    public override async Task HandleAsync({Action}{Entity}Model.Request req, CancellationToken ct)
-    {
-        var command = _mapper.Map<{Action}{Entity}UseCase.Command>(req);
-        var result = await _useCase.ExecuteAsync(command, ct);
-
-        if (result.IsFailed)
-        {
-            await SendAsync(new ErrorResponse
-            {
-                Errors = new ErrorsDto
-                {
-                    GeneralErrors = result.Errors.Select(e => e.Message).ToList()
-                }
-            }, 400, ct);
-            return;
-        }
-
-        var response = _mapper.Map<{Action}{Entity}Model.Response>(result.Value);
-        await SendCreatedAtAsync<Get{Entity}Endpoint>(
-            new { id = result.Value.Id },
-            response,
-            generateAbsoluteUrl: false,
-            cancellation: ct);
-    }
-}
-
-public class {Action}{Entity}Validator : Validator<{Action}{Entity}Model.Request>
-{
-    public {Action}{Entity}Validator()
-    {
-        RuleFor(x => x.PropertyName)
-            .NotEmpty()
-            .WithMessage("PropertyName cannot be empty");
-    }
-}
-```
-
-**6. Registrar Use Case en DI:** En Program.cs o Startup.cs:
-```csharp
-services.AddScoped<{Action}{Entity}UseCase>();
-```
-
-**Ejecutar tests -> DEBEN PASAR**
-
-### Fase 3: REFACTOR
-
-Verificar:
-- [ ] DTOs solo tienen propiedades (sin logica)
-- [ ] Strings inicializados con `string.Empty`
-- [ ] Colecciones con `Enumerable.Empty<T>()`
+- [ ] Codigo compila sin errores
+- [ ] DTOs solo tienen propiedades
 - [ ] Use Cases son thin wrappers
-- [ ] Endpoints manejan errores con codigos HTTP correctos
-- [ ] Mapping Profile tiene todos los mapeos necesarios
-- [ ] Documentacion XML completa
-
-**Ejecutar tests -> DEBEN SEGUIR PASANDO**
+- [ ] Endpoints manejan errores correctamente
+- [ ] Mapping Profile tiene todos los mapeos
+- [ ] Validators tienen todas las reglas
+- [ ] Use Cases registrados en DI
 
 ---
 
-## Reporte de Salida
+## Formato de Salida
 
 Al finalizar, muestra:
 
 ```markdown
-## WebAPI Layer Completado (TDD)
+## Application + WebAPI Layer Implementado
 
 ### DTOs Creados
-- [x] {proyecto}.webapi/dtos/{Entity}Dto.cs
 
-### Request/Response Models
-- [x] {proyecto}.webapi/features/{entity}/models/{Action}{Entity}Model.cs
+| Archivo | Descripcion |
+|---------|-------------|
+| `{proyecto}.webapi/dtos/{Entity}Dto.cs` | DTO con {n} propiedades |
 
-### Mapping Profiles
-- [x] {proyecto}.webapi/mappingprofiles/{Entity}MappingProfile.cs
+### Use Cases Creados
 
-### Use Cases (Application Layer)
-- [x] {proyecto}.application/usecases/{entity}/{Action}{Entity}UseCase.cs
+| Archivo | Tipo | Descripcion |
+|---------|------|-------------|
+| `Create{Entity}UseCase.cs` | Command | Crear entidad |
+| `Get{Entity}UseCase.cs` | Query | Obtener por ID |
+| `GetManyAndCount{Entities}UseCase.cs` | Query | Listar con paginacion |
+| `Update{Entity}UseCase.cs` | Command | Actualizar entidad |
 
-### Endpoints
-- [x] {proyecto}.webapi/features/{entity}/{Action}{Entity}Endpoint.cs
+### Endpoints Creados
 
-### Tests
-- Integration Tests: {n}
-- Mapping Tests: {n}
-- Total Pasando: {n}
+| Endpoint | Metodo | Ruta |
+|----------|--------|------|
+| `Create{Entity}Endpoint` | POST | `/{entities}` |
+| `Get{Entity}Endpoint` | GET | `/{entities}/{id}` |
+| `GetManyAndCount{Entities}Endpoint` | GET | `/{entities}` |
+| `Update{Entity}Endpoint` | PUT | `/{entities}/{id}` |
+
+### Archivos de Soporte
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `{Entity}MappingProfile.cs` | {n} mapeos configurados |
+| `{Action}{Entity}Model.cs` | Request/Response models |
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `Program.cs` | Registrados {n} Use Cases en DI |
 
 **Status:** SUCCESS
 ```
@@ -350,43 +212,49 @@ Al finalizar, muestra:
 ## Patrones por Tipo de Endpoint
 
 ### CREATE (POST)
-- Response: 201 Created
-- Tests: Happy path, validaciones, duplicados, auth
+- Response: 201 Created con `SendCreatedAtAsync`
+- Retorna el recurso creado
 
 ### GET Single (GET /{id})
 - Response: 200 OK o 404 NotFound
-- Tests: Existente, no existe, formato invalido
+- Retorna el recurso o error
 
 ### GET Many (GET /)
 - Response: 200 OK con lista (puede ser vacia)
-- Tests: Sin filtros, con filtros, paginacion, sorting
+- Soporta filtros y paginacion
 
 ### UPDATE (PUT /{id})
 - Response: 200 OK o 404 NotFound
-- Tests: Happy path, no existe, validaciones, duplicados
+- Retorna el recurso actualizado
 
 ### DELETE (DELETE /{id})
 - Response: 204 NoContent o 404 NotFound
-- Tests: Happy path, no existe, con dependencias
+- Sin body en respuesta exitosa
 
 ---
 
-## Anti-Patrones a Evitar
+## Restricciones
 
-1. **NUNCA usar endpoint bajo test en Arrange/Assert** - Solo en Act
-2. **NUNCA exponer entidades de dominio** - Siempre usar DTOs
-3. **NUNCA poner logica de negocio en Use Cases** - Solo orquestacion
-4. **NUNCA poner logica de negocio en Endpoints** - Solo HTTP handling
-5. **NUNCA ejecutar servicios externos sin mock** - Email, SMS, etc.
+### NO debes:
+- Implementar capas de Domain o Infrastructure (eso es otro comando)
+- Poner logica de negocio en Use Cases o Endpoints
+- Exponer entidades de dominio directamente (usar DTOs)
+- Crear archivos fuera de `{proyecto}.application/` y `{proyecto}.webapi/`
+
+### DEBES:
+- Seguir estrictamente las guias de desarrollo
+- Usar los patrones de implementaciones existentes como referencia
+- Implementar TODOS los endpoints listados en el plan
+- Registrar Use Cases en DI
+- Use Cases deben ser thin wrappers
 
 ---
 
-## Recordatorios
+## Referencias
 
-1. **TDD es obligatorio** - Tests primero, implementacion despues
-2. **Use Cases son thin wrappers** - Solo orquestacion
-3. **NUNCA usar endpoint en Arrange/Assert** - Solo en Act
-4. **LoadScenario() para Arrange** - Cargar datos de prueba
-5. **NDbUnit para Assert** - Verificar en BD directamente
-6. **Mockear servicios externos** - Email, SMS, storage, payments
-7. **FluentAssertions con mensajes** - Describir el "porque"
+- [Use Cases]({GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md)
+- [Command Handler Patterns]({GUIDES_REPO}/architectures/clean-architecture/guides/application/command-handler-patterns.md)
+- [FastEndpoints Basics]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md)
+- [Request/Response Models]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/request-response-models.md)
+- [DTOs]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md)
+- [AutoMapper Profiles]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/automapper-profiles.md)

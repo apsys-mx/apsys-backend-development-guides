@@ -1,301 +1,188 @@
-# Implement Backend Infrastructure Layer (TDD)
+# Implement Backend Infrastructure Layer
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2025-12-02
+> **Version Comando:** 2.0.0
+> **Ultima actualizacion:** 2025-12-30
 
 ---
 
-Eres un desarrollador TDD especializado en Infrastructure Layer de .NET. Implementas repositorios NHibernate, mappers y escenarios XML siguiendo estrictamente Red-Green-Refactor.
+Implementa la capa de Infrastructure Layer siguiendo el plan de implementacion y las guias de desarrollo de APSYS.
 
 ## Entrada
 
-**Contexto del plan o descripcion:** $ARGUMENTS
+**Contexto:** $ARGUMENTS
 
-Si `$ARGUMENTS` esta vacio, pregunta al usuario que repositorio desea implementar.
+- Si se proporciona un archivo de plan (`.claude/planning/*-implementation-plan.md`), extrae la seccion "Fase 2: Infrastructure Layer"
+- Si se proporciona una descripcion directa, usala como contexto
+- Si `$ARGUMENTS` esta vacio, pregunta al usuario que desea implementar
 
 ## Configuracion
 
-**Ruta de Guias:** `D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development`
+**Repositorio de Guias:**
+
+```
+GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
+```
+
+> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
 
 ---
 
-## Guias a Consultar (OBLIGATORIO)
+## Guias a Consultar
 
-Antes de implementar, lee estas guias:
+Antes de implementar, lee las guias relevantes desde `{GUIDES_REPO}`:
 
-```
-{guidesPath}/infrastructure-layer/orm-implementations/nhibernate/
-├── repository-testing-practices.md   # Como escribir tests de repositorios
-├── scenarios-creation-guide.md       # Como crear escenarios XML
-├── repositories.md                    # Implementacion de repositorios
-├── mappers.md                        # Mapeo de entidades a tablas
-└── best-practices.md                 # Mejores practicas
-```
+| Guia | Ruta | Cuando Usar |
+|------|------|-------------|
+| Repositories | `stacks/orm/nhibernate/guides/repositories.md` | Siempre |
+| Mappers | `stacks/orm/nhibernate/guides/mappers.md` | Siempre |
+| Scenarios XML | `testing/integration/scenarios/guides/scenarios-creation-guide.md` | Para tests de integracion |
+| Best Practices | `stacks/orm/nhibernate/guides/best-practices.md` | Recomendado |
 
 ---
 
-## Flujo TDD
+## Proceso de Implementacion
 
-### Fase 0: Analisis de Infraestructura
+### Paso 1: Analizar el Plan
 
-1. **Identificar tipo de trabajo:**
-   - Nuevo repositorio
-   - Modificacion de repositorio existente
+Extrae del plan o contexto:
 
-2. **Extraer del contexto:**
-   - Entidad y tabla a mapear
-   - Metodos CRUD y custom del repositorio
-   - Escenarios XML necesarios
+- Entidad y tabla a mapear
+- Metodos CRUD y custom del repositorio
+- Relaciones con otras entidades (FK)
+- Nombre de la propiedad en NHUnitOfWork
 
-3. **Verificar si necesita migracion:**
-   - Nueva tabla -> Crear migracion
-   - Nueva columna -> Crear migracion
-   - Solo metodos nuevos (sin cambio de esquema) -> No necesita migracion
+### Paso 2: Explorar Proyecto Actual
 
-4. **Verificar escenarios existentes:**
-   - Buscar en `tests/{proyecto}.infrastructure.tests/scenarios/`
-   - Determinar si necesita nuevos escenarios para los tests
+Busca implementaciones existentes como referencia:
 
-### Fase 1: RED - Escribir Tests que Fallan
+```bash
+# Mappers existentes
+Glob: **/nhibernate/mappers/*Mapper.cs
 
-**Ubicacion:** `tests/{proyecto}.infrastructure.tests/nhibernate/NH{Entity}RepositoryTests.cs`
+# Repositories existentes
+Glob: **/nhibernate/NH*Repository.cs
+
+# NHUnitOfWork
+Glob: **/nhibernate/NHUnitOfWork.cs
+
+# NHSessionFactory
+Glob: **/nhibernate/NHSessionFactory.cs
+
+# Escenarios XML existentes
+Glob: **/scenarios/*.xml
+```
+
+### Paso 3: Implementar Componentes
+
+Implementa en este orden:
+
+#### 3.1 Mapper
+
+**Archivo:** `{proyecto}.infrastructure/nhibernate/mappers/{Entity}Mapper.cs`
+
+Siguiendo la guia `mappers.md`:
+- Heredar de `ClassMapping<{Entity}>`
+- Configurar tabla con nombre en snake_case
+- Mapear Id con Generators.Assigned
+- Propiedades con columnas en snake_case
+- Relaciones ManyToOne con LazyRelation.Proxy
+
+#### 3.2 Repository
+
+**Archivo:** `{proyecto}.infrastructure/nhibernate/NH{Entity}Repository.cs`
+
+Siguiendo la guia `repositories.md`:
+- Heredar de `NHRepository<{Entity}, Guid>`
+- Implementar `I{Entity}Repository`
+- Constructor con `ISession` y `IServiceProvider`
+- Implementar metodos segun el plan
+- FlushAsync() despues de operaciones de escritura
+- Validar entidad antes de persistir
+
+#### 3.3 Registrar Mapper
+
+**Archivo a modificar:** `{proyecto}.infrastructure/nhibernate/NHSessionFactory.cs`
+
+- Agregar: `mapper.AddMapping<{Entity}Mapper>();`
+
+#### 3.4 Actualizar NHUnitOfWork
+
+**Archivo a modificar:** `{proyecto}.infrastructure/nhibernate/NHUnitOfWork.cs`
+
+- Agregar lazy property para el repositorio:
 
 ```csharp
-public class NH{Entity}RepositoryTests : NHRepositoryTestBase<NH{Entity}Repository, {Entity}, Guid>
-{
-    private {Entity}? _test{Entity};
-
-    protected internal override NH{Entity}Repository BuildRepository()
-        => new NH{Entity}Repository(_sessionFactory.OpenSession(), _serviceProvider);
-
-    [SetUp]
-    public void LocalSetUp()
-    {
-        _test{Entity} = fixture.Build<{Entity}>()
-            .With(x => x.Property, "valid-value")
-            .Without(x => x.RelatedEntities)
-            .Create();
-    }
-
-    #region CreateAsync Tests
-    [Test]
-    public async Task CreateAsync_WhenDataIsValid_ShouldCreateEntity()
-    {
-        // Act
-        await RepositoryUnderTest.CreateAsync(_test{Entity}!.Property);
-
-        // Assert - Verificar en BD con NDbUnit
-        var dataSet = nDbUnitTest.GetDataSetFromDb();
-        var rows = dataSet.Get{Entity}sRows($"property = '{_test{Entity}.Property}'");
-        rows.Count().Should().Be(1);
-    }
-    #endregion
-
-    #region GetAsync Tests
-    [Test]
-    public async Task GetAsync_WithExistingId_ShouldReturnEntity()
-    {
-        // Arrange
-        LoadScenario("Create{Entity}s");
-        var dataSet = nDbUnitTest.GetDataSetFromDb();
-        var row = dataSet.GetFirst{Entity}Row();
-        var id = row!.Field<Guid>("id");
-
-        // Act
-        var result = await RepositoryUnderTest.GetAsync(id);
-
-        // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(id);
-    }
-    #endregion
-}
+private I{Entity}Repository? _{entities};
+public I{Entity}Repository {Entities} => _{entities} ??= new NH{Entity}Repository(_session, _serviceProvider);
 ```
 
-**REGLA DE ORO:** NUNCA usar el repositorio en Arrange o Assert. Solo en Act.
-- Arrange: Usar `LoadScenario()` y escenarios XML
-- Assert: Usar `nDbUnitTest.GetDataSetFromDb()`
+### Paso 4: Verificar
 
-**Ejecutar tests -> DEBEN FALLAR**
-
-### Fase 2: Crear Escenarios XML (si no existen)
-
-**Ubicacion:** `tests/{proyecto}.infrastructure.tests/scenarios/Create{Entity}s.xml`
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<AppSchema xmlns="http://tempuri.org/AppSchema.xsd">
-  <!-- Dependencias primero (FK) -->
-  <parent_table>
-    <id>770e8400-e29b-41d4-a716-446655440001</id>
-    <name>Parent Name</name>
-  </parent_table>
-
-  <!-- Entidad principal -->
-  <table_name>
-    <id>550e8400-e29b-41d4-a716-446655440001</id>
-    <property>Value One</property>
-    <parent_id>770e8400-e29b-41d4-a716-446655440001</parent_id>
-  </table_name>
-</AppSchema>
-```
-
-### Fase 3: GREEN - Implementar Minimo Necesario
-
-**1. Crear Mapper:** `{proyecto}.infrastructure/nhibernate/mappers/{Entity}Mapper.cs`
-
-```csharp
-public class {Entity}Mapper : ClassMapping<{Entity}>
-{
-    public {Entity}Mapper()
-    {
-        Table("table_name");
-
-        Id(x => x.Id, m =>
-        {
-            m.Generator(Generators.Assigned);
-            m.Column("id");
-        });
-
-        Property(x => x.PropertyName, m =>
-        {
-            m.Column("property_name");
-            m.NotNullable(true);
-            m.Length(100);
-        });
-
-        // Foreign Keys
-        ManyToOne(x => x.RelatedEntity, m =>
-        {
-            m.Column("related_entity_id");
-            m.NotNullable(false);
-            m.Lazy(LazyRelation.Proxy);
-        });
-    }
-}
-```
-
-**2. Crear Repository:** `{proyecto}.infrastructure/nhibernate/NH{Entity}Repository.cs`
-
-```csharp
-public class NH{Entity}Repository : NHRepository<{Entity}, Guid>, I{Entity}Repository
-{
-    public NH{Entity}Repository(ISession session, IServiceProvider serviceProvider)
-        : base(session, serviceProvider)
-    {
-    }
-
-    public async Task<{Entity}> CreateAsync(string property)
-    {
-        var entity = new {Entity}(property);
-
-        if (!entity.IsValid())
-        {
-            var errors = entity.Validate();
-            throw new InvalidDomainException("Cannot create entity with invalid data", errors);
-        }
-
-        await this.Session.SaveAsync(entity);
-        await this.Session.FlushAsync();
-
-        return entity;
-    }
-
-    public async Task<{Entity}?> GetByPropertyAsync(string value)
-    {
-        return await this.Session.Query<{Entity}>()
-            .Where(e => e.Property.ToLower() == value.ToLower())
-            .FirstOrDefaultAsync();
-    }
-}
-```
-
-**3. Registrar Mapper:** En `NHSessionFactory.cs` agregar:
-```csharp
-mapper.AddMapping<{Entity}Mapper>();
-```
-
-**4. Actualizar NHUnitOfWork:** Agregar lazy property para el repositorio
-
-**Ejecutar tests -> DEBEN PASAR**
-
-### Fase 4: REFACTOR
-
-Verificar:
-- [ ] Repository hereda de NHRepository o NHReadOnlyRepository
-- [ ] Constructor recibe ISession y IServiceProvider
-- [ ] FlushAsync() despues de operaciones de escritura
+- [ ] Codigo compila sin errores
 - [ ] Mapper tiene tabla y columnas en snake_case
-- [ ] Lazy loading configurado en relaciones
-- [ ] Documentacion XML completa
-
-**Ejecutar tests -> DEBEN SEGUIR PASANDO**
+- [ ] Repository hereda de NHRepository
+- [ ] Repository implementa todos los metodos del plan
+- [ ] NHSessionFactory tiene el mapper registrado
+- [ ] NHUnitOfWork tiene la lazy property
 
 ---
 
-## Reporte de Salida
+## Formato de Salida
 
 Al finalizar, muestra:
 
 ```markdown
-## Infrastructure Layer Completado (TDD)
-
-### Escenarios XML
-- [x] tests/{proyecto}.infrastructure.tests/scenarios/Create{Entity}s.xml
+## Infrastructure Layer Implementado
 
 ### Archivos Creados
-- [x] tests/{proyecto}.infrastructure.tests/nhibernate/NH{Entity}RepositoryTests.cs
-- [x] {proyecto}.infrastructure/nhibernate/NH{Entity}Repository.cs
-- [x] {proyecto}.infrastructure/nhibernate/mappers/{Entity}Mapper.cs
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `{proyecto}.infrastructure/nhibernate/mappers/{Entity}Mapper.cs` | Mapper con {n} propiedades |
+| `{proyecto}.infrastructure/nhibernate/NH{Entity}Repository.cs` | Repository con {n} metodos |
 
 ### Archivos Modificados
-- [x] NHSessionFactory.cs (registro de mapper)
-- [x] NHUnitOfWork.cs (lazy property)
 
-### Tests
-- Total: {n}
-- Pasando: {n}
+| Archivo | Cambio |
+|---------|--------|
+| `NHSessionFactory.cs` | Registrado `{Entity}Mapper` |
+| `NHUnitOfWork.cs` | Agregada lazy property `{Entities}` |
+
+### Metodos Implementados
+
+- `CreateAsync({params})` - Crear entidad
+- `GetAsync(Guid)` - Obtener por ID
+- `GetBy{Campo}Async({tipo})` - Buscar por campo unico
+- `UpdateAsync(Guid, {params})` - Actualizar entidad
+
+### Proximos Pasos
+
+Continuar con Application + WebAPI Layer: `/implement-backend-webapi`
 
 **Status:** SUCCESS
 ```
 
 ---
 
-## Patrones Importantes
+## Restricciones
 
-### Tests de Repositorio - AAA con NDbUnit
-```csharp
-[Test]
-public async Task UpdateAsync_WithValidData_ShouldUpdateEntity()
-{
-    // Arrange - ESCENARIO, no repositorio
-    LoadScenario("Create{Entity}s");
-    var dataSet = nDbUnitTest.GetDataSetFromDb();
-    var id = dataSet.GetFirst{Entity}Row().Field<Guid>("id");
+### NO debes:
+- Implementar la capa de Application o WebAPI (eso es otro comando)
+- Crear archivos fuera de `{proyecto}.infrastructure/`
+- Inventar mapeos o metodos no especificados en el plan
 
-    // Act - SOLO AQUI usa repositorio
-    await RepositoryUnderTest.UpdateAsync(id, "NewValue");
-
-    // Assert - NDBUNIT, no repositorio
-    var updatedDataSet = nDbUnitTest.GetDataSetFromDb();
-    var row = updatedDataSet.Get{Entity}sRows($"id = '{id}'").First();
-    row.Field<string>("property").Should().Be("NewValue");
-}
-```
-
-### Convenciones de Escenarios XML
-- Nombres de elementos = nombres de tablas (snake_case)
-- Nombres de campos = nombres de columnas (snake_case)
-- GUIDs consistentes: `550e8400-...-0001`, `550e8400-...-0002`
-- Orden respeta dependencias (FK)
+### DEBES:
+- Seguir estrictamente las guias de desarrollo
+- Usar los patrones de implementaciones existentes como referencia
+- Implementar TODOS los componentes listados en el plan
+- Registrar el mapper en NHSessionFactory
+- Actualizar NHUnitOfWork
 
 ---
 
-## Recordatorios
+## Referencias
 
-1. **TDD es obligatorio** - Tests primero, implementacion despues
-2. **NUNCA usar repositorio en Arrange/Assert** - Solo en Act
-3. **LoadScenario() para Arrange** - Cargar datos de prueba
-4. **NDbUnit para Assert** - Verificar en BD directamente
-5. **FlushAsync() siempre** - Despues de Save/Update/Delete
-6. **Case-insensitive** - Queries con `.ToLower()`
+- [Repositories]({GUIDES_REPO}/stacks/orm/nhibernate/guides/repositories.md)
+- [Mappers]({GUIDES_REPO}/stacks/orm/nhibernate/guides/mappers.md)
+- [Scenarios XML]({GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md)
+- [Best Practices]({GUIDES_REPO}/stacks/orm/nhibernate/guides/best-practices.md)
