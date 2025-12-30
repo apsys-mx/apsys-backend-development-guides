@@ -1,6 +1,6 @@
 # Implement Backend Feature
 
-> **Version Comando:** 3.0.0
+> **Version Comando:** 3.1.0
 > **Ultima actualizacion:** 2025-12-30
 
 ---
@@ -167,6 +167,54 @@ Extrae de la seccion "Fase 1: Domain Layer" del plan.
 ## Fase 2: Infrastructure Layer
 
 Extrae de la seccion "Fase 2: Infrastructure Layer" del plan.
+
+### 2.0 Verificar Migraciones de Base de Datos
+
+**ANTES de implementar**, verifica si se necesita una migracion:
+
+| Situacion | ¿Migracion? | Accion |
+|-----------|-------------|--------|
+| Entidad nueva sin tabla | ✅ Si | Crear tabla con columnas |
+| Agregar columna a tabla existente | ✅ Si | ALTER TABLE ADD COLUMN |
+| Eliminar columna | ✅ Si | ALTER TABLE DROP COLUMN |
+| Cambiar tipo de columna | ✅ Si | ALTER TABLE ALTER COLUMN |
+| Agregar FK o indice | ✅ Si | CREATE INDEX / ADD CONSTRAINT |
+| Solo metodo nuevo (sin cambio de esquema) | ❌ No | No se necesita migracion |
+| Tabla ya existe con columnas correctas | ❌ No | Usar esquema actual |
+
+**Si necesita migracion:**
+
+1. Buscar migraciones existentes:
+   ```bash
+   Glob: **/data-migrations/*.cs
+   ```
+
+2. Crear archivo de migracion:
+   ```
+   {proyecto}.infrastructure/data-migrations/{Timestamp}_{DescripcionCambio}.cs
+   ```
+
+3. Usar FluentMigrator:
+   ```csharp
+   [Migration({timestamp})]
+   public class {DescripcionCambio} : Migration
+   {
+       public override void Up()
+       {
+           Create.Table("table_name")
+               .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
+               .WithColumn("name").AsString(100).NotNullable()
+               .WithColumn("creation_date").AsDateTime().NotNullable();
+       }
+
+       public override void Down()
+       {
+           Delete.Table("table_name");
+       }
+   }
+   ```
+
+4. Ejecutar migracion o notificar al usuario si no es posible automaticamente.
 
 ### 2.1 Mapper
 
@@ -375,6 +423,57 @@ Si alguna fase falla:
 - Implementar TODOS los componentes listados en el plan
 - Verificar compilacion al final de cada fase
 - Mostrar progreso claro al usuario
+
+---
+
+## Anti-Patterns a Evitar
+
+### Domain Layer
+
+| Anti-Pattern | Problema | Solucion |
+|--------------|----------|----------|
+| Logica de persistencia en entidad | Viola separacion de responsabilidades | Mover a repositorio |
+| Atributos de ORM en entidad | Acopla dominio a infraestructura | Usar mappers separados |
+| Propiedades no-virtual | NHibernate no puede crear proxies | Todas las propiedades `virtual` |
+| Dependencias externas en entidad | Dificulta testing | Solo logica de negocio pura |
+| Colecciones sin inicializar | NullReferenceException | Inicializar con `new List<>()` |
+
+### Infrastructure Layer
+
+| Anti-Pattern | Problema | Solucion |
+|--------------|----------|----------|
+| Olvidar `FlushAsync()` | Cambios no se persisten | Siempre despues de Save/Update/Delete |
+| Exponer `ISession` publicamente | Viola encapsulamiento | Solo usar internamente |
+| Logica de negocio en repositorio | Responsabilidad incorrecta | Mover a entidad o servicio de dominio |
+| Queries case-sensitive | Busquedas inconsistentes | Usar `.ToLower()` en comparaciones |
+| Retornar `IQueryable` publico | Permite queries arbitrarias | Retornar `IEnumerable` o `List` |
+
+### Application Layer (Use Cases)
+
+| Anti-Pattern | Problema | Solucion |
+|--------------|----------|----------|
+| Logica de negocio en Use Case | Use Cases deben ser thin wrappers | Mover logica a entidades |
+| Validaciones complejas en Use Case | Duplica logica de entidad | Usar validators de entidad |
+| Acceso directo a BD | Viola patron Repository | Usar repositorios inyectados |
+| Use Case con mas de 30 lineas | Hace demasiado | Simplificar o dividir |
+
+### WebAPI Layer
+
+| Anti-Pattern | Problema | Solucion |
+|--------------|----------|----------|
+| Exponer entidades de dominio | Acopla API a dominio | Siempre usar DTOs |
+| Logica de negocio en Endpoint | Responsabilidad incorrecta | Mover a Use Case o entidad |
+| Strings sin inicializar en DTOs | Null reference en serializacion | Inicializar con `string.Empty` |
+| Colecciones null en DTOs | Null reference en serializacion | Inicializar con `Enumerable.Empty<T>()` |
+| Ignorar codigos HTTP correctos | API no RESTful | Usar 201, 204, 404, 409 segun caso |
+
+### Manejo de Errores
+
+| Anti-Pattern | Problema | Solucion |
+|--------------|----------|----------|
+| Swallow exceptions | Oculta errores | Propagar o manejar explicitamente |
+| Excepciones genericas | Dificil debugging | Usar excepciones de dominio especificas |
+| No validar antes de persistir | Datos invalidos en BD | Llamar `IsValid()` antes de guardar |
 
 ---
 
