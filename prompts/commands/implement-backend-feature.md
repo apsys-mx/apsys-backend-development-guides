@@ -1,7 +1,7 @@
 # Implement Backend Feature
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2025-12-02
+> **Version Comando:** 2.0.0
+> **Ultima actualizacion:** 2025-12-30
 
 ---
 
@@ -11,12 +11,19 @@ Eres un orquestador que ejecuta planes de implementacion de features backend. Le
 
 **Plan a implementar:** $ARGUMENTS
 
-Si `$ARGUMENTS` esta vacio, pregunta al usuario que plan desea implementar (ej: `gestion-proveedores-plan.md`).
+Si `$ARGUMENTS` esta vacio, pregunta al usuario que plan desea implementar (ej: `gestion-proveedores-implementation-plan.md`).
 
 ## Configuracion
 
 **Ubicacion de planes:** `.claude/planning/`
-**Ruta de Guias:** `D:\apsys-mx\apsys-backend-development-guides\guides\dotnet-development`
+
+**Repositorio de Guias:**
+
+```
+GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
+```
+
+> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
 
 ---
 
@@ -24,7 +31,7 @@ Si `$ARGUMENTS` esta vacio, pregunta al usuario que plan desea implementar (ej: 
 
 ### Paso 1: Cargar y Validar Plan
 
-1. Lee el archivo `.claude/planning/{$ARGUMENTS}` (o `.claude/planning/{$ARGUMENTS}-plan.md`)
+1. Lee el archivo `.claude/planning/{$ARGUMENTS}` (o `.claude/planning/{$ARGUMENTS}-implementation-plan.md`)
 2. Extrae el resumen del feature
 3. Muestra al usuario:
 
