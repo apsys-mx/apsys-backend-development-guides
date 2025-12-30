@@ -1,6 +1,6 @@
 # Init Backend Project
 
-> **Version:** 3.3.0
+> **Version:** 3.4.0
 > **Ultima actualizacion:** 2025-12-30
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
@@ -129,7 +129,7 @@ Al iniciar, mostrar:
 
 ```
 Init Backend Project
-Version: 3.3.0
+Version: 3.4.0
 Ultima actualizacion: 2025-12-30
 ```
 
@@ -149,12 +149,24 @@ Ultima actualizacion: 2025-12-30
    - Sin espacios ni caracteres especiales (excepto punto)
    - NO convertir a PascalCase
 
-### Fase 2: Crear Todo List
+### Fase 2: Crear Carpeta de Reportes
+
+> **OBLIGATORIO:** Crear carpeta para reportes de ejecucion.
+
+Inmediatamente despues de recopilar la informacion del usuario:
+
+```bash
+mkdir -p {ProjectPath}/.claude/init
+```
+
+Esto permite analizar tiempos y errores posteriormente para optimizar el proceso.
+
+### Fase 3: Crear Todo List
 
 > **OBLIGATORIO:** Usar la herramienta `TodoWrite` para crear la lista de tareas.
 > Esto permite al usuario ver el progreso en tiempo real.
 
-Inmediatamente despues de recopilar la informacion del usuario, invocar `TodoWrite` con las siguientes tareas (omitir las que no apliquen segun las opciones seleccionadas):
+Inmediatamente despues de crear la carpeta de reportes, invocar `TodoWrite` con las siguientes tareas (omitir las que no apliquen segun las opciones seleccionadas):
 
 ```
 - [ ] Crear estructura base de solucion
@@ -172,15 +184,18 @@ Inmediatamente despues de recopilar la informacion del usuario, invocar `TodoWri
 - [ ] Verificacion final
 ```
 
-### Fase 3: Ejecutar Guias
+### Fase 4: Ejecutar Guias
 
 Para cada guia, en orden:
 
 1. **Marcar tarea como `in_progress`** en TodoWrite
-2. **Leer la guia completa** con el tool Read desde `{GUIDES_REPO}`
-3. **Ejecutar los comandos** reemplazando `{ProjectName}`
-4. **Copiar templates** desde `{GUIDES_REPO}`, reemplazando placeholders
-5. **Marcar tarea como `completed`** en TodoWrite inmediatamente al terminar
+2. **Registrar hora de inicio** en reporte de fase
+3. **Leer la guia completa** con el tool Read desde `{GUIDES_REPO}`
+4. **Ejecutar los comandos** reemplazando `{ProjectName}`
+5. **Copiar templates** desde `{GUIDES_REPO}`, reemplazando placeholders
+6. **Registrar hora de fin y errores** en reporte de fase
+7. **Guardar reporte de fase** en `.claude/init/` (JSON y Markdown)
+8. **Marcar tarea como `completed`** en TodoWrite inmediatamente al terminar
 
 > **IMPORTANTE:** Actualizar TodoWrite despues de CADA paso completado, no al final de todos.
 
@@ -200,7 +215,73 @@ Para cada guia, en orden:
 | 10 | `{GUIDES_REPO}/testing/integration/tools/ndbunit/guides/setup.md` | NDbUnit (si aplica) |
 | 11 | `{GUIDES_REPO}/testing/integration/scenarios/guides/setup.md` | Escenarios (si aplica) |
 
-### Fase 4: Verificacion Final
+### Fase 5: Generacion de Reportes por Fase
+
+Para CADA fase, crear DOS archivos en `.claude/init/`:
+
+#### 5.1 Reporte JSON (para analisis automatizado)
+
+**Nombre:** `phase-{numero}-{nombre-corto}.json`
+
+```json
+{
+  "phase": 1,
+  "name": "estructura-base",
+  "guide": "architectures/clean-architecture/init/01-estructura-base.md",
+  "startTime": "2025-01-15T10:30:00",
+  "endTime": "2025-01-15T10:35:00",
+  "durationSeconds": 300,
+  "status": "success",
+  "commands": [
+    {
+      "command": "dotnet new sln -n proyecto",
+      "exitCode": 0,
+      "output": "..."
+    }
+  ],
+  "errors": [],
+  "filesCreated": [
+    "proyecto.sln",
+    "Directory.Build.props"
+  ]
+}
+```
+
+#### 5.2 Reporte Markdown (para revision visual)
+
+**Nombre:** `phase-{numero}-{nombre-corto}.md`
+
+```markdown
+# Phase 01: Estructura Base
+
+| Campo | Valor |
+|-------|-------|
+| **Guia** | `architectures/clean-architecture/init/01-estructura-base.md` |
+| **Inicio** | 10:30:00 |
+| **Fin** | 10:35:00 |
+| **Duracion** | 5 min |
+| **Status** | Success |
+
+## Comandos Ejecutados
+
+| # | Comando | Resultado |
+|---|---------|-----------|
+| 1 | `dotnet new sln -n proyecto` | OK |
+| 2 | `dotnet new classlib -n proyecto.domain` | OK |
+
+## Archivos Creados
+
+- proyecto.sln
+- Directory.Build.props
+
+## Errores
+
+Ninguno
+```
+
+**Usar el tool Write** para crear ambos reportes al finalizar cada fase.
+
+### Fase 6: Verificacion Final
 
 1. **Compilar solucion**:
    ```bash
@@ -217,7 +298,83 @@ Para cada guia, en orden:
    dotnet run --project src/{ProjectName}.webapi
    ```
 
-### Fase 5: Reporte Final
+### Fase 7: Reportes Finales
+
+Al finalizar TODAS las fases, crear dos archivos de resumen:
+
+#### 7.1 summary.json (para analisis)
+
+```json
+{
+  "projectName": "nombre.proyecto",
+  "projectPath": "D:\\projects\\nombre-proyecto",
+  "database": "postgresql",
+  "webapi": "fastendpoints",
+  "migrations": true,
+  "scenarios": true,
+  "execution": {
+    "startTime": "2025-01-15T10:30:00",
+    "endTime": "2025-01-15T11:10:00",
+    "totalDurationSeconds": 2400,
+    "totalDurationMinutes": 40
+  },
+  "phases": [
+    {
+      "phase": 1,
+      "name": "estructura-base",
+      "durationSeconds": 300,
+      "status": "success"
+    }
+  ],
+  "totalPhases": 11,
+  "successPhases": 11,
+  "failedPhases": 0,
+  "overallStatus": "success"
+}
+```
+
+#### 7.2 summary.md (para revision visual)
+
+```markdown
+# Init Backend Report
+
+## Configuracion
+
+| Campo | Valor |
+|-------|-------|
+| **Proyecto** | nombre.proyecto |
+| **Ubicacion** | D:\projects\nombre-proyecto |
+| **Base de datos** | PostgreSQL |
+| **WebAPI** | FastEndpoints |
+| **Migraciones** | Si |
+| **Escenarios** | Si |
+
+## Tiempo de Ejecucion
+
+| Campo | Valor |
+|-------|-------|
+| **Inicio** | 2025-01-15 10:30:00 |
+| **Fin** | 2025-01-15 11:10:00 |
+| **Duracion Total** | 40 min |
+
+## Resumen de Fases
+
+| # | Fase | Duracion | Status |
+|---|------|----------|--------|
+| 1 | Estructura Base | 5 min | Success |
+| 2 | Domain Layer | 3 min | Success |
+| 3 | Application Layer | 4 min | Success |
+| ... | ... | ... | ... |
+
+## Resultado
+
+- **Total Fases:** 11
+- **Exitosas:** 11
+- **Fallidas:** 0
+- **Estado General:** Success
+```
+
+### Fase 8: Reporte Final al Usuario
 
 Mostrar al usuario:
 
@@ -229,6 +386,11 @@ Mostrar al usuario:
    ├── Directory.Packages.props
    ├── Directory.Build.props
    ├── buildscenarios.bat  (si aplica)
+   ├── .claude/
+   │   └── init/
+   │       ├── summary.json
+   │       ├── summary.md
+   │       └── phase-*.json/md
    ├── src/
    │   ├── {ProjectName}.domain/
    │   ├── {ProjectName}.application/
@@ -240,14 +402,15 @@ Mostrar al usuario:
        ├── {ProjectName}.common.tests/    (si aplica)
        └── {ProjectName}.scenarios/       (si aplica)
    ```
-3. **Comandos utiles**:
+3. **Resumen de tiempos** por fase (desde summary.md)
+4. **Comandos utiles**:
    ```bash
    dotnet build                                    # Compilar
    dotnet run --project src/{ProjectName}.webapi  # Ejecutar API
    dotnet run --project src/{ProjectName}.migrations cnn="..."  # Migraciones
    buildscenarios.bat                             # Generar escenarios (si aplica)
    ```
-4. **Proximos pasos**:
+5. **Proximos pasos**:
    - Crear entidades de dominio
    - Crear migraciones de base de datos
    - Implementar endpoints
@@ -259,6 +422,7 @@ Mostrar al usuario:
 En todos los archivos y rutas:
 - `{GUIDES_REPO}` → Ruta al repositorio de guias (ver seccion Configuracion)
 - `{ProjectName}` → Nombre del proyecto (como lo proporciono el usuario)
+- `{ProjectPath}` → Ruta absoluta del proyecto
 - `{database}` → Base de datos seleccionada (postgresql | sqlserver)
 
 ---
@@ -267,13 +431,49 @@ En todos los archivos y rutas:
 
 Si ocurre un error:
 
-1. **Detener ejecucion**
-2. **Reportar** con contexto:
+1. **Registrar el error** en el reporte de la fase actual (JSON y MD)
+2. **Actualizar status** a "failed" en ambos reportes
+3. **Guardar los reportes** inmediatamente
+4. **Reportar** con contexto:
    - Guia en la que fallo
    - Comando que causo el error
    - Mensaje de error
-3. **Sugerir solucion**
-4. **Preguntar** si continuar o cancelar
+5. **Sugerir solucion**
+6. **Preguntar** si continuar o cancelar
+
+---
+
+## Estructura de Reportes Generada
+
+```
+{ProjectPath}/
+└── .claude/
+    └── init/
+        ├── summary.json                          # Resumen para analisis
+        ├── summary.md                            # Resumen visual
+        ├── phase-01-estructura-base.json
+        ├── phase-01-estructura-base.md
+        ├── phase-02-domain-layer.json
+        ├── phase-02-domain-layer.md
+        ├── phase-03-application-layer.json
+        ├── phase-03-application-layer.md
+        ├── phase-04-infrastructure-layer.json
+        ├── phase-04-infrastructure-layer.md
+        ├── phase-05-webapi-layer.json
+        ├── phase-05-webapi-layer.md
+        ├── phase-06-database-setup.json
+        ├── phase-06-database-setup.md
+        ├── phase-07-nhibernate-setup.json
+        ├── phase-07-nhibernate-setup.md
+        ├── phase-08-fastendpoints-setup.json     (si aplica)
+        ├── phase-08-fastendpoints-setup.md       (si aplica)
+        ├── phase-09-migrations-setup.json        (si aplica)
+        ├── phase-09-migrations-setup.md          (si aplica)
+        ├── phase-10-ndbunit-setup.json           (si aplica)
+        ├── phase-10-ndbunit-setup.md             (si aplica)
+        ├── phase-11-scenarios-setup.json         (si aplica)
+        └── phase-11-scenarios-setup.md           (si aplica)
+```
 
 ---
 
@@ -284,7 +484,7 @@ Usuario: /init-backend
 
 Asistente:
 Init Backend Project
-Version: 3.3.0
+Version: 3.4.0
 Ultima actualizacion: 2025-12-30
 
 ¿Como se llamara el proyecto?
@@ -317,9 +517,13 @@ Framework: FastEndpoints
 Migraciones: Si
 Escenarios: Si
 
+[Crea carpeta .claude/init...]
+[Crea todo list...]
 [Ejecuta guias en orden...]
+[Genera reportes por fase...]
 [Muestra progreso con todo list...]
-[Reporte final...]
+[Genera reportes finales...]
+[Reporte final con tiempos...]
 ```
 
 ---
@@ -331,15 +535,26 @@ Escenarios: Si
 - **Respetar el orden** de ejecucion (hay dependencias)
 - **Reemplazar TODOS los placeholders** en archivos y rutas
 - **Validar cada paso** antes de continuar
+- **Generar reportes** para cada fase (JSON y Markdown)
 
 ### Uso Obligatorio de TodoWrite
 
 **SIEMPRE** usar la herramienta `TodoWrite` para:
 
-1. **Al inicio (Fase 2):** Crear la lista completa de tareas
-2. **Durante ejecucion (Fase 3):**
+1. **Al inicio (Fase 3):** Crear la lista completa de tareas
+2. **Durante ejecucion (Fase 4):**
    - Marcar tarea actual como `in_progress` ANTES de comenzar
    - Marcar tarea como `completed` INMEDIATAMENTE al terminar
 3. **No acumular:** Actualizar despues de CADA paso, no al final
 
 Esto es critico para que el usuario vea el progreso en tiempo real.
+
+### Uso Obligatorio de Reportes
+
+**SIEMPRE** generar reportes para:
+
+1. **Cada fase:** JSON + Markdown con tiempos, comandos y errores
+2. **Al finalizar:** summary.json + summary.md con resumen total
+3. **En errores:** Registrar inmediatamente antes de preguntar al usuario
+
+Esto permite analizar y optimizar el proceso posteriormente.
