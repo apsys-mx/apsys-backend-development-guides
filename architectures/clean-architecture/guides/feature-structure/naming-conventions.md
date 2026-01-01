@@ -44,6 +44,31 @@ Mantener consistencia en nombres de:
 4. **Plural** para carpetas de features, repositorios en UoW
 5. **Nombres descriptivos** que reflejen la responsabilidad
 6. **Consistencia** del nombre de entidad a través de todas las capas
+7. **Idioma inglés** para todo el código y documentación
+
+### Idioma del Código
+
+**IMPORTANTE:** Todo el código fuente debe estar escrito en **inglés**, incluyendo:
+
+| Elemento | Idioma | Ejemplo Correcto | Ejemplo Incorrecto |
+|----------|--------|------------------|-------------------|
+| Nombres de clases | English | `User`, `Invoice` | `Usuario`, `Factura` |
+| Nombres de métodos | English | `GetByEmail`, `Create` | `ObtenerPorEmail`, `Crear` |
+| Nombres de propiedades | English | `Name`, `CreationDate` | `Nombre`, `FechaCreacion` |
+| Variables | English | `user`, `totalCount` | `usuario`, `totalConteo` |
+| XML Documentation | English | `/// <summary>Gets user by ID</summary>` | `/// <summary>Obtiene usuario por ID</summary>` |
+| Comentarios de código | English | `// Validate before save` | `// Validar antes de guardar` |
+| Mensajes de error (código) | English | `"User not found"` | `"Usuario no encontrado"` |
+| Nombres de archivos | English | `UserValidator.cs` | `ValidadorUsuario.cs` |
+
+**Razones:**
+
+1. **Consistencia** con el ecosistema .NET y librerías externas
+2. **Colaboración** - Facilita trabajo con desarrolladores internacionales
+3. **Documentación** - IntelliSense y Swagger se generan correctamente
+4. **Mantenibilidad** - Código uniforme en todo el proyecto
+
+> **Nota:** Las guías de desarrollo pueden estar en español para facilitar su comprensión, pero el código fuente siempre debe estar en inglés.
 
 ### Convención de Sufijos
 
