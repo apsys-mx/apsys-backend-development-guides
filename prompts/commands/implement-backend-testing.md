@@ -173,28 +173,79 @@ public class Sc###Create{Entity} : IScenario
 - Datos representativos para validaciones
 - PreloadScenario si hay dependencias FK
 
-### 0.3 Generar XML
-
-Ejecutar el generador de scenarios:
-
-```bash
-# Buscar el proyecto generador
-Glob: **/ScenarioBuilder.csproj
-Glob: **/Program.cs (en proyecto de scenarios)
-```
-
-Ejecutar:
-```bash
-dotnet run --project {ruta-al-generador}
-```
-
 ### Verificacion Fase 0
 
 - [ ] Scenario implementa IScenario
 - [ ] PreloadScenario definido si hay dependencias
 - [ ] GUIDs son estaticos y predecibles
-- [ ] XML generado correctamente
 - [ ] Datos cubren casos de test
+
+---
+
+### CHECKPOINT: Regenerar XMLs de Scenarios
+
+**IMPORTANTE:** Si se crearon nuevos scenarios en esta fase, los archivos XML deben regenerarse antes de ejecutar los tests de integracion.
+
+**Accion requerida del usuario:**
+
+```markdown
+## Scenarios Creados
+
+Se han creado los siguientes scenarios:
+- `Sc###Create{Entity}.cs`
+- (otros scenarios si aplica)
+
+## Accion Requerida
+
+Para que los tests de integracion funcionen, debes regenerar los XMLs.
+
+### Opcion 1: Usar script existente (Recomendado)
+
+Si existe un script `buildscenarios.bat` en la raiz del proyecto:
+
+```bash
+.\buildscenarios.bat
+```
+
+### Opcion 2: Ejecutar manualmente
+
+1. **Compilar el proyecto de scenarios:**
+   ```bash
+   cd tests/{proyecto}.scenarios
+   dotnet build
+   ```
+
+2. **Ejecutar el .exe compilado con argumentos:**
+   ```bash
+   cd bin/Debug/net9.0
+   {proyecto}.scenarios.exe /cnn:"Host=localhost;Port=5432;Database={dbname};Username=postgres;Password=root;" /output:"{ruta-salida-xmls}"
+   ```
+
+**Argumentos requeridos:**
+| Argumento | Descripcion |
+|-----------|-------------|
+| `/cnn:` | Connection string a la BD de desarrollo/test |
+| `/output:` | Ruta donde se generaran los XMLs |
+
+**Ubicacion tipica del proyecto de scenarios:**
+- `tests/{proyecto}.scenarios/`
+
+## Verificacion
+
+Despues de ejecutar el generador, verifica que existan los XMLs en la ruta de salida:
+- `{output}/Create{Entity}.xml`
+
+---
+
+**¿XMLs regenerados?** Confirma para continuar con la implementacion de tests.
+- "si" o "continuar" - Proceder con Fase 1 (Unit Tests)
+- "solo unit" - Implementar solo Unit Tests (no requieren scenarios)
+- "cancelar" - Pausar implementacion
+```
+
+**Nota:** Los Unit Tests (Fase 1) NO requieren scenarios y pueden implementarse sin esperar la regeneracion de XMLs. Los Integration Tests (Fases 2 y 3) SI requieren que los XMLs esten actualizados.
+
+**Referencia:** Ver `{GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md` para mas detalles.
 
 ---
 
@@ -357,6 +408,46 @@ public class {Entity}ValidatorTests
 - [ ] Usa FluentAssertions para assertions
 - [ ] Patron AAA (Arrange-Act-Assert) en todos los tests
 - [ ] Naming convention: `Method_Condition_ExpectedResult`
+
+---
+
+### CHECKPOINT: Verificar XMLs Antes de Integration Tests
+
+**IMPORTANTE:** Antes de continuar con los Integration Tests (Fases 2 y 3), verifica que los XMLs de scenarios esten actualizados.
+
+```markdown
+## Verificacion de XMLs
+
+Si se crearon scenarios nuevos en Fase 0, confirma que:
+
+1. Se ejecuto el generador de scenarios usando una de estas opciones:
+
+   **Opcion A - Script (si existe):**
+   ```bash
+   .\buildscenarios.bat
+   ```
+
+   **Opcion B - Manual:**
+   ```bash
+   cd tests/{proyecto}.scenarios
+   dotnet build
+   cd bin/Debug/net9.0
+   {proyecto}.scenarios.exe /cnn:"..." /output:"..."
+   ```
+
+2. Existen los archivos XML en la ruta de salida configurada:
+   - `{output}/Create{Entity}.xml`
+
+3. Los XMLs contienen los datos esperados del scenario
+
+---
+
+**¿XMLs listos?** Confirma para continuar con Integration Tests.
+- "si" o "continuar" - Proceder con Fase 2 (Repository Tests)
+- "cancelar" - Pausar implementacion
+```
+
+**Si los XMLs no estan listos:** Los tests de integracion fallaran porque LoadScenario() no encontrara los datos en la base de datos.
 
 ---
 
@@ -1102,6 +1193,8 @@ Si alguna fase falla:
 - Crear tests sin seguir el patron AAA
 - Ignorar convenciones de naming de tests
 - Crear tests que dependan del orden de ejecucion
+- **Ejecutar integration tests sin que el usuario confirme que los XMLs estan regenerados**
+- Continuar automaticamente despues de crear scenarios nuevos
 
 ### DEBES:
 - Seguir estrictamente las guias de testing
@@ -1111,6 +1204,8 @@ Si alguna fase falla:
 - Usar LoadScenario() para Arrange en integration tests
 - Usar NDbUnit para Assert de estado de BD en repository tests
 - Mostrar progreso claro al usuario
+- **Esperar confirmacion del usuario despues de crear scenarios nuevos** (para que regenere XMLs)
+- **Verificar que XMLs existen antes de proceder con integration tests**
 
 ---
 
