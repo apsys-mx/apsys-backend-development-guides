@@ -24,6 +24,14 @@ Patrones de acceso a datos.
 - Transacciones
 - Conceptos core
 
+### Event-Driven
+Patrones para manejo de eventos de dominio, auditoría y mensajería.
+→ Ver: [event-driven/](./event-driven/)
+
+- Domain Events
+- Outbox Pattern
+- Event Store
+
 ### Best Practices
 Mejores practicas generales de .NET.
 → Ver: [best-practices/](./best-practices/)
@@ -53,3 +61,4 @@ Los patrones definen **que** hacer. Los stacks definen **como** implementarlo:
 | Repository Pattern | NHibernate, Entity Framework |
 | Validacion | FluentValidation |
 | Migraciones | FluentMigrator, EF Migrations |
+| Event-Driven / Outbox | NHibernate + FluentMigrator |

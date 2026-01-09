@@ -1,7 +1,7 @@
 # Implement Backend Feature
 
-> **Version Comando:** 3.1.0
-> **Ultima actualizacion:** 2025-12-30
+> **Version Comando:** 3.2.0
+> **Ultima actualizacion:** 2025-01-09
 
 ---
 
@@ -64,6 +64,8 @@ Antes de implementar cada fase, lee las guias relevantes desde `{GUIDES_REPO}`:
 |------|------|
 | Use Cases | `architectures/clean-architecture/guides/application/use-cases.md` |
 | Command Handler Patterns | `architectures/clean-architecture/guides/application/command-handler-patterns.md` |
+| Event Store (Outbox Pattern) | `fundamentals/patterns/event-driven/outbox-pattern.md` |
+| Domain Events | `fundamentals/patterns/event-driven/domain-events.md` |
 
 ### WebAPI Layer
 
@@ -148,7 +150,35 @@ Extrae de la seccion "Fase 1: Domain Layer" del plan.
 - Metodos custom segun el plan
 - XML documentation completa
 
-### 1.4 Actualizar IUnitOfWork
+### 1.4 Domain Events (si el proyecto tiene Event Store)
+
+**Archivos:** `{proyecto}.domain/events/{feature}/{Entity}CreatedEvent.cs`, etc.
+
+Verificar si el proyecto tiene Event Store:
+```bash
+Glob: **/IEventStore.cs
+```
+
+Si existe, crear eventos de dominio como records:
+
+```csharp
+namespace {proyecto}.domain.events.{feature};
+
+/// <summary>Raised when a new {entity} is created.</summary>
+public record {Entity}CreatedEvent(
+    Guid OrganizationId,
+    Guid {Entity}Id,
+    // Propiedades relevantes del evento
+    DateTime CreatedAt);
+```
+
+**Tipos de eventos:**
+- Sin atributo: Solo auditoria (tracking)
+- `[PublishableEvent]`: Auditoria + publicacion a message bus
+
+**Referencia:** `{GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md`
+
+### 1.5 Actualizar IUnitOfWork
 
 **Archivo:** `{proyecto}.domain/interfaces/repositories/IUnitOfWork.cs`
 
@@ -159,6 +189,7 @@ Extrae de la seccion "Fase 1: Domain Layer" del plan.
 - [ ] Entity hereda de AbstractDomainObject
 - [ ] Propiedades son virtual
 - [ ] Validator implementa todas las reglas
+- [ ] Domain Events creados (si aplica)
 - [ ] Repository interface tiene todos los metodos
 - [ ] IUnitOfWork actualizado
 
@@ -282,6 +313,54 @@ Extrae de las secciones "Fase 3" y "Fase 4" del plan.
 - **Thin wrappers** - solo orquestacion, NO logica de negocio
 - Inyectar repositorio via constructor
 
+#### 3.2.1 Emitir Eventos de Dominio (si el proyecto tiene Event Store)
+
+Verificar si el proyecto tiene Event Store:
+```bash
+Glob: **/IEventStore.cs
+```
+
+Si existe, **inyectar `IEventStore`** en el Handler del Use Case y emitir eventos:
+
+**En el constructor del Handler:**
+```csharp
+public class Handler(IUnitOfWork uoW, IEventStore eventStore, ILogger<Handler> logger)
+    : ICommandHandler<Command, Result<{Entity}>>
+{
+    private readonly IUnitOfWork _uoW = uoW;
+    private readonly IEventStore _eventStore = eventStore;
+    private readonly ILogger<Handler> _logger = logger;
+```
+
+**Despues de la operacion y ANTES del Commit:**
+```csharp
+// 1. Ejecutar logica de negocio
+var entity = await _uoW.{Entities}.CreateAsync(...);
+
+// 2. Emitir evento (ANTES del Commit)
+await _eventStore.AppendAsync(
+    new {Entity}CreatedEvent(
+        OrganizationId: command.OrganizationId,
+        {Entity}Id: entity.Id,
+        // ... propiedades relevantes
+        CreatedAt: DateTime.UtcNow),
+    organizationId: command.OrganizationId,
+    aggregateType: nameof({Entity}),
+    aggregateId: entity.Id,
+    userId: currentUserId,
+    userName: currentUserName);
+
+// 3. Commit atomico (estado + evento)
+_uoW.Commit();
+```
+
+**Importante:**
+- El evento se emite **dentro de la misma transaccion** que el cambio de estado
+- Si el Commit falla, el evento tambien se revierte (atomicidad)
+- Solo eventos con `[PublishableEvent]` se publican al message bus
+
+**Referencia:** `{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md`
+
 ### 3.3 Request/Response Models
 
 **Archivo:** `{proyecto}.webapi/features/{entity}/models/{Action}{Entity}Model.cs`
@@ -331,6 +410,7 @@ Extrae de las secciones "Fase 3" y "Fase 4" del plan.
 
 - [ ] DTOs solo tienen propiedades
 - [ ] Use Cases son thin wrappers
+- [ ] Use Cases emiten eventos (si aplica)
 - [ ] Endpoints manejan errores correctamente
 - [ ] Mapping Profile completo
 - [ ] Use Cases registrados en DI
@@ -484,6 +564,8 @@ Si alguna fase falla:
 - [Validators]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/validators.md)
 - [Repository Interfaces]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/repository-interfaces.md)
 - [DAOs]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/daos.md)
+- [Domain Events]({GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md)
+- [Outbox Pattern]({GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md)
 
 ### Infrastructure
 - [Repositories]({GUIDES_REPO}/stacks/orm/nhibernate/guides/repositories.md)

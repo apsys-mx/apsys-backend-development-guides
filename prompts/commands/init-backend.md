@@ -1,7 +1,7 @@
 # Init Backend Project
 
-> **Version:** 3.6.0
-> **Ultima actualizacion:** 2025-12-30
+> **Version:** 3.7.0
+> **Ultima actualizacion:** 2025-01-09
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
 
@@ -90,7 +90,28 @@ Selecciona una opcion (1-4):
 
 **Esperar respuesta del usuario.**
 
-### 6. Confirmar configuracion
+### 6. Event Store (Auditoria/Mensajeria)
+
+Preguntar con opciones:
+```
+¿Incluir Event Store para auditoria y/o mensajeria (Outbox Pattern)?
+1. No (default para proyectos simples)
+2. Si - Solo auditoria (tracking de cambios)
+3. Si - Auditoria + Mensajeria (publicacion a message bus)
+
+Selecciona una opcion (1-3):
+```
+
+> **Nota sobre Event Store:** El Event Store implementa:
+> - Tabla `domain_events` para persistir eventos de dominio
+> - `IEventStore` para appendear eventos desde use cases
+> - `IDomainEventRepository` con soporte de outbox pattern
+> - `[PublishableEvent]` para marcar eventos que se publican al message bus
+> - Garantia de atomicidad entre estado y eventos (Outbox Pattern)
+
+**Esperar respuesta del usuario.**
+
+### 7. Confirmar configuracion
 
 Mostrar resumen y pedir confirmacion:
 ```
@@ -101,6 +122,7 @@ Configuracion del proyecto:
 - Framework: {framework}
 - Migraciones: {si/no}
 - Escenarios: {si/no}
+- Event Store: {no/auditoria/auditoria+mensajeria}
 
 ¿Confirmar e iniciar? (si/no)
 ```
@@ -144,15 +166,39 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
     └── scenarios-creation-guide.md
 ```
 
+**Guias de Event Store:**
+```
+{GUIDES_REPO}/fundamentals/patterns/event-driven/
+├── README.md
+├── outbox-pattern.md
+└── domain-events.md
+```
+
 **Templates:**
 ```
 {GUIDES_REPO}/templates/
 ├── domain/
+│   ├── events/
+│   │   ├── DomainEvent.cs
+│   │   └── PublishableEventAttribute.cs
+│   └── interfaces/
+│       ├── IEventStore.cs
+│       └── repositories/
+│           └── IDomainEventRepository.cs
+├── infrastructure/
+│   └── event-driven/
+│       ├── EventStore.cs
+│       └── nhibernate/
+│           ├── NHDomainEventRepository.cs
+│           └── DomainEventMapper.cs
 ├── webapi/
 ├── tests/
 └── Directory.Packages.props
 
 {GUIDES_REPO}/stacks/{stack}/templates/
+
+{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/
+└── CreateDomainEventsTable.cs     # Migracion para Event Store
 
 {GUIDES_REPO}/testing/integration/
 ├── tools/ndbunit/templates/project/
@@ -232,6 +278,7 @@ Inmediatamente despues de crear la carpeta de reportes, invocar `TodoWrite` con 
 - [ ] Configurar NHibernate
 - [ ] Configurar FastEndpoints (si aplica)
 - [ ] Configurar migraciones (si aplica)
+- [ ] Configurar Event Store (si aplica)
 - [ ] Configurar NDbUnit (si aplica)
 - [ ] Configurar common.tests (si aplica)
 - [ ] Configurar generador de escenarios (si aplica)
@@ -266,8 +313,84 @@ Para cada guia, en orden:
 | 7 | `{GUIDES_REPO}/stacks/orm/nhibernate/guides/setup.md` | Repositorios NHibernate |
 | 8 | `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/setup.md` | FastEndpoints (si aplica) |
 | 9 | `{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/setup.md` | Migraciones (si aplica) |
-| 10 | `{GUIDES_REPO}/testing/integration/tools/ndbunit/guides/setup.md` | NDbUnit (si aplica) |
-| 11 | `{GUIDES_REPO}/testing/integration/scenarios/guides/setup.md` | Escenarios (si aplica) |
+| 10 | `{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md` | Event Store (si aplica) |
+| 11 | `{GUIDES_REPO}/testing/integration/tools/ndbunit/guides/setup.md` | NDbUnit (si aplica) |
+| 12 | `{GUIDES_REPO}/testing/integration/scenarios/guides/setup.md` | Escenarios (si aplica) |
+
+#### Fase 4.10: Event Store (si aplica)
+
+Si el usuario eligio Event Store (opcion 2 o 3), ejecutar los siguientes pasos:
+
+**1. Copiar templates de Domain Layer:**
+
+```
+{GUIDES_REPO}/templates/domain/events/DomainEvent.cs
+  → src/{ProjectName}.domain/entities/DomainEvent.cs
+
+{GUIDES_REPO}/templates/domain/events/PublishableEventAttribute.cs
+  → src/{ProjectName}.domain/events/PublishableEventAttribute.cs
+
+{GUIDES_REPO}/templates/domain/interfaces/IEventStore.cs
+  → src/{ProjectName}.domain/interfaces/IEventStore.cs
+
+{GUIDES_REPO}/templates/domain/interfaces/repositories/IDomainEventRepository.cs
+  → src/{ProjectName}.domain/interfaces/repositories/IDomainEventRepository.cs
+```
+
+**2. Actualizar IUnitOfWork:**
+
+Agregar propiedad al interface `IUnitOfWork.cs`:
+```csharp
+IDomainEventRepository DomainEvents { get; }
+```
+
+**3. Copiar templates de Infrastructure Layer:**
+
+```
+{GUIDES_REPO}/templates/infrastructure/event-driven/EventStore.cs
+  → src/{ProjectName}.infrastructure/nhibernate/EventStore.cs
+
+{GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/NHDomainEventRepository.cs
+  → src/{ProjectName}.infrastructure/nhibernate/NHDomainEventRepository.cs
+
+{GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/DomainEventMapper.cs
+  → src/{ProjectName}.infrastructure/nhibernate/mappers/DomainEventMapper.cs
+```
+
+**4. Actualizar NHUnitOfWork:**
+
+Agregar lazy property al `NHUnitOfWork.cs`:
+```csharp
+private IDomainEventRepository? _domainEvents;
+public IDomainEventRepository DomainEvents => _domainEvents ??= new NHDomainEventRepository(_session);
+```
+
+**5. Registrar Mapper:**
+
+Agregar en `NHSessionFactory.cs`:
+```csharp
+mapper.AddMapping<DomainEventMapper>();
+```
+
+**6. Registrar EventStore en DI:**
+
+Agregar en `Program.cs`:
+```csharp
+builder.Services.AddScoped<IEventStore, EventStore>();
+```
+
+**7. Crear migracion (si migraciones estan habilitadas):**
+
+```
+{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/CreateDomainEventsTable.cs
+  → src/{ProjectName}.migrations/M{NextNumber}CreateDomainEventsTable.cs
+```
+
+Reemplazar placeholders:
+- `{MigrationNumber}` → Siguiente numero de migracion
+- `{SchemaName}` → Schema del proyecto
+
+**Referencia completa:** `{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md`
 
 ### Fase 5: Generacion de Reportes por Fase
 
@@ -392,6 +515,7 @@ Al finalizar TODAS las fases, crear el archivo de resumen `summary.md`:
 | **WebAPI** | FastEndpoints |
 | **Migraciones** | Si |
 | **Escenarios** | Si |
+| **Event Store** | Auditoria + Mensajeria |
 
 ## Tiempo de Ejecucion
 
@@ -529,8 +653,9 @@ Es CRITICO distinguir entre ambos tipos para poder corregir las guias posteriorm
         ├── phase-07-nhibernate-setup.md
         ├── phase-08-fastendpoints-setup.md       (si aplica)
         ├── phase-09-migrations-setup.md          (si aplica)
-        ├── phase-10-ndbunit-setup.md             (si aplica)
-        └── phase-11-scenarios-setup.md           (si aplica)
+        ├── phase-10-event-store-setup.md         (si aplica)
+        ├── phase-11-ndbunit-setup.md             (si aplica)
+        └── phase-12-scenarios-setup.md           (si aplica)
 ```
 
 ---
@@ -589,6 +714,16 @@ Selecciona una opcion (1-4):
 Usuario: 1
 
 Asistente:
+¿Incluir Event Store para auditoria y/o mensajeria (Outbox Pattern)?
+1. No (default para proyectos simples)
+2. Si - Solo auditoria (tracking de cambios)
+3. Si - Auditoria + Mensajeria (publicacion a message bus)
+
+Selecciona una opcion (1-3):
+
+Usuario: 2
+
+Asistente:
 Configuracion del proyecto:
 - Nombre: gestion.inventario
 - Ubicacion: C:\projects\inventario
@@ -596,6 +731,7 @@ Configuracion del proyecto:
 - Framework: FastEndpoints
 - Migraciones: Si
 - Escenarios: Si
+- Event Store: Auditoria
 
 ¿Confirmar e iniciar? (si/no)
 

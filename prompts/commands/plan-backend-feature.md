@@ -1,7 +1,7 @@
 # Plan Backend Feature
 
-> **Version Comando:** 2.0.0
-> **Ultima actualizacion:** 2025-12-30
+> **Version Comando:** 2.1.0
+> **Ultima actualizacion:** 2025-01-09
 
 ---
 
@@ -30,6 +30,7 @@ GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
 | Feature Structure | `architectures/clean-architecture/guides/feature-structure/` |
 | Domain Modeling | `fundamentals/patterns/domain-modeling/` |
 | Repository Patterns | `fundamentals/patterns/repository/` |
+| Event-Driven | `fundamentals/patterns/event-driven/` |
 | Application Layer | `architectures/clean-architecture/guides/application/` |
 | WebApi Layer | `architectures/clean-architecture/guides/webapi/` |
 | NHibernate | `stacks/orm/nhibernate/guides/` |
@@ -164,6 +165,7 @@ Analiza la descripcion para identificar:
 - **Campos/propiedades**: Que datos maneja la entidad
 - **Validaciones**: Reglas de negocio (campos requeridos, formatos, unicidad)
 - **Relaciones**: Depende de otras entidades?
+- **Eventos de dominio**: Que eventos se deben emitir para auditoria/mensajeria?
 
 ### 2. Consulta de Guias
 
@@ -184,6 +186,7 @@ Consulta las guias relevantes desde `{GUIDES_REPO}`:
 - Para WebApi: `stacks/webapi/fastendpoints/guides/fastendpoints-basics.md`, `stacks/webapi/fastendpoints/guides/automapper-profiles.md`
 - Para DTOs: `architectures/clean-architecture/guides/webapi/dtos.md`
 - Si es read-only: `fundamentals/patterns/domain-modeling/daos.md`
+- Para Event Store: `fundamentals/patterns/event-driven/outbox-pattern.md`, `fundamentals/patterns/event-driven/domain-events.md`
 
 ### 3. Identificacion de Elementos por Capa
 
@@ -196,6 +199,9 @@ Basandote en las guias, identifica todos los elementos a crear:
 | `entities/{Entity}.cs`                              | Entidad del dominio              | Siempre (CRUD)               |
 | `entities/validators/{Entity}Validator.cs`          | Validador FluentValidation       | Siempre (CRUD)               |
 | `daos/{Entity}Dao.cs`                               | DAO para queries read-only       | Solo si es read-only pattern |
+| `events/{feature}/{Entity}CreatedEvent.cs`          | Evento de creacion               | Si usa Event Store           |
+| `events/{feature}/{Entity}UpdatedEvent.cs`          | Evento de actualizacion          | Si usa Event Store           |
+| `events/{feature}/{Entity}DeletedEvent.cs`          | Evento de eliminacion            | Si usa Event Store           |
 | `interfaces/repositories/I{Entity}Repository.cs`    | Interface del repositorio        | Siempre                      |
 | `interfaces/repositories/I{Entity}DaoRepository.cs` | Interface del DAO repository     | Solo si usa DAO              |
 | `interfaces/repositories/IUnitOfWork.cs`            | Agregar propiedad del nuevo repo | Modificar existente          |
@@ -333,6 +339,14 @@ Genera el plan en **formato markdown** con la siguiente estructura:
 - {campo}: {regla de validacion}
 - ...
 
+### Eventos de Dominio (si el proyecto tiene Event Store)
+
+| Operacion | Evento | Tipo |
+|-----------|--------|------|
+| Create | `{Entity}CreatedEvent` | Auditoria / [PublishableEvent] |
+| Update | `{Entity}UpdatedEvent` | Auditoria |
+| Delete | `{Entity}DeletedEvent` | Auditoria |
+
 ## Estructura de Archivos
 ```
 
@@ -341,6 +355,10 @@ Domain Layer:
 │ ├── {Entity}.cs
 │ └── validators/
 │ └── {Entity}Validator.cs
+├── events/{feature}/                    # Si usa Event Store
+│ ├── {Entity}CreatedEvent.cs
+│ ├── {Entity}UpdatedEvent.cs
+│ └── {Entity}DeletedEvent.cs
 ├── interfaces/repositories/
 │ └── I{Entity}Repository.cs
 
@@ -431,7 +449,44 @@ public virtual {tipo} {Propiedad} { get; set; }
 
 ---
 
-#### 1.3. Repository Interface
+#### 1.3. Domain Events (si el proyecto tiene Event Store)
+
+**Archivos**: `{proyecto}.domain/events/{feature}/{Entity}CreatedEvent.cs`, etc.
+
+**Responsabilidades**:
+
+- Definir eventos como records inmutables
+- Marcar con `[PublishableEvent]` si debe publicarse a message bus
+- Incluir solo datos necesarios (no entidades completas)
+
+**Dependencias**: Ninguna
+
+**Cuando crear:**
+
+| Operacion | Evento | Atributo |
+|-----------|--------|----------|
+| Create | `{Entity}CreatedEvent` | Sin atributo (auditoria) o `[PublishableEvent]` |
+| Update | `{Entity}UpdatedEvent` | Sin atributo (auditoria) |
+| Delete | `{Entity}DeletedEvent` | Sin atributo (auditoria) |
+
+**Ejemplo de evento:**
+
+```csharp
+namespace {proyecto}.domain.events.{feature};
+
+/// <summary>Raised when a new {entity} is created.</summary>
+public record {Entity}CreatedEvent(
+    Guid OrganizationId,
+    Guid {Entity}Id,
+    // ... propiedades relevantes
+    DateTime CreatedAt);
+```
+
+**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md`
+
+---
+
+#### 1.4. Repository Interface
 
 **Archivo**: `{proyecto}.domain/interfaces/repositories/I{Entity}Repository.cs`
 
@@ -458,7 +513,7 @@ Task<{Entity}> UpdateAsync(Guid id, {parametros});
 
 ---
 
-#### 1.4. Actualizar IUnitOfWork
+#### 1.5. Actualizar IUnitOfWork
 
 **Archivo a modificar**: `{proyecto}.domain/interfaces/repositories/IUnitOfWork.cs`
 
