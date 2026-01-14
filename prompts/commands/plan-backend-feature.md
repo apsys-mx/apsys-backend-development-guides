@@ -1,7 +1,7 @@
 # Plan Backend Feature
 
-> **Version Comando:** 2.1.0
-> **Ultima actualizacion:** 2025-01-09
+> **Version Comando:** 2.2.0
+> **Ultima actualizacion:** 2025-01-14
 
 ---
 
@@ -35,6 +35,7 @@ GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
 | WebApi Layer | `architectures/clean-architecture/guides/webapi/` |
 | NHibernate | `stacks/orm/nhibernate/guides/` |
 | FastEndpoints | `stacks/webapi/fastendpoints/guides/` |
+| FluentMigrator | `stacks/database/migrations/fluent-migrator/guides/` |
 | Examples | `architectures/clean-architecture/examples/` |
 
 ---
@@ -119,6 +120,18 @@ Glob: **/mappingprofiles/*MappingProfile.cs
 - Identificar patrones de mapeo
 - Ver estructura de DTOs
 
+**6. Migraciones Existentes**
+
+```bash
+# Buscar migraciones existentes
+Glob: **/migrations/M*.cs
+```
+
+- Identificar el ultimo numero de migracion usado en el proyecto
+- Entender convenciones de naming de migraciones del proyecto
+- Ver patrones de schema y tablas existentes
+- Identificar si el proyecto usa CustomVersionTableMetaData para schema
+
 #### Documentar Hallazgos
 
 Despues de explorar, DEBES documentar en el plan:
@@ -151,6 +164,12 @@ Despues de explorar, DEBES documentar en el plan:
 - Endpoint<Request, Response>
 - Models con inner classes Request/Response
 - AutoMapper para transformaciones
+
+### Migraciones
+
+- Ultima migracion: M027 (ejemplo)
+- Schema: public (o custom)
+- Convenciones: M{NNN}{Description}.cs
 ```
 
 ---
@@ -187,6 +206,7 @@ Consulta las guias relevantes desde `{GUIDES_REPO}`:
 - Para DTOs: `architectures/clean-architecture/guides/webapi/dtos.md`
 - Si es read-only: `fundamentals/patterns/domain-modeling/daos.md`
 - Para Event Store: `fundamentals/patterns/event-driven/outbox-pattern.md`, `fundamentals/patterns/event-driven/domain-events.md`
+- Para Migraciones: `stacks/database/migrations/fluent-migrator/guides/patterns.md`, `stacks/database/migrations/fluent-migrator/guides/best-practices.md`
 
 ### 3. Identificacion de Elementos por Capa
 
@@ -243,11 +263,34 @@ Basandote en las guias, identifica todos los elementos a crear:
 | `dtos/{Entity}Dto.cs`                                              | DTO para respuestas     | Siempre          |
 | `mappingprofiles/{Entity}MappingProfile.cs`                        | AutoMapper profile      | Siempre          |
 
+#### E. Migrations Layer
+
+| Archivo | Descripcion | Cuando Crear |
+| ------- | ----------- | ------------ |
+| `M{NNN}Create{Entity}Table.cs` | Migracion para crear tabla de la entidad | Si es nueva entidad |
+| `M{NNN}Add{Column}To{Entity}.cs` | Migracion para agregar columna | Si se agrega columna a tabla existente |
+| `M{NNN}Create{Entity}Indexes.cs` | Migracion para indices adicionales | Si hay indices complejos separados |
+
+**Consideraciones para Migraciones**:
+
+- Consultar `stacks/database/migrations/fluent-migrator/guides/patterns.md` para patrones
+- Consultar `stacks/database/migrations/fluent-migrator/guides/best-practices.md` para convenciones
+- Verificar ultimo numero de migracion en el proyecto antes de asignar numero
+- Seguir naming: `M{NNN}{Description}.cs` donde NNN es secuencial
+- Siempre implementar `Up()` y `Down()` simetricamente
+- Una responsabilidad por migracion (no mezclar creacion de tabla con seed data)
+
 ### 4. Ordenar por Dependencias
 
 Ordena los elementos por orden de implementacion:
 
 **Orden recomendado:**
+
+0. **Migrations Layer** (prerequisito - la tabla debe existir)
+
+   - Crear migracion para nueva tabla/columnas
+   - Ejecutar migracion en ambiente local
+   - Verificar schema creado correctamente
 
 1. **Domain Layer** (sin dependencias externas)
 
@@ -350,6 +393,10 @@ Genera el plan en **formato markdown** con la siguiente estructura:
 ## Estructura de Archivos
 ```
 
+Migrations Layer:
+└── {proyecto}.migrations/
+    └── M{NNN}Create{Entity}Table.cs
+
 Domain Layer:
 ├── entities/
 │ ├── {Entity}.cs
@@ -395,6 +442,55 @@ WebApi Layer:
 ````
 
 ## Plan de Implementacion
+
+### Fase 0: Migrations Layer
+
+#### 0.1. Database Migration
+
+**Archivo**: `{proyecto}.migrations/M{NNN}Create{Entity}Table.cs`
+
+**Responsabilidades**:
+- Crear tabla para la nueva entidad
+- Definir columnas con tipos correctos
+- Agregar constraints (PK, FK, UNIQUE, NOT NULL)
+- Crear indices para columnas frecuentemente consultadas
+- Implementar Down() simetrico para rollback
+
+**Dependencias**: Ninguna (es el primer paso)
+
+**Consideraciones**:
+- Verificar ultimo numero de migracion en el proyecto
+- Usar schema consistente con el proyecto (ej: `CustomVersionTableMetaData.SchemaNameValue`)
+- Nombres de tablas en `snake_case` y plural (ej: `suppliers`, `technical_standards`)
+- Nombres de indices: `idx_{tabla}_{columna}`
+- Nombres de FK: `fk_{tabla_origen}_{columna}`
+
+**Ejemplo de estructura**:
+```csharp
+[Migration({NNN})]
+public class M{NNN}Create{Entity}Table : Migration
+{
+    private readonly string _tableName = "{entities}";
+    private readonly string _schemaName = CustomVersionTableMetaData.SchemaNameValue;
+
+    public override void Up()
+    {
+        Create.Table(_tableName)
+            .InSchema(_schemaName)
+            .WithColumn("id").AsGuid().PrimaryKey().NotNullable()
+            // ... mas columnas
+    }
+
+    public override void Down()
+    {
+        Delete.Table(_tableName).InSchema(_schemaName);
+    }
+}
+```
+
+**Referencia**: `{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/patterns.md`
+
+---
 
 ### Fase 1: Domain Layer
 
@@ -799,6 +895,7 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 
 **Desglose**:
 
+- Migrations Layer: {numero} archivos
 - Domain Layer: {numero} archivos
 - Application Layer: {numero} archivos
 - Infrastructure Layer: {numero} archivos
@@ -807,6 +904,7 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 
 ### Orden de Implementacion
 
+0. **Migrations** (Crear tabla -> Ejecutar -> Verificar schema)
 1. **Domain** (Entity -> Validator -> Interface -> IUnitOfWork)
 2. **Infrastructure** (Mapper -> Repository -> NHUnitOfWork)
 3. **Application** (Use Cases)
@@ -821,8 +919,15 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 ### Proximos Pasos
 
 1. Validar el plan con el equipo
-2. Crear migracion de base de datos si es necesario
-3. Seguir el orden propuesto para evitar dependencias circulares
+2. **Crear migracion de base de datos** (si hay nuevas tablas/columnas):
+   - Consultar guia: `stacks/database/migrations/fluent-migrator/guides/patterns.md`
+   - Verificar ultimo numero de migracion en el proyecto (ej: M027 -> siguiente es M028)
+   - Crear archivo: `M{NNN}Create{Entity}Table.cs`
+   - Implementar `Up()` con Create.Table() y columnas necesarias
+   - Implementar `Down()` simetrico con Delete.Table()
+   - Ejecutar migracion localmente y verificar schema
+   - Probar rollback (`Down()`) antes de commit
+3. Seguir el orden propuesto: Migrations -> Domain -> Infrastructure -> Application -> WebApi
 4. Probar cada capa antes de continuar con la siguiente
 5. Agregar tests unitarios y de integracion
 
@@ -837,6 +942,7 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 - [WebApi Layer]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/README.md)
 - [NHibernate]({GUIDES_REPO}/stacks/orm/nhibernate/guides/README.md)
 - [FastEndpoints]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/README.md)
+- [FluentMigrator]({GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/README.md)
 - [Best Practices]({GUIDES_REPO}/fundamentals/patterns/best-practices/README.md)
 - [Examples]({GUIDES_REPO}/architectures/clean-architecture/examples/README.md)
 
