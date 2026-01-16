@@ -1,7 +1,13 @@
 # Outbox Pattern
 
-**Versión:** 1.0.0
-**Última actualización:** 2025-01-09
+**Versión:** 1.0.1
+**Última actualización:** 2025-01-16
+
+> **Nota sobre convenciones de nombres:** Los ejemplos en esta guía usan el prefijo `NH` para
+> implementaciones de NHibernate (ej: `NHDomainEventRepository`, `NHUnitOfWork`). Sin embargo,
+> los nombres de las clases implementadoras **pueden variar según el proyecto**. Lo importante
+> es que implementen las interfaces correspondientes (`IDomainEventRepository`, `IUnitOfWork`).
+> Adapta los nombres según las convenciones de tu proyecto.
 
 ## Tabla de Contenidos
 
@@ -136,6 +142,9 @@ public class CreateOrderUseCase(IUnitOfWork uoW, IEventStore eventStore)
 
 ### 📂 Estructura de Archivos
 
+> **Nota:** Los nombres de las implementaciones (ej: `NHDomainEventRepository`) son ejemplos.
+> Usa la convención de nombres de tu proyecto.
+
 ```
 src/
 ├── {project}.domain/
@@ -153,10 +162,10 @@ src/
 │
 ├── {project}.infrastructure/
 │   └── nhibernate/
-│       ├── EventStore.cs               ← Implementación IEventStore
-│       ├── NHDomainEventRepository.cs  ← Implementación repositorio
+│       ├── EventStore.cs                    ← Implementación IEventStore
+│       ├── {Prefix}DomainEventRepository.cs ← Implementación repositorio (nombre variable)
 │       └── mappers/
-│           └── DomainEventMapper.cs    ← Mapping NHibernate
+│           └── DomainEventMapper.cs         ← Mapping NHibernate
 │
 └── {project}.migrations/
     └── M00XCreateDomainEventsTable.cs  ← Migración de tabla
@@ -191,8 +200,8 @@ src/
 ┌────────────┼───────────────────────┼────────────────────────────┐
 │            │                       │     INFRASTRUCTURE LAYER    │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │  NHDomainEventRepository       EventStore               │    │
-│  │  (implementation)              (implementation)         │    │
+│  │  {Prefix}DomainEventRepository    EventStore            │    │
+│  │  (implementation)                 (implementation)      │    │
 │  └─────────────────────────────────────────────────────────┘    │
 │                         │                                        │
 │                         ▼                                        │
@@ -565,7 +574,13 @@ public class EventStore(IUnitOfWork uoW) : IEventStore
 }
 ```
 
-### Paso 3: Implementar NHDomainEventRepository
+### Paso 3: Implementar DomainEventRepository
+
+> **Nota sobre el nombre:** El ejemplo usa `NHDomainEventRepository` siguiendo la convención
+> de prefijo `NH` para NHibernate. Adapta el nombre según tu proyecto:
+> - Si usas `NHUserRepository` → usa `NHDomainEventRepository`
+> - Si usas `UserRepository` → usa `DomainEventRepository`
+> - Si usas `EFUserRepository` → usa `EFDomainEventRepository`
 
 ```csharp
 using {ProjectName}.domain.entities;
@@ -1118,8 +1133,9 @@ public async Task HandleOrderCreated(OrderCreatedEvent e)
 ### 📋 Infrastructure Layer
 
 - [ ] `EventStore` implementado en `infrastructure/nhibernate/`
-- [ ] `NHDomainEventRepository` implementado
+- [ ] `{Prefix}DomainEventRepository` implementado (nombre según convención del proyecto)
 - [ ] `DomainEventMapper` para NHibernate creado
+- [ ] Implementación de IUnitOfWork actualizada con propiedad `DomainEvents`
 - [ ] Migración de tabla `domain_events` creada
 - [ ] Índices optimizados para outbox queries
 - [ ] Servicios registrados en DI
@@ -1154,6 +1170,6 @@ public async Task HandleOrderCreated(OrderCreatedEvent e)
 
 ---
 
-**Versión:** 1.0.0
-**Fecha:** 2025-01-09
+**Versión:** 1.0.1
+**Fecha:** 2025-01-16
 **Autor:** Equipo de Arquitectura

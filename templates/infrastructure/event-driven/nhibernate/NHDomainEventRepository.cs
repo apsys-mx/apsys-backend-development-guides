@@ -1,3 +1,20 @@
+// =============================================================================
+// TEMPLATE: DomainEventRepository
+// =============================================================================
+// Este es un template de ejemplo. El nombre de la clase debe adaptarse según
+// las convenciones del proyecto:
+//
+//   - Si el proyecto usa prefijo "NH" (NHUserRepository) → NHDomainEventRepository
+//   - Si el proyecto NO usa prefijo (UserRepository)    → DomainEventRepository
+//   - Si usa otro ORM (EF)                              → EFDomainEventRepository
+//
+// La clase base también debe adaptarse según el proyecto:
+//   - NHReadOnlyRepository → clase base existente en el proyecto
+//
+// Placeholders a reemplazar:
+//   - {ProjectName} → nombre del proyecto (ej: mycompany.myproject)
+// =============================================================================
+
 using {ProjectName}.domain.entities;
 using {ProjectName}.domain.interfaces.repositories;
 using NHibernate;
@@ -10,9 +27,15 @@ namespace {ProjectName}.infrastructure.nhibernate;
 /// Provides data access operations for <see cref="DomainEvent"/> entities.
 /// </summary>
 /// <remarks>
+/// <para>
 /// This repository extends NHReadOnlyRepository instead of NHRepository because
 /// DomainEvent is an infrastructure entity without domain validation rules.
 /// Write operations are implemented directly without FluentValidation.
+/// </para>
+/// <para>
+/// <strong>Note:</strong> The class name (NHDomainEventRepository) follows the project's
+/// naming convention. Adapt the name according to your project's repository naming pattern.
+/// </para>
 /// </remarks>
 public class NHDomainEventRepository : NHReadOnlyRepository<DomainEvent, Guid>, IDomainEventRepository
 {

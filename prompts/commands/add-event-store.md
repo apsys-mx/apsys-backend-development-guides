@@ -22,8 +22,12 @@ GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
 Antes de ejecutar este comando, el proyecto debe tener:
 
 - [ ] Estructura de Clean Architecture (`domain`, `application`, `infrastructure`, `webapi`)
-- [ ] NHibernate configurado con `IUnitOfWork` y `NHUnitOfWork`
+- [ ] ORM configurado con `IUnitOfWork` y su implementacion (ej: `NHUnitOfWork`, `UnitOfWork`, `EFUnitOfWork`)
 - [ ] FluentMigrator configurado (opcional, para crear la tabla automaticamente)
+
+> **Nota sobre nombres de clases:** Los nombres de las clases implementadoras pueden variar entre proyectos.
+> Este comando detecta automaticamente las implementaciones buscando por las interfaces que implementan,
+> no por nombres de archivo especificos.
 
 ---
 
@@ -37,22 +41,39 @@ Antes de ejecutar este comando, el proyecto debe tener:
 Buscar automaticamente la estructura del proyecto:
 
 ```bash
+# Buscar solucion
 Glob: **/*.sln
+
+# Buscar interface IUnitOfWork
 Glob: **/src/**/IUnitOfWork.cs
-Glob: **/src/**/NHUnitOfWork.cs
+
+# Buscar la IMPLEMENTACION de IUnitOfWork (nombre puede variar)
+# Buscar clases que implementen ": IUnitOfWork" o ", IUnitOfWork"
+Grep: ": IUnitOfWork|, IUnitOfWork" en **/src/**/infrastructure/**/*.cs
+
+# Buscar configuracion de session factory (nombre puede variar)
+# Buscar clases que configuren mappers de NHibernate
+Grep: "AddMapping<|ModelMapper|ISessionFactory" en **/src/**/infrastructure/**/*.cs
 ```
+
+**Variables a detectar y almacenar:**
+- `{UnitOfWorkImpl}` = nombre de la clase que implementa IUnitOfWork (ej: NHUnitOfWork, UnitOfWork)
+- `{UnitOfWorkImplPath}` = ruta al archivo de la implementacion
+- `{SessionFactoryClass}` = nombre de la clase de configuracion de session (ej: NHSessionFactory, SessionFactory)
+- `{SessionFactoryPath}` = ruta al archivo de session factory
 
 Si se detecta correctamente, mostrar:
 ```
 Proyecto detectado:
 - Solucion: {nombre}.sln
 - IUnitOfWork: src/{nombre}.domain/interfaces/repositories/IUnitOfWork.cs
-- NHUnitOfWork: src/{nombre}.infrastructure/nhibernate/NHUnitOfWork.cs
+- Implementacion: {UnitOfWorkImplPath} (clase: {UnitOfWorkImpl})
+- Session Factory: {SessionFactoryPath} (clase: {SessionFactoryClass})
 
 ¿Es correcto? (si/no)
 ```
 
-Si no se detecta, preguntar la ruta manualmente.
+Si no se detecta alguna implementacion, preguntar la ruta manualmente.
 
 **Esperar respuesta del usuario.**
 
@@ -179,9 +200,9 @@ Este comando agrega el patron Event Store (Outbox Pattern) a un proyecto existen
 ### Fase 1: Validacion
 
 1. **Verificar estructura del proyecto:**
-   - Debe existir `IUnitOfWork.cs`
-   - Debe existir `NHUnitOfWork.cs`
-   - Debe existir `NHSessionFactory.cs`
+   - Debe existir `IUnitOfWork.cs` (interface)
+   - Debe existir una clase que implemente `IUnitOfWork` (detectada como `{UnitOfWorkImpl}`)
+   - Debe existir una clase de configuracion de session/mappers (detectada como `{SessionFactoryClass}`)
 
 2. **Verificar que no exista Event Store:**
    ```bash
@@ -192,7 +213,7 @@ Este comando agrega el patron Event Store (Outbox Pattern) a un proyecto existen
 
 ### Fase 2: Crear Todo List
 
-Invocar `TodoWrite` con las siguientes tareas:
+Invocar `TodoWrite` con las siguientes tareas (usar nombres detectados):
 
 ```
 - [ ] Crear DomainEvent entity
@@ -201,10 +222,10 @@ Invocar `TodoWrite` con las siguientes tareas:
 - [ ] Crear IDomainEventRepository interface
 - [ ] Actualizar IUnitOfWork
 - [ ] Crear EventStore implementation
-- [ ] Crear NHDomainEventRepository
+- [ ] Crear DomainEventRepository implementation
 - [ ] Crear DomainEventMapper
-- [ ] Actualizar NHUnitOfWork
-- [ ] Registrar DomainEventMapper en NHSessionFactory
+- [ ] Actualizar {UnitOfWorkImpl} (implementacion de IUnitOfWork)
+- [ ] Registrar DomainEventMapper en {SessionFactoryClass}
 - [ ] Registrar EventStore en DI
 - [ ] Crear migracion (si aplica)
 - [ ] Verificacion final
@@ -254,11 +275,18 @@ IDomainEventRepository DomainEvents { get; }
   → src/{ProjectName}.infrastructure/nhibernate/EventStore.cs
 ```
 
-**Crear NHDomainEventRepository.cs:**
+**Crear DomainEventRepository:**
+
+Usar el template como base y adaptar el nombre segun convenciones del proyecto:
 ```
 {GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/NHDomainEventRepository.cs
-  → src/{ProjectName}.infrastructure/nhibernate/NHDomainEventRepository.cs
+  → src/{ProjectName}.infrastructure/nhibernate/{Prefix}DomainEventRepository.cs
 ```
+
+> **Nota:** El nombre de la clase debe seguir la convencion del proyecto.
+> Si el proyecto usa `NHUserRepository`, usar `NHDomainEventRepository`.
+> Si usa `UserRepository`, usar `DomainEventRepository`.
+> Detectar el prefijo usado en otros repositorios del proyecto.
 
 **Crear DomainEventMapper.cs:**
 ```
@@ -268,17 +296,19 @@ IDomainEventRepository DomainEvents { get; }
 
 Reemplazar `{SchemaName}` con el schema detectado/proporcionado.
 
-**Actualizar NHUnitOfWork.cs:**
+**Actualizar la implementacion de IUnitOfWork ({UnitOfWorkImpl}):**
 
-Agregar lazy property:
+Agregar lazy property en `{UnitOfWorkImplPath}`:
 ```csharp
 private IDomainEventRepository? _domainEvents;
-public IDomainEventRepository DomainEvents => _domainEvents ??= new NHDomainEventRepository(_session);
+public IDomainEventRepository DomainEvents => _domainEvents ??= new {DomainEventRepositoryClass}(_session);
 ```
 
-**Actualizar NHSessionFactory.cs:**
+> **Nota:** Usar el nombre de clase del DomainEventRepository creado (ej: `NHDomainEventRepository` o `DomainEventRepository`).
 
-Agregar en el metodo de configuracion de mappers:
+**Actualizar la clase de configuracion de session ({SessionFactoryClass}):**
+
+Agregar en el metodo de configuracion de mappers en `{SessionFactoryPath}`:
 ```csharp
 mapper.AddMapping<DomainEventMapper>();
 ```
@@ -323,7 +353,7 @@ Obtener el numero mas alto y sumar 1.
    - [ ] `IEventStore.cs` existe
    - [ ] `IDomainEventRepository.cs` existe
    - [ ] `EventStore.cs` existe
-   - [ ] `NHDomainEventRepository.cs` existe
+   - [ ] `{Prefix}DomainEventRepository.cs` existe (nombre segun convencion del proyecto)
    - [ ] `DomainEventMapper.cs` existe
    - [ ] Migracion creada (si aplica)
 
@@ -349,7 +379,7 @@ Al finalizar:
 
 ### Infrastructure Layer
 - `nhibernate/EventStore.cs`
-- `nhibernate/NHDomainEventRepository.cs`
+- `nhibernate/{Prefix}DomainEventRepository.cs`
 - `nhibernate/mappers/DomainEventMapper.cs`
 
 ### Migraciones
@@ -358,8 +388,8 @@ Al finalizar:
 ## Archivos Modificados
 
 - `IUnitOfWork.cs` - Agregada propiedad `DomainEvents`
-- `NHUnitOfWork.cs` - Agregada lazy property
-- `NHSessionFactory.cs` - Registrado `DomainEventMapper`
+- `{UnitOfWorkImpl}.cs` - Agregada lazy property para DomainEvents
+- `{SessionFactoryClass}.cs` - Registrado `DomainEventMapper`
 - `Program.cs` - Registrado `IEventStore` en DI
 
 ## Proximos Pasos
