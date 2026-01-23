@@ -1,7 +1,7 @@
 # Plan Backend Testing
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2026-01-01
+> **Version Comando:** 1.1.0
+> **Ultima actualizacion:** 2025-01-23
 
 ---
 
@@ -379,10 +379,17 @@ Guarda el plan generado en:
 
 ### Estructura del Plan
 
-Genera el plan en **formato markdown** con la siguiente estructura:
+Genera el plan en **formato markdown** con la siguiente estructura.
+
+> **Nota:** `{VERSION_COMANDO}` debe sustituirse por la version declarada en el encabezado de este prompt (campo "Version Comando").
 
 ```markdown
 # Plan de Testing: {Nombre del Feature}
+
+> **Generado con:** plan-backend-testing v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
 
 ## Resumen
 

@@ -1,7 +1,7 @@
 # Review Backend Code
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2025-12-30
+> **Version Comando:** 1.1.0
+> **Ultima actualizacion:** 2025-01-23
 
 ---
 
@@ -71,6 +71,12 @@ Consulta estas guias desde `{GUIDES_REPO}` segun la capa del codigo:
 | Request/Response Models | `stacks/webapi/fastendpoints/guides/request-response-models.md` |
 | DTOs | `architectures/clean-architecture/guides/webapi/dtos.md` |
 | Error Responses | `architectures/clean-architecture/guides/webapi/error-responses.md` |
+
+### Best Practices
+
+| Guia | Ruta |
+|------|------|
+| Date Handling | `fundamentals/patterns/best-practices/date-handling.md` |
 
 ### Ejemplos de Referencia
 
@@ -155,6 +161,15 @@ Revisar **EXCLUSIVAMENTE** los archivos modificados.
 - [ ] Codigos HTTP correctos (201, 204, 404, 409)
 - [ ] Validators con FluentValidation
 
+#### Date Handling (si hay propiedades DateTime)
+
+- [ ] Request Models usan `DateTimeOffset` para recibir fechas del frontend
+- [ ] MappingProfile convierte a UTC con `.UtcDateTime` o `.ToUniversalTime()`
+- [ ] Entities almacenan fechas en UTC
+- [ ] Comparaciones de fechas usan `DateTime.UtcNow` (NO `DateTime.Now`)
+- [ ] Queries de repositorio usan `DateTime.UtcNow` como referencia
+- [ ] DTOs devuelven fechas en UTC (se serializan con sufijo `Z`)
+
 ### Paso 5: Checklist General
 
 #### Arquitectura
@@ -212,12 +227,18 @@ Revisar **EXCLUSIVAMENTE** los archivos modificados.
 
 ## Formato de Salida
 
-Crear reporte en `.claude/reviews/{branch_name}-review.md`:
+Crear reporte en `.claude/reviews/{branch_name}-review.md`.
+
+> **Nota:** `{VERSION_COMANDO}` debe sustituirse por la version declarada en el encabezado de este prompt (campo "Version Comando").
 
 ```markdown
 # Peer Review: {branch_name}
 
-**Fecha:** {fecha}
+> **Generado con:** review-backend-code v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
+
 **Revisor:** Claude Code
 **Estado:** {Aprobado | Aprobado con observaciones | Requiere cambios}
 
@@ -277,10 +298,6 @@ Crear reporte en `.claude/reviews/{branch_name}-review.md`:
 
 {Parrafo con conclusion y proximos pasos}
 
----
-
-_Generado por Claude Code_
-_Fecha: {fecha y hora}_
 ```
 
 ---
@@ -331,3 +348,4 @@ git diff {base_branch}...{branch_name}
 - [Use Cases]({GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md)
 - [FastEndpoints]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md)
 - [DTOs]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md)
+- [Date Handling]({GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md)

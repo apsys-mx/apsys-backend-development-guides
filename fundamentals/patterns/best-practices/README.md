@@ -8,6 +8,7 @@ Mejores practicas generales para desarrollo en .NET. Aplicables independientemen
 |------|-------------|
 | [async-await-patterns.md](./async-await-patterns.md) | Patrones de programacion asincrona |
 | [code-organization.md](./code-organization.md) | Organizacion de codigo y namespaces |
+| [date-handling.md](./date-handling.md) | Manejo de fechas y timezones (UTC) |
 | [dependency-injection.md](./dependency-injection.md) | Inyeccion de dependencias |
 | [error-handling.md](./error-handling.md) | Manejo de errores y excepciones |
 
@@ -27,6 +28,12 @@ Mejores practicas generales para desarrollo en .NET. Aplicables independientemen
 - Excepciones para situaciones excepcionales
 - Validacion temprana (fail fast)
 - Mensajes de error descriptivos
+
+### Date Handling
+- Almacenar siempre en UTC ("Store UTC, Display Local")
+- Usar `DateTimeOffset` en Request Models para recibir fechas del frontend
+- Comparar siempre con `DateTime.UtcNow` (nunca `DateTime.Now`)
+- Convertir a UTC en AutoMapper con `.UtcDateTime`
 
 ### Code Organization
 - Un concepto por archivo

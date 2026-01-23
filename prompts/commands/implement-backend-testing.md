@@ -1,7 +1,7 @@
 # Implement Backend Testing
 
-> **Version Comando:** 1.0.0
-> **Ultima actualizacion:** 2026-01-01
+> **Version Comando:** 1.1.0
+> **Ultima actualizacion:** 2025-01-23
 
 ---
 
@@ -1091,10 +1091,17 @@ public class Delete{Entity}EndpointTests : EndpointTestBase
 
 ## Formato de Salida
 
-Al finalizar todas las fases:
+Al finalizar todas las fases, genera el reporte con la siguiente estructura.
+
+> **Nota:** `{VERSION_COMANDO}` debe sustituirse por la version declarada en el encabezado de este prompt (campo "Version Comando").
 
 ```markdown
 # Testing Implementation Complete
+
+> **Generado con:** implement-backend-testing v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
 
 **Feature:** {nombre}
 **Entidad:** {Entity}
@@ -1164,6 +1171,11 @@ Si alguna fase falla:
 
 ```markdown
 # Testing Implementation PAUSED
+
+> **Generado con:** implement-backend-testing v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
 
 **Fase:** {0: Scenarios | 1: Unit Tests | 2: Repository Tests | 3: WebAPI Tests}
 **Error:** {descripcion}

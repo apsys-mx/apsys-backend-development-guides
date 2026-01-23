@@ -1,7 +1,7 @@
 # Plan Backend Feature
 
-> **Version Comando:** 2.2.0
-> **Ultima actualizacion:** 2025-01-14
+> **Version Comando:** 2.3.0
+> **Ultima actualizacion:** 2025-01-23
 
 ---
 
@@ -182,6 +182,7 @@ Analiza la descripcion para identificar:
 - **Tipo de feature**: CRUD completo, read-only (DAO), infraestructura
 - **Operaciones requeridas**: Create, Read (Get), GetManyAndCount, Update, Delete
 - **Campos/propiedades**: Que datos maneja la entidad
+- **Propiedades DateTime**: Identificar fechas que requieren manejo UTC (ver guia date-handling.md)
 - **Validaciones**: Reglas de negocio (campos requeridos, formatos, unicidad)
 - **Relaciones**: Depende de otras entidades?
 - **Eventos de dominio**: Que eventos se deben emitir para auditoria/mensajeria?
@@ -207,6 +208,7 @@ Consulta las guias relevantes desde `{GUIDES_REPO}`:
 - Si es read-only: `fundamentals/patterns/domain-modeling/daos.md`
 - Para Event Store: `fundamentals/patterns/event-driven/outbox-pattern.md`, `fundamentals/patterns/event-driven/domain-events.md`
 - Para Migraciones: `stacks/database/migrations/fluent-migrator/guides/patterns.md`, `stacks/database/migrations/fluent-migrator/guides/best-practices.md`
+- **Si tiene propiedades DateTime**: `fundamentals/patterns/best-practices/date-handling.md`
 
 ### 3. Identificacion de Elementos por Capa
 
@@ -346,10 +348,17 @@ Guarda el plan generado en:
 
 ### Estructura del Plan
 
-Genera el plan en **formato markdown** con la siguiente estructura:
+Genera el plan en **formato markdown** con la siguiente estructura.
+
+> **Nota:** `{VERSION_COMANDO}` debe sustituirse por la version declarada en el encabezado de este prompt (campo "Version Comando").
 
 ```markdown
 # Plan de Implementacion: {Nombre del Feature}
+
+> **Generado con:** plan-backend-feature v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
 
 ## Resumen
 
@@ -848,7 +857,23 @@ public class Create{Entity}Model
 }
 ```
 
+**Consideraciones para propiedades DateTime en Request:**
+
+- Usar `DateTimeOffset` en lugar de `DateTime` para recibir fechas del frontend
+- Documentar que el frontend debe enviar ISO 8601 con offset (ej: `"2026-01-22T06:00:00-06:00"`)
+- En el MappingProfile, convertir a UTC con `.UtcDateTime`
+
+```csharp
+// Request Model
+public DateTimeOffset ScheduledDate { get; set; }
+
+// MappingProfile
+.ForMember(dest => dest.ScheduledDate,
+    opt => opt.MapFrom(src => src.ScheduledDate.UtcDateTime));
+```
+
 **Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/request-response-models.md`
+**Referencia Date Handling**: `{GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md`
 
 ---
 
@@ -944,6 +969,7 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 - [FastEndpoints]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/README.md)
 - [FluentMigrator]({GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/README.md)
 - [Best Practices]({GUIDES_REPO}/fundamentals/patterns/best-practices/README.md)
+- [Date Handling]({GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md)
 - [Examples]({GUIDES_REPO}/architectures/clean-architecture/examples/README.md)
 
 ````

@@ -1,7 +1,7 @@
 # Implement Backend Feature
 
-> **Version Comando:** 3.2.0
-> **Ultima actualizacion:** 2025-01-09
+> **Version Comando:** 3.3.0
+> **Ultima actualizacion:** 2025-01-23
 
 ---
 
@@ -49,6 +49,12 @@ Antes de implementar cada fase, lee las guias relevantes desde `{GUIDES_REPO}`:
 | Repository Interfaces | `fundamentals/patterns/domain-modeling/repository-interfaces.md` |
 | DAOs | `fundamentals/patterns/domain-modeling/daos.md` |
 | Domain Exceptions | `fundamentals/patterns/domain-modeling/domain-exceptions.md` |
+
+### Best Practices (Todas las Capas)
+
+| Guia | Ruta |
+|------|------|
+| Date Handling | `fundamentals/patterns/best-practices/date-handling.md` |
 
 ### Infrastructure Layer
 
@@ -419,10 +425,17 @@ _uoW.Commit();
 
 ## Formato de Salida
 
-Al finalizar todas las fases:
+Al finalizar todas las fases, genera el reporte con la siguiente estructura.
+
+> **Nota:** `{VERSION_COMANDO}` debe sustituirse por la version declarada en el encabezado de este prompt (campo "Version Comando").
 
 ```markdown
 # Feature Implementation Complete
+
+> **Generado con:** implement-backend-feature v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
 
 **Feature:** {nombre}
 **Entidad:** {Entity}
@@ -469,6 +482,11 @@ Si alguna fase falla:
 
 ```markdown
 # Feature Implementation PAUSED
+
+> **Generado con:** implement-backend-feature v{VERSION_COMANDO}
+> **Fecha:** {fecha de generacion}
+
+---
 
 **Fase:** {1: Domain | 2: Infrastructure | 3: WebAPI}
 **Error:** {descripcion}
@@ -555,6 +573,17 @@ Si alguna fase falla:
 | Excepciones genericas | Dificil debugging | Usar excepciones de dominio especificas |
 | No validar antes de persistir | Datos invalidos en BD | Llamar `IsValid()` antes de guardar |
 
+### Manejo de Fechas
+
+| Anti-Pattern | Problema | Solucion |
+|--------------|----------|----------|
+| `DateTime.Now` en comparaciones | Usa hora local del servidor | Usar `DateTime.UtcNow` |
+| Almacenar hora local | Inconsistente entre servidores | Almacenar siempre UTC |
+| `DateTime` sin timezone en Request | Backend interpreta incorrectamente | Usar `DateTimeOffset` en Request Models |
+| Comparar fechas con Kind diferente | Resultados incorrectos | Normalizar todo a UTC antes de comparar |
+
+> **Referencia**: `{GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md`
+
 ---
 
 ## Referencias
@@ -579,3 +608,6 @@ Si alguna fase falla:
 - [Request/Response Models]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/request-response-models.md)
 - [DTOs]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md)
 - [AutoMapper Profiles]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/automapper-profiles.md)
+
+### Best Practices
+- [Date Handling]({GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md)
