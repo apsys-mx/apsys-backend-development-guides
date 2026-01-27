@@ -30,6 +30,42 @@ Implementa un feature backend completo siguiendo el plan de implementacion y las
 
 ---
 
+## Verificacion Inicial (OBLIGATORIO)
+
+**ANTES de cualquier otra accion**, verificar que existe el submodule de guias:
+
+```bash
+# Verificar que existe la carpeta docs/guides con contenido
+ls docs/guides/README.md
+```
+
+**Si la verificacion falla** (la carpeta no existe o esta vacia):
+
+1. **DETENER** la ejecucion inmediatamente
+2. **Mostrar** el siguiente mensaje al usuario:
+
+```
+ERROR: No se encontro el submodule de guias en docs/guides/
+
+Este comando requiere las guias de desarrollo de APSYS configuradas como submodule.
+
+Para configurarlo, ejecuta:
+
+  git submodule add https://github.com/apsys-mx/apsys-backend-development-guides.git docs/guides
+
+Si ya lo agregaste pero esta vacio:
+
+  git submodule update --init --recursive
+
+Documentacion: https://github.com/apsys-mx/apsys-backend-development-guides#instalacion-en-proyectos
+```
+
+3. **NO continuar** con el resto del comando
+
+**Si la verificacion es exitosa**, continuar con el proceso normal.
+
+---
+
 ## Guias a Consultar
 
 Antes de implementar cada fase, lee las guias relevantes desde `docs/guides`:
