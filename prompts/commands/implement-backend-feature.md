@@ -1,7 +1,7 @@
 # Implement Backend Feature
 
-> **Version Comando:** 3.3.0
-> **Ultima actualizacion:** 2025-01-23
+> **Version Comando:** 3.4.0
+> **Ultima actualizacion:** 2026-01-27
 
 ---
 

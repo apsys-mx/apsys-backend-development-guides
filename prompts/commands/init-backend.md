@@ -1,7 +1,7 @@
 # Init Backend Project
 
-> **Version:** 3.7.0
-> **Ultima actualizacion:** 2025-01-09
+> **Version:** 3.8.0
+> **Ultima actualizacion:** 2026-01-27
 
 Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias de APSYS.
 

@@ -1,7 +1,7 @@
 # Add Event Store
 
-> **Version:** 1.0.0
-> **Ultima actualizacion:** 2025-01-09
+> **Version:** 1.1.0
+> **Ultima actualizacion:** 2026-01-27
 
 Agrega el patron Event Store (Outbox Pattern) a un proyecto backend existente para auditoria y/o mensajeria.
 

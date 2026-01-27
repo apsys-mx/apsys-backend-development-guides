@@ -1,7 +1,7 @@
 # Plan Backend Testing
 
-> **Version Comando:** 1.1.0
-> **Ultima actualizacion:** 2025-01-23
+> **Version Comando:** 1.2.0
+> **Ultima actualizacion:** 2026-01-27
 
 ---
 
