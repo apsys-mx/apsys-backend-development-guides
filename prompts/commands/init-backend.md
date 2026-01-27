@@ -9,11 +9,7 @@ Inicializa un proyecto backend .NET con Clean Architecture siguiendo las guias d
 
 ## Configuracion
 
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
+Las guias se encuentran en `docs/guides/` del proyecto (agregado como git submodule).
 
 ---
 
@@ -132,11 +128,11 @@ Configuracion del proyecto:
 
 ## Rutas de Recursos
 
-Todas las rutas son relativas a `{GUIDES_REPO}`.
+Todas las rutas son relativas a `docs/guides`.
 
 **Guias de inicializacion:**
 ```
-{GUIDES_REPO}/architectures/clean-architecture/init/
+docs/guides/architectures/clean-architecture/init/
 ├── 01-estructura-base.md
 ├── 02-domain-layer.md
 ├── 03-application-layer.md
@@ -146,7 +142,7 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 
 **Guias de stacks:**
 ```
-{GUIDES_REPO}/stacks/
+docs/guides/stacks/
 ├── database/
 │   ├── postgresql/guides/setup.md
 │   ├── sqlserver/guides/setup.md
@@ -159,7 +155,7 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 
 **Guias de testing:**
 ```
-{GUIDES_REPO}/testing/integration/
+docs/guides/testing/integration/
 ├── tools/ndbunit/guides/setup.md
 └── scenarios/guides/
     ├── setup.md
@@ -168,7 +164,7 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 
 **Guias de Event Store:**
 ```
-{GUIDES_REPO}/fundamentals/patterns/event-driven/
+docs/guides/fundamentals/patterns/event-driven/
 ├── README.md
 ├── outbox-pattern.md
 └── domain-events.md
@@ -176,7 +172,7 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 
 **Templates:**
 ```
-{GUIDES_REPO}/templates/
+docs/guides/templates/
 ├── domain/
 │   ├── events/
 │   │   ├── DomainEvent.cs
@@ -195,12 +191,12 @@ Todas las rutas son relativas a `{GUIDES_REPO}`.
 ├── tests/
 └── Directory.Packages.props
 
-{GUIDES_REPO}/stacks/{stack}/templates/
+docs/guides/stacks/{stack}/templates/
 
-{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/
+docs/guides/stacks/database/migrations/fluent-migrator/templates/
 └── CreateDomainEventsTable.cs     # Migracion para Event Store
 
-{GUIDES_REPO}/testing/integration/
+docs/guides/testing/integration/
 ├── tools/ndbunit/templates/project/
 │   ├── INDbUnit.cs
 │   ├── NDbUnit.cs
@@ -291,9 +287,9 @@ Para cada guia, en orden:
 
 1. **Marcar tarea como `in_progress`** en TodoWrite
 2. **Registrar hora de inicio** en reporte de fase
-3. **Leer la guia completa** con el tool Read desde `{GUIDES_REPO}`
+3. **Leer la guia completa** con el tool Read desde `docs/guides`
 4. **Ejecutar los comandos** reemplazando `{ProjectName}`
-5. **Copiar templates** desde `{GUIDES_REPO}`, reemplazando placeholders
+5. **Copiar templates** desde `docs/guides`, reemplazando placeholders
 6. **Registrar hora de fin y errores** en reporte de fase
 7. **Guardar reporte de fase** en `.claude/init/` (Markdown)
 8. **Marcar tarea como `completed`** en TodoWrite inmediatamente al terminar
@@ -304,18 +300,18 @@ Para cada guia, en orden:
 
 | Paso | Guia | Descripcion |
 |------|------|-------------|
-| 1 | `{GUIDES_REPO}/architectures/clean-architecture/init/01-estructura-base.md` | Solucion .NET |
-| 2 | `{GUIDES_REPO}/architectures/clean-architecture/init/02-domain-layer.md` | Capa de dominio |
-| 3 | `{GUIDES_REPO}/architectures/clean-architecture/init/03-application-layer.md` | Capa de aplicacion |
-| 4 | `{GUIDES_REPO}/architectures/clean-architecture/init/04-infrastructure-layer.md` | Capa de infraestructura |
-| 5 | `{GUIDES_REPO}/architectures/clean-architecture/init/05-webapi-layer.md` | Capa WebAPI base |
-| 6 | `{GUIDES_REPO}/stacks/database/{database}/guides/setup.md` | Driver y ConnectionString |
-| 7 | `{GUIDES_REPO}/stacks/orm/nhibernate/guides/setup.md` | Repositorios NHibernate |
-| 8 | `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/setup.md` | FastEndpoints (si aplica) |
-| 9 | `{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/setup.md` | Migraciones (si aplica) |
-| 10 | `{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md` | Event Store (si aplica) |
-| 11 | `{GUIDES_REPO}/testing/integration/tools/ndbunit/guides/setup.md` | NDbUnit (si aplica) |
-| 12 | `{GUIDES_REPO}/testing/integration/scenarios/guides/setup.md` | Escenarios (si aplica) |
+| 1 | `docs/guides/architectures/clean-architecture/init/01-estructura-base.md` | Solucion .NET |
+| 2 | `docs/guides/architectures/clean-architecture/init/02-domain-layer.md` | Capa de dominio |
+| 3 | `docs/guides/architectures/clean-architecture/init/03-application-layer.md` | Capa de aplicacion |
+| 4 | `docs/guides/architectures/clean-architecture/init/04-infrastructure-layer.md` | Capa de infraestructura |
+| 5 | `docs/guides/architectures/clean-architecture/init/05-webapi-layer.md` | Capa WebAPI base |
+| 6 | `docs/guides/stacks/database/{database}/guides/setup.md` | Driver y ConnectionString |
+| 7 | `docs/guides/stacks/orm/nhibernate/guides/setup.md` | Repositorios NHibernate |
+| 8 | `docs/guides/stacks/webapi/fastendpoints/guides/setup.md` | FastEndpoints (si aplica) |
+| 9 | `docs/guides/stacks/database/migrations/fluent-migrator/guides/setup.md` | Migraciones (si aplica) |
+| 10 | `docs/guides/fundamentals/patterns/event-driven/outbox-pattern.md` | Event Store (si aplica) |
+| 11 | `docs/guides/testing/integration/tools/ndbunit/guides/setup.md` | NDbUnit (si aplica) |
+| 12 | `docs/guides/testing/integration/scenarios/guides/setup.md` | Escenarios (si aplica) |
 
 #### Fase 4.10: Event Store (si aplica)
 
@@ -324,16 +320,16 @@ Si el usuario eligio Event Store (opcion 2 o 3), ejecutar los siguientes pasos:
 **1. Copiar templates de Domain Layer:**
 
 ```
-{GUIDES_REPO}/templates/domain/events/DomainEvent.cs
+docs/guides/templates/domain/events/DomainEvent.cs
   → src/{ProjectName}.domain/entities/DomainEvent.cs
 
-{GUIDES_REPO}/templates/domain/events/PublishableEventAttribute.cs
+docs/guides/templates/domain/events/PublishableEventAttribute.cs
   → src/{ProjectName}.domain/events/PublishableEventAttribute.cs
 
-{GUIDES_REPO}/templates/domain/interfaces/IEventStore.cs
+docs/guides/templates/domain/interfaces/IEventStore.cs
   → src/{ProjectName}.domain/interfaces/IEventStore.cs
 
-{GUIDES_REPO}/templates/domain/interfaces/repositories/IDomainEventRepository.cs
+docs/guides/templates/domain/interfaces/repositories/IDomainEventRepository.cs
   → src/{ProjectName}.domain/interfaces/repositories/IDomainEventRepository.cs
 ```
 
@@ -347,13 +343,13 @@ IDomainEventRepository DomainEvents { get; }
 **3. Copiar templates de Infrastructure Layer:**
 
 ```
-{GUIDES_REPO}/templates/infrastructure/event-driven/EventStore.cs
+docs/guides/templates/infrastructure/event-driven/EventStore.cs
   → src/{ProjectName}.infrastructure/nhibernate/EventStore.cs
 
-{GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/NHDomainEventRepository.cs
+docs/guides/templates/infrastructure/event-driven/nhibernate/NHDomainEventRepository.cs
   → src/{ProjectName}.infrastructure/nhibernate/NHDomainEventRepository.cs
 
-{GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/DomainEventMapper.cs
+docs/guides/templates/infrastructure/event-driven/nhibernate/DomainEventMapper.cs
   → src/{ProjectName}.infrastructure/nhibernate/mappers/DomainEventMapper.cs
 ```
 
@@ -382,7 +378,7 @@ builder.Services.AddScoped<IEventStore, EventStore>();
 **7. Crear migracion (si migraciones estan habilitadas):**
 
 ```
-{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/CreateDomainEventsTable.cs
+docs/guides/stacks/database/migrations/fluent-migrator/templates/CreateDomainEventsTable.cs
   → src/{ProjectName}.migrations/M{NextNumber}CreateDomainEventsTable.cs
 ```
 
@@ -390,7 +386,7 @@ Reemplazar placeholders:
 - `{MigrationNumber}` → Siguiente numero de migracion
 - `{SchemaName}` → Schema del proyecto
 
-**Referencia completa:** `{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md`
+**Referencia completa:** `docs/guides/fundamentals/patterns/event-driven/outbox-pattern.md`
 
 ### Fase 5: Generacion de Reportes por Fase
 
@@ -432,7 +428,7 @@ Para CADA fase, crear un archivo Markdown en `.claude/init/`:
 
 | # | Origen | Destino | Status |
 |---|--------|---------|--------|
-| 1 | `{GUIDES_REPO}/templates/Directory.Packages.props` | `Directory.Packages.props` | OK |
+| 1 | `docs/guides/templates/Directory.Packages.props` | `Directory.Packages.props` | OK |
 
 ## Archivos Creados
 
@@ -476,7 +472,7 @@ Ninguno
 
 | Tipo | Descripcion | Instruccion en Guia | Ruta Intentada | Ruta Correcta | Sugerencia |
 |------|-------------|---------------------|----------------|---------------|------------|
-| template_not_found | Template no encontrado | Copiar desde templates/... | D:\apsys-mx\...\init\templates\... | D:\apsys-mx\...\templates\... | Usar {GUIDES_REPO}/templates/ |
+| template_not_found | Template no encontrado | Copiar desde templates/... | D:\apsys-mx\...\init\templates\... | D:\apsys-mx\...\templates\... | Usar docs/guides/templates/ |
 ```
 
 **Usar el tool Write** para crear el reporte al finalizar cada fase.
@@ -597,7 +593,7 @@ Mostrar al usuario:
 ## Reemplazo de Placeholders
 
 En todos los archivos y rutas:
-- `{GUIDES_REPO}` → Ruta al repositorio de guias (ver seccion Configuracion)
+- `docs/guides` → Ruta al repositorio de guias (ver seccion Configuracion)
 - `{ProjectName}` → Nombre del proyecto (como lo proporciono el usuario)
 - `{ProjectPath}` → Ruta absoluta del proyecto
 - `{database}` → Base de datos seleccionada (postgresql | sqlserver)

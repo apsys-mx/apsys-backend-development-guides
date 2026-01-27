@@ -15,15 +15,9 @@ Si `$ARGUMENTS` esta vacio, pregunta al usuario que feature desea planear.
 
 ## Configuracion
 
-**Repositorio de Guias:**
+Las guias se encuentran en `docs/guides/` del proyecto (agregado como git submodule).
 
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
-
-**Rutas de Recursos (relativas a GUIDES_REPO):**
+**Rutas de Recursos (relativas a docs/guides/):**
 
 | Categoria | Ruta |
 |-----------|------|
@@ -189,7 +183,7 @@ Analiza la descripcion para identificar:
 
 ### 2. Consulta de Guias
 
-Consulta las guias relevantes desde `{GUIDES_REPO}`:
+Consulta las guias relevantes desde `docs/guides`:
 
 **Siempre consultar:**
 
@@ -497,7 +491,7 @@ public class M{NNN}Create{Entity}Table : Migration
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/patterns.md`
+**Referencia**: `docs/guides/stacks/database/migrations/fluent-migrator/guides/patterns.md`
 
 ---
 
@@ -526,7 +520,7 @@ public virtual {tipo} {Propiedad} { get; set; }
 - Constructor vacio requerido para NHibernate
 - Constructor con parametros requeridos para factory
 
-**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/domain-modeling/entities.md`
+**Referencia**: `docs/guides/fundamentals/patterns/domain-modeling/entities.md`
 
 ---
 
@@ -550,7 +544,7 @@ public virtual {tipo} {Propiedad} { get; set; }
 - {campo}: {regla}
 - {campo}: {regla}
 
-**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/domain-modeling/validators.md`
+**Referencia**: `docs/guides/fundamentals/patterns/domain-modeling/validators.md`
 
 ---
 
@@ -587,7 +581,7 @@ public record {Entity}CreatedEvent(
     DateTime CreatedAt);
 ```
 
-**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md`
+**Referencia**: `docs/guides/fundamentals/patterns/event-driven/domain-events.md`
 
 ---
 
@@ -614,7 +608,7 @@ Task<{Entity}?> GetBy{Campo}Async({tipo} {campo});
 Task<{Entity}> UpdateAsync(Guid id, {parametros});
 ```
 
-**Referencia**: `{GUIDES_REPO}/fundamentals/patterns/domain-modeling/repository-interfaces.md`
+**Referencia**: `docs/guides/fundamentals/patterns/domain-modeling/repository-interfaces.md`
 
 ---
 
@@ -652,7 +646,7 @@ Task<{Entity}> UpdateAsync(Guid id, {parametros});
 - Schema: usar AppSchemaResource.{Schema}
 - Generator: Generators.GuidComb para Guid
 
-**Referencia**: `{GUIDES_REPO}/stacks/orm/nhibernate/guides/mappers.md`
+**Referencia**: `docs/guides/stacks/orm/nhibernate/guides/mappers.md`
 
 ---
 
@@ -688,7 +682,7 @@ public async Task<{Entity}> CreateAsync({parametros})
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/stacks/orm/nhibernate/guides/repositories.md`
+**Referencia**: `docs/guides/stacks/orm/nhibernate/guides/repositories.md`
 
 ---
 
@@ -739,7 +733,7 @@ public class Command : ICommand<Result<{Entity}>>
 - Commit o Rollback
 - Retornar Result.Ok() o Result.Fail()
 
-**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
+**Referencia**: `docs/guides/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -753,7 +747,7 @@ public class Command : ICommand<Result<{Entity}>>
 - NO requiere transaccion (solo lectura)
 - Retornar Result.Fail si no encuentra
 
-**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
+**Referencia**: `docs/guides/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -767,7 +761,7 @@ public class Command : ICommand<Result<{Entity}>>
 - Llamar repository.GetManyAndCountAsync()
 - Retornar GetManyAndCountResult<{Entity}>
 
-**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
+**Referencia**: `docs/guides/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -781,7 +775,7 @@ public class Command : ICommand<Result<{Entity}>>
 - Manejar transacciones
 - Manejar ResourceNotFoundException, InvalidDomainException, DuplicatedDomainException
 
-**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md`
+**Referencia**: `docs/guides/architectures/clean-architecture/guides/application/use-cases.md`
 
 ---
 
@@ -804,7 +798,7 @@ public Guid Id { get; set; }
 public {tipo} {Propiedad} { get; set; }
 ```
 
-**Referencia**: `{GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md`
+**Referencia**: `docs/guides/architectures/clean-architecture/guides/webapi/dtos.md`
 
 ---
 
@@ -827,7 +821,7 @@ CreateMap<{Entity}, Create{Entity}Model.Response>()
     .ForMember(dest => dest.{Entity}, opt => opt.MapFrom(src => src));
 ```
 
-**Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/automapper-profiles.md`
+**Referencia**: `docs/guides/stacks/webapi/fastendpoints/guides/automapper-profiles.md`
 
 ---
 
@@ -872,8 +866,8 @@ public DateTimeOffset ScheduledDate { get; set; }
     opt => opt.MapFrom(src => src.ScheduledDate.UtcDateTime));
 ```
 
-**Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/request-response-models.md`
-**Referencia Date Handling**: `{GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md`
+**Referencia**: `docs/guides/stacks/webapi/fastendpoints/guides/request-response-models.md`
+**Referencia Date Handling**: `docs/guides/fundamentals/patterns/best-practices/date-handling.md`
 
 ---
 
@@ -908,7 +902,7 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md`
+**Referencia**: `docs/guides/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md`
 
 ---
 
@@ -960,17 +954,17 @@ public class Create{Entity}Endpoint(AutoMapper.IMapper mapper)
 
 ## Referencias
 
-- [Feature Structure]({GUIDES_REPO}/architectures/clean-architecture/guides/feature-structure/README.md)
-- [Domain Modeling]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/README.md)
-- [Application Layer]({GUIDES_REPO}/architectures/clean-architecture/guides/application/README.md)
-- [Repository Patterns]({GUIDES_REPO}/fundamentals/patterns/repository/README.md)
-- [WebApi Layer]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/README.md)
-- [NHibernate]({GUIDES_REPO}/stacks/orm/nhibernate/guides/README.md)
-- [FastEndpoints]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/README.md)
-- [FluentMigrator]({GUIDES_REPO}/stacks/database/migrations/fluent-migrator/guides/README.md)
-- [Best Practices]({GUIDES_REPO}/fundamentals/patterns/best-practices/README.md)
-- [Date Handling]({GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md)
-- [Examples]({GUIDES_REPO}/architectures/clean-architecture/examples/README.md)
+- [Feature Structure](docs/guides/architectures/clean-architecture/guides/feature-structure/README.md)
+- [Domain Modeling](docs/guides/fundamentals/patterns/domain-modeling/README.md)
+- [Application Layer](docs/guides/architectures/clean-architecture/guides/application/README.md)
+- [Repository Patterns](docs/guides/fundamentals/patterns/repository/README.md)
+- [WebApi Layer](docs/guides/architectures/clean-architecture/guides/webapi/README.md)
+- [NHibernate](docs/guides/stacks/orm/nhibernate/guides/README.md)
+- [FastEndpoints](docs/guides/stacks/webapi/fastendpoints/guides/README.md)
+- [FluentMigrator](docs/guides/stacks/database/migrations/fluent-migrator/guides/README.md)
+- [Best Practices](docs/guides/fundamentals/patterns/best-practices/README.md)
+- [Date Handling](docs/guides/fundamentals/patterns/best-practices/date-handling.md)
+- [Examples](docs/guides/architectures/clean-architecture/examples/README.md)
 
 ````
 

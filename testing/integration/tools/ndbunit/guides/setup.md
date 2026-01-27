@@ -80,7 +80,7 @@ rm tests/{ProjectName}.ndbunit/Class1.cs
 
 ### 4. Copiar templates
 
-Copiar los siguientes archivos desde `{GUIDES_REPO}/testing/integration/tools/ndbunit/templates/project/`:
+Copiar los siguientes archivos desde `docs/guides/testing/integration/tools/ndbunit/templates/project/`:
 
 | Archivo | Descripcion |
 |---------|-------------|
@@ -220,7 +220,7 @@ El proyecto ndbunit es utilizado por:
 Los templates se encuentran en:
 
 ```
-{GUIDES_REPO}/testing/integration/tools/ndbunit/templates/
+docs/guides/testing/integration/tools/ndbunit/templates/
 ├── project/                        # Templates del proyecto library
 │   ├── INDbUnit.cs
 │   ├── NDbUnit.cs

@@ -26,19 +26,13 @@ Implementa los tests de un feature backend siguiendo el plan de testing y las gu
 
 **Ubicacion de planes:** `.claude/planning/`
 
-**Repositorio de Guias:**
-
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
+**Ubicacion de guias:** `docs/guides/` (agregado como git submodule)
 
 ---
 
 ## Guias a Consultar
 
-Antes de implementar cada fase, lee las guias relevantes desde `{GUIDES_REPO}`:
+Antes de implementar cada fase, lee las guias relevantes desde `docs/guides`:
 
 ### Convenciones Generales
 
@@ -245,7 +239,7 @@ Despues de ejecutar el generador, verifica que existan los XMLs en la ruta de sa
 
 **Nota:** Los Unit Tests (Fase 1) NO requieren scenarios y pueden implementarse sin esperar la regeneracion de XMLs. Los Integration Tests (Fases 2 y 3) SI requieren que los XMLs esten actualizados.
 
-**Referencia:** Ver `{GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md` para mas detalles.
+**Referencia:** Ver `docs/guides/testing/integration/scenarios/guides/scenarios-creation-guide.md` para mas detalles.
 
 ---
 
@@ -1273,15 +1267,15 @@ Si alguna fase falla:
 ## Referencias
 
 ### Convenciones
-- [Testing Conventions]({GUIDES_REPO}/testing/fundamentals/guides/conventions.md)
+- [Testing Conventions](docs/guides/testing/fundamentals/guides/conventions.md)
 
 ### Unit Tests
-- [Domain Testing]({GUIDES_REPO}/testing/unit/guides/domain-testing.md)
+- [Domain Testing](docs/guides/testing/unit/guides/domain-testing.md)
 
 ### Integration Tests
-- [Database Testing]({GUIDES_REPO}/testing/integration/guides/database-testing.md)
-- [WebAPI Testing]({GUIDES_REPO}/testing/integration/guides/webapi-testing.md)
-- [Infrastructure Testing]({GUIDES_REPO}/testing/unit/guides/infrastructure-testing.md)
+- [Database Testing](docs/guides/testing/integration/guides/database-testing.md)
+- [WebAPI Testing](docs/guides/testing/integration/guides/webapi-testing.md)
+- [Infrastructure Testing](docs/guides/testing/unit/guides/infrastructure-testing.md)
 
 ### Scenarios
-- [Scenarios Creation]({GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md)
+- [Scenarios Creation](docs/guides/testing/integration/scenarios/guides/scenarios-creation-guide.md)

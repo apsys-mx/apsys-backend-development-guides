@@ -80,7 +80,7 @@ mkdir src/{ProjectName}.migrations/migrations
 
 ### 4. Copiar templates
 
-Copiar desde `{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/` a `src/{ProjectName}.migrations/`:
+Copiar desde `docs/guides/stacks/database/migrations/fluent-migrator/templates/` a `src/{ProjectName}.migrations/`:
 
 | Template | Destino | Descripción |
 |----------|---------|-------------|

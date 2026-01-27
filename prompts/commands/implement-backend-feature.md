@@ -26,19 +26,13 @@ Implementa un feature backend completo siguiendo el plan de implementacion y las
 
 **Ubicacion de planes:** `.claude/planning/`
 
-**Repositorio de Guias:**
-
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
+**Ubicacion de guias:** `docs/guides/` (agregado como git submodule)
 
 ---
 
 ## Guias a Consultar
 
-Antes de implementar cada fase, lee las guias relevantes desde `{GUIDES_REPO}`:
+Antes de implementar cada fase, lee las guias relevantes desde `docs/guides`:
 
 ### Domain Layer
 
@@ -182,7 +176,7 @@ public record {Entity}CreatedEvent(
 - Sin atributo: Solo auditoria (tracking)
 - `[PublishableEvent]`: Auditoria + publicacion a message bus
 
-**Referencia:** `{GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md`
+**Referencia:** `docs/guides/fundamentals/patterns/event-driven/domain-events.md`
 
 ### 1.5 Actualizar IUnitOfWork
 
@@ -365,7 +359,7 @@ _uoW.Commit();
 - Si el Commit falla, el evento tambien se revierte (atomicidad)
 - Solo eventos con `[PublishableEvent]` se publican al message bus
 
-**Referencia:** `{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md`
+**Referencia:** `docs/guides/fundamentals/patterns/event-driven/outbox-pattern.md`
 
 ### 3.3 Request/Response Models
 
@@ -582,32 +576,32 @@ Si alguna fase falla:
 | `DateTime` sin timezone en Request | Backend interpreta incorrectamente | Usar `DateTimeOffset` en Request Models |
 | Comparar fechas con Kind diferente | Resultados incorrectos | Normalizar todo a UTC antes de comparar |
 
-> **Referencia**: `{GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md`
+> **Referencia**: `docs/guides/fundamentals/patterns/best-practices/date-handling.md`
 
 ---
 
 ## Referencias
 
 ### Domain
-- [Entities]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/entities.md)
-- [Validators]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/validators.md)
-- [Repository Interfaces]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/repository-interfaces.md)
-- [DAOs]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/daos.md)
-- [Domain Events]({GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md)
-- [Outbox Pattern]({GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md)
+- [Entities](docs/guides/fundamentals/patterns/domain-modeling/entities.md)
+- [Validators](docs/guides/fundamentals/patterns/domain-modeling/validators.md)
+- [Repository Interfaces](docs/guides/fundamentals/patterns/domain-modeling/repository-interfaces.md)
+- [DAOs](docs/guides/fundamentals/patterns/domain-modeling/daos.md)
+- [Domain Events](docs/guides/fundamentals/patterns/event-driven/domain-events.md)
+- [Outbox Pattern](docs/guides/fundamentals/patterns/event-driven/outbox-pattern.md)
 
 ### Infrastructure
-- [Repositories]({GUIDES_REPO}/stacks/orm/nhibernate/guides/repositories.md)
-- [Mappers]({GUIDES_REPO}/stacks/orm/nhibernate/guides/mappers.md)
-- [Best Practices]({GUIDES_REPO}/stacks/orm/nhibernate/guides/best-practices.md)
+- [Repositories](docs/guides/stacks/orm/nhibernate/guides/repositories.md)
+- [Mappers](docs/guides/stacks/orm/nhibernate/guides/mappers.md)
+- [Best Practices](docs/guides/stacks/orm/nhibernate/guides/best-practices.md)
 
 ### Application + WebAPI
-- [Use Cases]({GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md)
-- [Command Handler Patterns]({GUIDES_REPO}/architectures/clean-architecture/guides/application/command-handler-patterns.md)
-- [FastEndpoints Basics]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md)
-- [Request/Response Models]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/request-response-models.md)
-- [DTOs]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md)
-- [AutoMapper Profiles]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/automapper-profiles.md)
+- [Use Cases](docs/guides/architectures/clean-architecture/guides/application/use-cases.md)
+- [Command Handler Patterns](docs/guides/architectures/clean-architecture/guides/application/command-handler-patterns.md)
+- [FastEndpoints Basics](docs/guides/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md)
+- [Request/Response Models](docs/guides/stacks/webapi/fastendpoints/guides/request-response-models.md)
+- [DTOs](docs/guides/architectures/clean-architecture/guides/webapi/dtos.md)
+- [AutoMapper Profiles](docs/guides/stacks/webapi/fastendpoints/guides/automapper-profiles.md)
 
 ### Best Practices
-- [Date Handling]({GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md)
+- [Date Handling](docs/guides/fundamentals/patterns/best-practices/date-handling.md)

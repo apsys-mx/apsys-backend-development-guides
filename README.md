@@ -1,11 +1,64 @@
 # APSYS Backend Development Guides
 
-> **Version:** 4.0.0 | **Last Update:** 2025-12-29
+> **Version:** 4.1.0 | **Last Update:** 2026-01-27
 
 Guias de desarrollo, patrones y templates para crear proyectos backend .NET.
 
 **Arquitectura actual:** Clean Architecture
 **Proximas:** Vertical Slices, Modular Monolith
+
+---
+
+## Instalacion en Proyectos
+
+Este repositorio esta disenado para usarse como **git submodule** en la ruta `docs/guides/`.
+
+### Agregar a un proyecto nuevo
+
+```bash
+# Desde la raiz de tu proyecto
+git submodule add https://github.com/apsys-mx/apsys-backend-development-guides.git docs/guides
+git commit -m "Add backend development guides as submodule"
+```
+
+### Clonar un proyecto que ya tiene el submodule
+
+```bash
+# Opcion 1: Clonar con submodules incluidos
+git clone --recurse-submodules <url-del-proyecto>
+
+# Opcion 2: Si ya clonaste sin submodules
+git submodule update --init --recursive
+```
+
+### Actualizar las guias
+
+```bash
+cd docs/guides
+git pull origin master
+cd ../..
+git add docs/guides
+git commit -m "Update development guides"
+```
+
+### Estructura resultante
+
+```
+tu-proyecto/
+├── src/
+├── tests/
+├── docs/
+│   └── guides/              <- Submodule aqui
+│       ├── architectures/
+│       ├── fundamentals/
+│       ├── prompts/
+│       ├── stacks/
+│       ├── templates/
+│       └── testing/
+└── ...
+```
+
+> **Nota:** Todos los prompts y guias asumen que las guias estan en `docs/guides/`.
 
 ---
 

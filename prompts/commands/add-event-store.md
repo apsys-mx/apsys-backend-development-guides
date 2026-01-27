@@ -9,11 +9,7 @@ Agrega el patron Event Store (Outbox Pattern) a un proyecto backend existente pa
 
 ## Configuracion
 
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
+Las guias se encuentran en `docs/guides/` del proyecto (agregado como git submodule).
 
 ---
 
@@ -156,12 +152,12 @@ Configuracion de Event Store:
 
 **Guia principal:**
 ```
-{GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md
+docs/guides/fundamentals/patterns/event-driven/outbox-pattern.md
 ```
 
 **Templates:**
 ```
-{GUIDES_REPO}/templates/
+docs/guides/templates/
 ├── domain/
 │   ├── events/
 │   │   ├── DomainEvent.cs
@@ -177,7 +173,7 @@ Configuracion de Event Store:
             ├── NHDomainEventRepository.cs
             └── DomainEventMapper.cs
 
-{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/
+docs/guides/stacks/database/migrations/fluent-migrator/templates/
 └── CreateDomainEventsTable.cs
 ```
 
@@ -237,25 +233,25 @@ Invocar `TodoWrite` con las siguientes tareas (usar nombres detectados):
 
 **Crear DomainEvent.cs:**
 ```
-{GUIDES_REPO}/templates/domain/events/DomainEvent.cs
+docs/guides/templates/domain/events/DomainEvent.cs
   → src/{ProjectName}.domain/entities/DomainEvent.cs
 ```
 
 **Crear PublishableEventAttribute.cs:**
 ```
-{GUIDES_REPO}/templates/domain/events/PublishableEventAttribute.cs
+docs/guides/templates/domain/events/PublishableEventAttribute.cs
   → src/{ProjectName}.domain/events/PublishableEventAttribute.cs
 ```
 
 **Crear IEventStore.cs:**
 ```
-{GUIDES_REPO}/templates/domain/interfaces/IEventStore.cs
+docs/guides/templates/domain/interfaces/IEventStore.cs
   → src/{ProjectName}.domain/interfaces/IEventStore.cs
 ```
 
 **Crear IDomainEventRepository.cs:**
 ```
-{GUIDES_REPO}/templates/domain/interfaces/repositories/IDomainEventRepository.cs
+docs/guides/templates/domain/interfaces/repositories/IDomainEventRepository.cs
   → src/{ProjectName}.domain/interfaces/repositories/IDomainEventRepository.cs
 ```
 
@@ -271,7 +267,7 @@ IDomainEventRepository DomainEvents { get; }
 
 **Crear EventStore.cs:**
 ```
-{GUIDES_REPO}/templates/infrastructure/event-driven/EventStore.cs
+docs/guides/templates/infrastructure/event-driven/EventStore.cs
   → src/{ProjectName}.infrastructure/nhibernate/EventStore.cs
 ```
 
@@ -279,7 +275,7 @@ IDomainEventRepository DomainEvents { get; }
 
 Usar el template como base y adaptar el nombre segun convenciones del proyecto:
 ```
-{GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/NHDomainEventRepository.cs
+docs/guides/templates/infrastructure/event-driven/nhibernate/NHDomainEventRepository.cs
   → src/{ProjectName}.infrastructure/nhibernate/{Prefix}DomainEventRepository.cs
 ```
 
@@ -290,7 +286,7 @@ Usar el template como base y adaptar el nombre segun convenciones del proyecto:
 
 **Crear DomainEventMapper.cs:**
 ```
-{GUIDES_REPO}/templates/infrastructure/event-driven/nhibernate/DomainEventMapper.cs
+docs/guides/templates/infrastructure/event-driven/nhibernate/DomainEventMapper.cs
   → src/{ProjectName}.infrastructure/nhibernate/mappers/DomainEventMapper.cs
 ```
 
@@ -326,7 +322,7 @@ builder.Services.AddScoped<IEventStore, EventStore>();
 
 **Crear migracion:**
 ```
-{GUIDES_REPO}/stacks/database/migrations/fluent-migrator/templates/CreateDomainEventsTable.cs
+docs/guides/stacks/database/migrations/fluent-migrator/templates/CreateDomainEventsTable.cs
   → src/{ProjectName}.migrations/M{NextNumber}CreateDomainEventsTable.cs
 ```
 
@@ -422,8 +418,8 @@ Al finalizar:
 
 ## Referencias
 
-- [Outbox Pattern]({GUIDES_REPO}/fundamentals/patterns/event-driven/outbox-pattern.md)
-- [Domain Events]({GUIDES_REPO}/fundamentals/patterns/event-driven/domain-events.md)
+- [Outbox Pattern](docs/guides/fundamentals/patterns/event-driven/outbox-pattern.md)
+- [Domain Events](docs/guides/fundamentals/patterns/event-driven/domain-events.md)
 ```
 
 ---

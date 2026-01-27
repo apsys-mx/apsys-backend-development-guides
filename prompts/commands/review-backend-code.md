@@ -24,19 +24,13 @@ Realiza peer review de codigo backend, analizando **exclusivamente** los archivo
 
 ## Configuracion
 
-**Repositorio de Guias:**
-
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
+Las guias se encuentran en `docs/guides/` del proyecto (agregado como git submodule).
 
 ---
 
 ## Guias de Referencia para Review
 
-Consulta estas guias desde `{GUIDES_REPO}` segun la capa del codigo:
+Consulta estas guias desde `docs/guides` segun la capa del codigo:
 
 ### Domain Layer
 
@@ -342,10 +336,10 @@ git diff {base_branch}...{branch_name}
 
 ## Referencias
 
-- [Entities]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/entities.md)
-- [Validators]({GUIDES_REPO}/fundamentals/patterns/domain-modeling/validators.md)
-- [Repositories]({GUIDES_REPO}/stacks/orm/nhibernate/guides/repositories.md)
-- [Use Cases]({GUIDES_REPO}/architectures/clean-architecture/guides/application/use-cases.md)
-- [FastEndpoints]({GUIDES_REPO}/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md)
-- [DTOs]({GUIDES_REPO}/architectures/clean-architecture/guides/webapi/dtos.md)
-- [Date Handling]({GUIDES_REPO}/fundamentals/patterns/best-practices/date-handling.md)
+- [Entities](docs/guides/fundamentals/patterns/domain-modeling/entities.md)
+- [Validators](docs/guides/fundamentals/patterns/domain-modeling/validators.md)
+- [Repositories](docs/guides/stacks/orm/nhibernate/guides/repositories.md)
+- [Use Cases](docs/guides/architectures/clean-architecture/guides/application/use-cases.md)
+- [FastEndpoints](docs/guides/stacks/webapi/fastendpoints/guides/fastendpoints-basics.md)
+- [DTOs](docs/guides/architectures/clean-architecture/guides/webapi/dtos.md)
+- [Date Handling](docs/guides/fundamentals/patterns/best-practices/date-handling.md)

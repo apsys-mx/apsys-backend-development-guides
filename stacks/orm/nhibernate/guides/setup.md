@@ -63,7 +63,7 @@ mkdir src/{ProjectName}.infrastructure/nhibernate/filtering
 
 ### 3. Copiar templates base
 
-Copiar desde `{GUIDES_REPO}/stacks/orm/nhibernate/templates/` a `src/{ProjectName}.infrastructure/nhibernate/`:
+Copiar desde `docs/guides/stacks/orm/nhibernate/templates/` a `src/{ProjectName}.infrastructure/nhibernate/`:
 
 | Template | Destino | Descripción |
 |----------|---------|-------------|
@@ -111,7 +111,7 @@ cfg.DataBaseIntegration(c =>
 
 ### 5. Copiar templates de filtering
 
-Copiar desde `{GUIDES_REPO}/stacks/orm/nhibernate/templates/filtering/` a `src/{ProjectName}.infrastructure/nhibernate/filtering/`:
+Copiar desde `docs/guides/stacks/orm/nhibernate/templates/filtering/` a `src/{ProjectName}.infrastructure/nhibernate/filtering/`:
 
 | Template | Descripción |
 |----------|-------------|

@@ -119,7 +119,7 @@ En Visual Studio, hacer clic derecho en `AppSchema.xsd` → "Run Custom Tool" pa
 
 ### 5. Copiar templates
 
-Copiar desde `{GUIDES_REPO}/testing/integration/scenarios/templates/common.tests/`:
+Copiar desde `docs/guides/testing/integration/scenarios/templates/common.tests/`:
 
 | Archivo | Descripcion |
 |---------|-------------|
@@ -182,7 +182,7 @@ Editar `tests/{ProjectName}.scenarios/{ProjectName}.scenarios.csproj`:
 
 ### 3. Copiar templates
 
-Copiar desde `{GUIDES_REPO}/testing/integration/scenarios/templates/project/`:
+Copiar desde `docs/guides/testing/integration/scenarios/templates/project/`:
 
 | Archivo | Descripcion |
 |---------|-------------|
@@ -259,7 +259,7 @@ buildscenarios.bat
 5. Actualizar `ScenarioBuilder.cs` con validators
 
 Para mas informacion sobre crear escenarios, ver:
-`{GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md`
+`docs/guides/testing/integration/scenarios/guides/scenarios-creation-guide.md`
 
 ---
 

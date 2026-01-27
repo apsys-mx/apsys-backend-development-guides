@@ -21,15 +21,9 @@ Si `$ARGUMENTS` esta vacio, pregunta al usuario la ruta al plan de implementacio
 
 ## Configuracion
 
-**Repositorio de Guias:**
+Las guias se encuentran en `docs/guides/` del proyecto (agregado como git submodule).
 
-```
-GUIDES_REPO: D:\apsys-mx\apsys-backend-development-guides
-```
-
-> **Nota:** Ajusta esta ruta segun la ubicacion del repositorio de guias en tu sistema.
-
-**Rutas de Recursos (relativas a GUIDES_REPO):**
+**Rutas de Recursos (relativas a docs/guides/):**
 
 | Categoria | Ruta |
 |-----------|------|
@@ -188,7 +182,7 @@ Del plan de implementacion, extrae:
 
 ### 2. Consulta de Guias
 
-Consulta las guias relevantes desde `{GUIDES_REPO}`:
+Consulta las guias relevantes desde `docs/guides`:
 
 **Siempre consultar:**
 
@@ -477,7 +471,7 @@ new {Entity}
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md`
+**Referencia**: `docs/guides/testing/integration/scenarios/guides/scenarios-creation-guide.md`
 
 ---
 
@@ -514,7 +508,7 @@ public class {Entity}Tests
 - Act: Llamar metodo a testear
 - Assert: Verificar resultado esperado
 
-**Referencia**: `{GUIDES_REPO}/testing/unit/guides/domain-testing.md`
+**Referencia**: `docs/guides/testing/unit/guides/domain-testing.md`
 
 ---
 
@@ -552,7 +546,7 @@ public class {Entity}ValidatorTests
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/testing/unit/guides/domain-testing.md`
+**Referencia**: `docs/guides/testing/unit/guides/domain-testing.md`
 
 ---
 
@@ -627,7 +621,7 @@ public class NH{Entity}RepositoryTests
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/testing/integration/guides/database-testing.md`
+**Referencia**: `docs/guides/testing/integration/guides/database-testing.md`
 
 ---
 
@@ -665,7 +659,7 @@ public class {Entity}MappingProfileTests
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/testing/integration/guides/webapi-testing.md`
+**Referencia**: `docs/guides/testing/integration/guides/webapi-testing.md`
 
 ---
 
@@ -700,7 +694,7 @@ public class Create{Entity}EndpointTests : EndpointTestBase
 }
 ```
 
-**Referencia**: `{GUIDES_REPO}/testing/integration/guides/webapi-testing.md`
+**Referencia**: `docs/guides/testing/integration/guides/webapi-testing.md`
 
 ---
 
@@ -848,12 +842,12 @@ public class Delete{Entity}EndpointTests : EndpointTestBase
 
 ## Referencias
 
-- [Testing Conventions]({GUIDES_REPO}/testing/fundamentals/guides/conventions.md)
-- [Domain Testing]({GUIDES_REPO}/testing/unit/guides/domain-testing.md)
-- [Infrastructure Testing]({GUIDES_REPO}/testing/unit/guides/infrastructure-testing.md)
-- [WebApi Testing]({GUIDES_REPO}/testing/integration/guides/webapi-testing.md)
-- [Database Testing]({GUIDES_REPO}/testing/integration/guides/database-testing.md)
-- [Scenarios Creation]({GUIDES_REPO}/testing/integration/scenarios/guides/scenarios-creation-guide.md)
+- [Testing Conventions](docs/guides/testing/fundamentals/guides/conventions.md)
+- [Domain Testing](docs/guides/testing/unit/guides/domain-testing.md)
+- [Infrastructure Testing](docs/guides/testing/unit/guides/infrastructure-testing.md)
+- [WebApi Testing](docs/guides/testing/integration/guides/webapi-testing.md)
+- [Database Testing](docs/guides/testing/integration/guides/database-testing.md)
+- [Scenarios Creation](docs/guides/testing/integration/scenarios/guides/scenarios-creation-guide.md)
 ```
 
 ## Restricciones y Consideraciones
