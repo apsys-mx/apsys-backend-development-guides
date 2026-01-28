@@ -2,75 +2,74 @@ using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 using {ProjectName}.migrations;
-using {ProjectName}.migrations.migrations;
 
-const string ActionRun = "run";
-const string ActionRollback = "rollback";
+const string _run = "run";
+const string _rollback = "rollback";
 
 try
 {
-    AnsiConsole.MarkupLine("[bold yellow]Reading command line parameters...[/]");
-    CommandLineArgs cmdArgs = new();
+    // Read the command line parameters
+    AnsiConsole.MarkupLine("Reading command line parameters...");
+    CommandLineArgs parameter = [];
+    if (!parameter.TryGetValue("cnn", out string? value))
+        throw new ArgumentException("No [cnn] parameter received. You need pass the connection string in order to execute the migrations");
 
-    if (!cmdArgs.TryGetValue("cnn", out string? connectionString))
-    {
-        throw new ArgumentException(
-            "Missing [cnn] parameter. Usage: dotnet run cnn=\"your_connection_string\" [action=run|rollback]");
-    }
-
+    // Create the service provider
     AnsiConsole.MarkupLine("[bold yellow]Connecting to database...[/]");
-    var serviceProvider = CreateServices(connectionString);
-
+    string connectionStringValue = value;
+    var serviceProvider = CreateServices(connectionStringValue);
     using var scope = serviceProvider.CreateScope();
     var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
 
-    if (!cmdArgs.TryGetValue("action", out string? action) || string.IsNullOrEmpty(action))
-    {
-        action = ActionRun;
-    }
+    // Check if the action is passed in the command line. If not, default to run
+    if (!parameter.TryGetValue("action", out string? action) && string.IsNullOrEmpty(action))
+        action = _run;
 
-    if (action == ActionRun)
+    // Execute the requested action
+    if (action == _run)
     {
         AnsiConsole.Status()
-            .Start("Running migrations...", ctx =>
+            .Start("Start running migrations...", ctx =>
             {
                 ctx.Spinner(Spinner.Known.Star);
                 ctx.SpinnerStyle(Style.Parse("green"));
+                ctx.Status("Running migrations...");
+                UpdateDatabase(scope.ServiceProvider);
                 runner.MigrateUp();
             });
-        AnsiConsole.MarkupLine("[bold green]All migrations applied successfully![/]");
+        AnsiConsole.MarkupLine("All migrations are updated");
     }
-    else if (action == ActionRollback)
+    else if (action == _rollback)
     {
         AnsiConsole.Status()
-            .Start("Rolling back last migration...", ctx =>
+            .Start("Start rolling back the last migration...", ctx =>
             {
                 ctx.Spinner(Spinner.Known.Star);
                 ctx.SpinnerStyle(Style.Parse("blue"));
-
+                ctx.Status("Rolling back migration...");
                 var lastMigration = runner.MigrationLoader.LoadMigrations().LastOrDefault();
-                if (lastMigration.Value != null)
-                {
-                    var rollbackToVersion = lastMigration.Value.Version - 1;
-                    runner.MigrateDown(rollbackToVersion);
-                }
+                var rollBackToVersion = lastMigration.Value.Version - 1;
+                runner.MigrateDown(rollBackToVersion);
             });
-        AnsiConsole.MarkupLine("[bold blue]Last migration rolled back successfully![/]");
+        AnsiConsole.MarkupLine("Last transaction rolled back");
+
     }
     else
     {
-        throw new ArgumentException($"Invalid action '{action}'. Use 'run' or 'rollback'.");
+        throw new ArgumentException("Invalid action. Please use 'run' or 'rollback'");
     }
-
     return 0;
 }
 catch (Exception ex)
 {
     AnsiConsole.WriteException(ex);
-    return 1;
+    return (int)ExitCode.UnknownError;
 }
 
-static IServiceProvider CreateServices(string connectionString)
+/// <summary>
+/// Configure the dependency injection services
+/// </sumamry>
+static IServiceProvider CreateServices(string? connectionString)
 {
     return new ServiceCollection()
         .AddFluentMigratorCore()
@@ -87,7 +86,13 @@ static IServiceProvider CreateServices(string connectionString)
             // .AddSqlServer()
 
             .WithGlobalConnectionString(connectionString)
-            .ScanIn(typeof(M001_InitialMigration).Assembly).For.Migrations())
+            .ScanIn(typeof(M001Sandbox).Assembly).For.Migrations())
         .AddLogging(lb => lb.AddFluentMigratorConsole())
         .BuildServiceProvider(false);
+}
+
+static void UpdateDatabase(IServiceProvider serviceProvider)
+{
+    var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
+    runner.MigrateUp();
 }

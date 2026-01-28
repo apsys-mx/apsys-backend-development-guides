@@ -22,8 +22,7 @@ src/{ProjectName}.migrations/
 ├── Program.cs                      ← Migration runner
 ├── CommandLineArgs.cs              ← CLI argument parser
 ├── CustomVersionTableMetaData.cs   ← Version tracking config
-└── migrations/
-    └── M001_InitialMigration.cs    ← Primera migración
+└── M001Sandbox.cs                  ← Primera migración
 ```
 
 ## Paquetes NuGet
@@ -72,24 +71,18 @@ Editar `src/{ProjectName}.migrations/{ProjectName}.migrations.csproj`:
 </Project>
 ```
 
-### 3. Crear carpeta de migraciones
-
-```bash
-mkdir src/{ProjectName}.migrations/migrations
-```
-
-### 4. Copiar templates
+### 3. Copiar templates
 
 Copiar desde `docs/guides/stacks/database/migrations/fluent-migrator/templates/` a `src/{ProjectName}.migrations/`:
 
 | Template | Destino | Descripción |
 |----------|---------|-------------|
 | `Program.cs` | raíz | Migration runner con CLI |
-| `CommandLineArgs.cs` | raíz | Parser de argumentos CLI |
+| `CommandLineArgs.cs` | raíz | Parser de argumentos CLI y ExitCode enum |
 | `CustomVersionTableMetaData.cs` | raíz | Configuración de tabla de versiones |
-| `M001_InitialMigration.cs` | `migrations/` | Migración de ejemplo |
+| `M001Sandbox.cs` | raíz | Migración inicial (crea extensión unaccent) |
 
-### 5. Configurar driver de BD
+### 4. Configurar driver de BD
 
 Editar `Program.cs` según la base de datos:
 
@@ -98,7 +91,7 @@ Editar `Program.cs` según la base de datos:
 .ConfigureRunner(rb => rb
     .AddPostgres11_0()
     .WithGlobalConnectionString(connectionString)
-    .ScanIn(typeof(M001_InitialMigration).Assembly).For.Migrations())
+    .ScanIn(typeof(M001Sandbox).Assembly).For.Migrations())
 ```
 
 **Para SQL Server:**
@@ -106,10 +99,10 @@ Editar `Program.cs` según la base de datos:
 .ConfigureRunner(rb => rb
     .AddSqlServer()
     .WithGlobalConnectionString(connectionString)
-    .ScanIn(typeof(M001_InitialMigration).Assembly).For.Migrations())
+    .ScanIn(typeof(M001Sandbox).Assembly).For.Migrations())
 ```
 
-### 6. Reemplazar namespaces
+### 5. Reemplazar namespaces
 
 En todos los archivos copiados, reemplazar:
 - `{ProjectName}` → nombre real del proyecto
@@ -122,10 +115,10 @@ En todos los archivos copiados, reemplazar:
 cd src/{ProjectName}.migrations
 
 # Aplicar migraciones
-dotnet run cnn="Host=localhost;Port=5432;Database=mydb;Username=postgres;Password=pass"
+dotnet run /cnn:"Host=localhost;Port=5432;Database=mydb;Username=postgres;Password=pass"
 
 # Revertir última migración
-dotnet run cnn="Host=localhost;Port=5432;Database=mydb;Username=postgres;Password=pass" action=rollback
+dotnet run /cnn:"Host=localhost;Port=5432;Database=mydb;Username=postgres;Password=pass" /action:rollback
 ```
 
 ### Usando variables de entorno
@@ -133,21 +126,21 @@ dotnet run cnn="Host=localhost;Port=5432;Database=mydb;Username=postgres;Passwor
 ```bash
 # Construir connection string desde .env
 source ../{ProjectName}.webapi/.env
-dotnet run cnn="Host=$DB_HOST;Port=$DB_PORT;Database=$DB_NAME;Username=$DB_USER;Password=$DB_PASSWORD"
+dotnet run /cnn:"Host=$DB_HOST;Port=$DB_PORT;Database=$DB_NAME;Username=$DB_USER;Password=$DB_PASSWORD"
 ```
 
 ## Crear Nueva Migración
 
-1. Determinar el siguiente número de versión (revisar `migrations/`)
-2. Crear archivo `migrations/M{NNN}_{Description}.cs`:
+1. Determinar el siguiente número de versión (revisar archivos `M*.cs` en el proyecto)
+2. Crear archivo `M{NNN}{Description}.cs` en la raíz del proyecto:
 
 ```csharp
 using FluentMigrator;
 
-namespace {ProjectName}.migrations.migrations;
+namespace {ProjectName}.migrations;
 
 [Migration(2)]
-public class M002_CreateUsersTable : Migration
+public class M002CreateUsersTable : Migration
 {
     private const string TableName = "users";
     private const string SchemaName = "public";
@@ -176,7 +169,7 @@ public class M002_CreateUsersTable : Migration
 dotnet build src/{ProjectName}.migrations
 
 # Ejecutar migraciones
-dotnet run --project src/{ProjectName}.migrations cnn="..."
+dotnet run --project src/{ProjectName}.migrations /cnn:"..."
 
 # Verificar en BD
 SELECT * FROM public.versioninfo ORDER BY version;
@@ -186,8 +179,8 @@ SELECT * FROM public.versioninfo ORDER BY version;
 
 | Elemento | Formato | Ejemplo |
 |----------|---------|---------|
-| Archivo | `M{NNN}_{Description}.cs` | `M001_InitialMigration.cs` |
-| Clase | `M{NNN}_{Description}` | `M001_InitialMigration` |
+| Archivo | `M{NNN}{Description}.cs` | `M001Sandbox.cs`, `M002CreateUsersTable.cs` |
+| Clase | `M{NNN}{Description}` | `M001Sandbox`, `M002CreateUsersTable` |
 | Atributo | `[Migration(N)]` | `[Migration(1)]` |
 | Tabla | `snake_case` | `users`, `user_roles` |
 | Columna | `snake_case` | `created_at`, `user_id` |
