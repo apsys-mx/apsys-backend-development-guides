@@ -1,7 +1,7 @@
 # Scenarios & Common.Tests - Setup Guide
 
-**Version:** 1.0.0
-**Ultima actualizacion:** 2025-12-29
+**Version:** 1.1.0
+**Ultima actualizacion:** 2026-01-27
 
 ## Descripcion
 
@@ -186,12 +186,12 @@ Copiar desde `docs/guides/testing/integration/scenarios/templates/project/`:
 
 | Archivo | Descripcion |
 |---------|-------------|
-| `Program.cs` | Punto de entrada |
-| `CommandLineArgs.cs` | Parser de argumentos |
-| `ExitCode.cs` | Codigos de salida |
-| `IScenario.cs` | Interface base |
-| `ScenarioBuilder.cs` | Builder principal |
-| `Sc010CreateSandBox.cs` | Escenario base vacio |
+| `Program.cs` | Punto de entrada con validacion robusta |
+| `CommandLineArgs.cs` | Parser de argumentos CLI (/key:value) |
+| `ExitCode.cs` | Codigos de salida (Success, InvalidParameters, etc.) |
+| `IScenario.cs` | Interface base para escenarios |
+| `ScenarioBuilder.cs` | Builder principal con DI |
+| `Sc010CreateSandBox.cs` | Escenario base con limpieza de tablas |
 
 ### 4. Eliminar Program.cs generado
 
@@ -263,13 +263,29 @@ Para mas informacion sobre crear escenarios, ver:
 
 ---
 
+## Codigos de Salida
+
+El ejecutable retorna los siguientes codigos:
+
+| Codigo | Nombre | Descripcion |
+|--------|--------|-------------|
+| 0 | Success | Todos los escenarios procesados correctamente |
+| 1 | UnknownError | Error inesperado |
+| 2 | InvalidParameters | Parametros /cnn o /output faltantes o invalidos |
+| 3 | OutputFolderError | Error al crear/acceder la carpeta de salida |
+| 4 | DatabaseConnectionError | Error de conexion a la base de datos |
+| 5 | ScenarioExecutionError | Error al ejecutar un escenario |
+
+---
+
 ## Changelog
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 1.1.0 | 2026-01-27 | Actualizacion de templates: ExitCodes granulares, Program.cs robusto, Sc010CreateSandBox con INDbUnit |
 | 1.0.0 | 2025-12-29 | Version inicial |
 
 ---
 
-**Ultima actualizacion:** 2025-12-29
+**Ultima actualizacion:** 2026-01-27
 **Mantenedor:** Equipo APSYS
