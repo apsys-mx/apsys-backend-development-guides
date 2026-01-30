@@ -101,6 +101,46 @@ apsys-backend-development-guides/
 
 ---
 
+## Instalacion de Comandos (Global)
+
+Instala los comandos como slash commands globales en tu maquina.
+
+### Prerequisitos
+
+```bash
+# 1. Instalar GitHub CLI: https://cli.github.com
+# 2. Autenticarse (requerido para repos privados)
+gh auth login
+```
+
+### Windows (PowerShell)
+
+```powershell
+gh repo clone apsys-mx/apsys-backend-development-guides $env:TEMP\apsys-install; & "$env:TEMP\apsys-install\install.ps1"
+```
+
+### Linux / macOS
+
+```bash
+gh repo clone apsys-mx/apsys-backend-development-guides /tmp/apsys-install && /tmp/apsys-install/install.sh
+```
+
+### Que hace el instalador?
+
+1. Clona/actualiza el repositorio en `~/.apsys-backend-prompts/`
+2. Te pregunta que IA usas (Claude o ChatGPT)
+3. Copia los comandos al destino correcto
+4. Para actualizar, ejecuta el mismo comando
+
+### Destinos de Instalacion
+
+| IA | Ruta | Uso |
+|----|------|-----|
+| Claude Code | `~/.claude/commands/` | `/init-backend`, `/add-event-store`, `/review-backend-code` |
+| ChatGPT | `~/.chatgpt/prompts/` | Copiar contenido manualmente |
+
+---
+
 ## Comandos Disponibles
 
 ### /init-backend
